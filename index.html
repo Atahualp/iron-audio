@@ -469,6 +469,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     </div>
   </div>
 
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v2.4</div>
+
 </div>
 
 <!-- LOADING OVERLAY -->
@@ -835,9 +837,7 @@ async function doSpotifyAuth(){
 // ─── SPOTIFY PLAYLIST ─────────────────────────────────────────────────
 async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return!!spUserId;}
 
-async function searchTracks(g, count){
-  // Genre query pools — 6 varied queries each, randomly sampled for variety each session
-  // Mix genre: sample one query from each active genre
+async function searchTracks(g, count) {
   if (g === 'Mix') return searchMixTracks(count);
 
   const qMap={
@@ -991,60 +991,101 @@ async function searchTracks(g, count){
       'artist:"David Bowie"'
     ]
   };
+
   const pool = qMap[g] || qMap['Random'];
 
-  // Latin: always use all 3 genre filters every session
-  // Other genres: shuffle pool, pick 4 artist queries for variety
-  let queries;
+  // Latin uses all 3 genre filters every session
   if (g === 'Latin') {
-    queries = pool;
-  } else {
-    const shuffledPool = [...pool].sort(() => Math.random() - .5);
-    queries = shuffledPool.slice(0, 4);
+    let allTracks = [];
+    for (const q of pool) {
+      try {
+        const r = await fetch(
+          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=10&offset=0',
+          {headers:{Authorization:'Bearer '+spToken}}
+        );
+        if (!r.ok) continue;
+        const d = await r.json();
+        const items = (d.tracks?.items||[]).filter(t => t.uri);
+        allTracks = allTracks.concat(items);
+      } catch(e) {}
+    }
+    allTracks.sort((a,b) => (b.popularity||0)-(a.popularity||0));
+    return allTracks.slice(0, count);
   }
 
-  let allTracks = [];
+  // For Hip-Hop and Anime (keyword queries): fetch then dedupe by artist
+  const isKeywordGenre = (g === 'Hip-Hop' || g === 'Anime');
 
-  for (const q of queries) {
-    // Randomise offset so repeated sessions surface different tracks
-    const offset = (g === 'Latin') ? 0 : Math.floor(Math.random() * 4) * 10;
+  if (isKeywordGenre) {
+    const shuffled = [...pool].sort(() => Math.random() - .5);
+    const queries  = shuffled.slice(0, 3);
+    let allTracks  = [];
+    for (const q of queries) {
+      const offset = Math.floor(Math.random() * 4) * 10;
+      try {
+        const r = await fetch(
+          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=10&offset=' + offset,
+          {headers:{Authorization:'Bearer '+spToken}}
+        );
+        if (!r.ok) continue;
+        const d = await r.json();
+        allTracks = allTracks.concat(d.tracks?.items||[]);
+      } catch(e) {}
+    }
+    // Dedupe by artist — max 1 track per artist, pick their most popular
+    const byArtist = {};
+    allTracks.forEach(t => {
+      const artist = (t.artists?.[0]?.name||'').toLowerCase();
+      if (!byArtist[artist] || (t.popularity||0) > (byArtist[artist].popularity||0)) {
+        byArtist[artist] = t;
+      }
+    });
+    const deduped = Object.values(byArtist).sort((a,b) => (b.popularity||0)-(a.popularity||0));
+    return deduped.slice(0, count);
+  }
+
+  // Artist-anchored genres: 1 query per artist, 1 track per artist
+  // Sample enough artists to overshoot count, then take the best
+  const needed   = count + 5; // overshoot so we have room after failures
+  const shuffled = [...pool].sort(() => Math.random() - .5);
+  const queries  = shuffled.slice(0, needed);
+
+  const trackPromises = queries.map(async q => {
+    const offset = Math.floor(Math.random() * 3) * 10;
     try {
       const r = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(buildEnergyQuery(q))}&type=track&limit=10&offset=${offset}`,
+        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=5&offset=' + offset,
         {headers:{Authorization:'Bearer '+spToken}}
       );
-      if (!r.ok) {
-        const e = await r.json();
-        throw new Error(`Search ${r.status}: ${e.error?.message||JSON.stringify(e)}`);
-      }
+      if (!r.ok) return null;
       const d = await r.json();
-      // Dedupe by track name+artist (catches same song from different albums/versions)
-      const items = (d.tracks?.items||[]).filter(t => {
-        if (!t.uri) return false;
-        const key = (t.name + '|' + (t.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
-        if (allTracks.find(x => {
-          const xk = (x.name + '|' + (x.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
-          return xk === key;
-        })) return false;
-        return true;
-      });
-      // Cap to 3 tracks per artist query — prevents one artist dominating the playlist
-      const capped = items.slice(0, 3);
-      allTracks = allTracks.concat(capped);
-    } catch(e) {
-      if (allTracks.length === 0) throw e;
-    }
-  }
+      const items = (d.tracks?.items||[]).filter(t => t.uri && t.popularity > 20);
+      if (!items.length) return null;
+      // Return the single most popular track for this artist
+      return items.sort((a,b) => (b.popularity||0)-(a.popularity||0))[0];
+    } catch(e) { return null; }
+  });
 
-  // Sort by Spotify popularity score (0-100) descending, then add slight shuffle
-  // to keep top tracks prominent but vary order each session
-  allTracks.sort((a, b) => (b.popularity||0) - (a.popularity||0));
-  // Keep top 60% by popularity in first half, shuffle the rest
-  const cutoff = Math.ceil(allTracks.length * 0.6);
-  const topTracks = allTracks.slice(0, cutoff).sort(() => Math.random() - .3);
-  const restTracks = allTracks.slice(cutoff).sort(() => Math.random() - .5);
-  return [...topTracks, ...restTracks].slice(0, count);
+  const results = await Promise.all(trackPromises);
+  const tracks  = results.filter(Boolean);
+
+  // Final dedup by artist name (safety net)
+  const seen    = new Set();
+  const unique  = tracks.filter(t => {
+    const artist = (t.artists?.[0]?.name||'').toLowerCase();
+    if (seen.has(artist)) return false;
+    seen.add(artist);
+    return true;
+  });
+
+  // Sort by popularity, light shuffle on top half for variety
+  unique.sort((a,b) => (b.popularity||0)-(a.popularity||0));
+  const cutoff   = Math.ceil(unique.length * 0.6);
+  const top      = unique.slice(0, cutoff).sort(() => Math.random() - .3);
+  const rest     = unique.slice(cutoff).sort(() => Math.random() - .5);
+  return [...top, ...rest].slice(0, count);
 }
+
 
 async function createPlaylist(name, uris){
   const ok=await ensureUserId();
@@ -2133,6 +2174,7 @@ function buildEnergyQuery(q) { return q; }
     <button class="orm-close" onclick="close1RMCalc()">Close</button>
   </div>
 </div>
+
 
 </body>
 </html>
