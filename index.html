@@ -467,8 +467,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
       <div id="plContainer">
         <div class="pl-prompt" id="plPrompt">
           <div class="pl-prompt-icon">🎵</div>
-          <div class="pl-prompt-text">Ready to build your playlist?</div>
-          <button class="pl-build-btn" onclick="buildPlaylist()">Create Playlist on Spotify</button>
+          <div class="pl-prompt-text">Tap to generate your playlist</div>
+          <button class="pl-build-btn" onclick="buildPlaylist()">🎵 Generate Playlist</button>
         </div>
       </div>
       <button class="share-btn" onclick="openShareCard()">📸 Share Workout Card</button>
@@ -1034,7 +1034,9 @@ async function searchTracks(g, count){
         })) return false;
         return true;
       });
-      allTracks = allTracks.concat(items);
+      // Cap to 3 tracks per artist query — prevents one artist dominating the playlist
+      const capped = items.slice(0, 3);
+      allTracks = allTracks.concat(capped);
     } catch(e) {
       if (allTracks.length === 0) throw e;
     }
@@ -1263,7 +1265,7 @@ function renderPreview(container, tracks, emoji, plName) {
     '<div class="pl-preview-label">👀 PREVIEW — ' + tracks.length + ' tracks · ~' + totalMin + ' min</div>' +
     '<div class="pl-preview-actions">' +
       '<button class="pl-preview-btn regen" onclick="regenPlaylist()">🔀 Regenerate</button>' +
-      '<button class="pl-preview-btn create" onclick="confirmCreatePlaylist()">✅ Create on Spotify</button>' +
+      '<button class="pl-preview-btn create" onclick="confirmCreatePlaylist()">✅ Save to Spotify</button>' +
       '<button class="pl-preview-btn cancel" onclick="cancelPreview()">✕</button>' +
     '</div></div><div class="track-list preview-list">';
   tracks.forEach(function(t, i) {
@@ -1286,8 +1288,8 @@ async function regenPlaylist() {
 function cancelPreview() {
   var container = document.getElementById('plContainer');
   container.innerHTML = '<div class="pl-prompt"><div class="pl-prompt-icon">🎵</div>' +
-    '<div class="pl-prompt-text">Ready to build your playlist?</div>' +
-    '<button class="pl-build-btn" onclick="buildPlaylist()">Create Playlist on Spotify</button></div>';
+    '<div class="pl-prompt-text">Tap to generate your playlist</div>' +
+    '<button class="pl-build-btn" onclick="buildPlaylist()">🎵 Generate Playlist</button></div>';
 }
 
 async function confirmCreatePlaylist() {
