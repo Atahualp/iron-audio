@@ -469,7 +469,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v2.4</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v3.0</div>
 
 </div>
 
@@ -1044,30 +1044,40 @@ async function searchTracks(g, count) {
     return deduped.slice(0, count);
   }
 
-  // Artist-anchored genres: 1 query per artist, 1 track per artist
-  // Sample enough artists to overshoot count, then take the best
-  const needed   = count + 5; // overshoot so we have room after failures
+  // Artist-anchored genres: sequential requests, 1 best track per artist
+  // Sample count+6 artists, stop early once we have enough tracks
   const shuffled = [...pool].sort(() => Math.random() - .5);
-  const queries  = shuffled.slice(0, needed);
+  const queries  = shuffled.slice(0, count + 6);
 
-  const trackPromises = queries.map(async q => {
+  const tracks = [];
+  for (const q of queries) {
+    // Stop once we have more than enough
+    if (tracks.length >= count + 2) break;
     const offset = Math.floor(Math.random() * 3) * 10;
     try {
       const r = await fetch(
         'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=5&offset=' + offset,
         {headers:{Authorization:'Bearer '+spToken}}
       );
-      if (!r.ok) return null;
+      if (!r.ok) {
+        const e = await r.json();
+        if (r.status === 429) {
+          // Rate limited — wait and retry once
+          await new Promise(res => setTimeout(res, 1000));
+          continue;
+        }
+        throw new Error('Search ' + r.status + ': ' + (e.error?.message || r.status));
+      }
       const d = await r.json();
-      const items = (d.tracks?.items||[]).filter(t => t.uri && t.popularity > 20);
-      if (!items.length) return null;
-      // Return the single most popular track for this artist
-      return items.sort((a,b) => (b.popularity||0)-(a.popularity||0))[0];
-    } catch(e) { return null; }
-  });
-
-  const results = await Promise.all(trackPromises);
-  const tracks  = results.filter(Boolean);
+      const items = (d.tracks?.items||[]).filter(t => t.uri && (t.popularity||0) > 20);
+      if (!items.length) continue;
+      // Take the single most popular track for this artist
+      const best = items.sort((a,b) => (b.popularity||0)-(a.popularity||0))[0];
+      tracks.push(best);
+    } catch(e) {
+      if (tracks.length === 0 && q === queries[queries.length-1]) throw e;
+    }
+  }
 
   // Final dedup by artist name (safety net)
   const seen    = new Set();
