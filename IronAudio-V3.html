@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>IRON AUDIO</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:#2a2a3a;
+  --accent:#F58426;--accent2:#006BB6;--green:#1DB954;--blue:#006BB6;
+  --orange:#F58426;--knicks-blue:#006BB6;
+  --text:#f0f0f0;--muted:#5a5a7a;
+  --safe-top:env(safe-area-inset-top,20px);--safe-bottom:env(safe-area-inset-bottom,20px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100%;overflow:hidden;position:fixed;width:100%}
+#app{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--safe-bottom)+28px)}
+
+/* ── HEADER ─────────────────────────────────────────────────────── */
+.hdr{padding:calc(var(--safe-top)+14px) 20px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,.97);backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(245,132,38,.15)}
+.logo{display:flex;align-items:center;gap:8px;line-height:1}.logo-icon{flex-shrink:0;filter:drop-shadow(0 0 6px rgba(245,132,38,.4))}.logo-iron{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);text-shadow:0 0 20px rgba(245,132,38,.4)}.logo-audio{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);opacity:.55}
+.logo span{color:var(--text)}
+.sp-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#1DB954;border:none;border-radius:20px;box-shadow:0 0 12px rgba(29,185,84,.25);color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:transform .15s}
+.sp-btn:active{transform:scale(.94)}
+.sp-btn.conn{background:#0d2e1a;color:#1DB954;border:1px solid #1a5c30}
+.sp-ico{width:16px;height:16px;flex-shrink:0}
+
+/* ── SECTIONS ────────────────────────────────────────────────────── */
+.sec{padding:20px;border-bottom:1px solid var(--border)}
+.sec-tag{font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#F58426;opacity:.9;margin-bottom:8px;opacity:.85}
+.sec-title{font-family:'Chakra Petch',sans-serif;font-size:28px;font-weight:800;letter-spacing:1px;margin-bottom:14px;line-height:1}
+
+/* ── DURATION ────────────────────────────────────────────────────── */
+.dur-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dur-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .2s}
+.dur-card.on{border-color:#F58426;background:rgba(245,132,38,.06)}
+.dur-card:active{transform:scale(.97)}
+.dur-num{font-family:'Chakra Petch',sans-serif;font-size:42px;color:var(--muted);line-height:1}
+.dur-card.on .dur-num{color:var(--accent)}
+.dur-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
+.mg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mg-chip{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s}
+.mg-chip.on{border-color:var(--accent);background:rgba(232,255,61,.05)}
+.mg-chip:active{transform:scale(.96)}
+.mg-ico{font-size:19px}
+.mg-name{font-weight:600;font-size:13px}
+.mg-chk{margin-left:auto;width:17px;height:17px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s}
+.mg-chip.on .mg-chk{background:var(--accent);border-color:var(--accent);display:flex;align-items:center;justify-content:center}
+.mg-chip.on .mg-chk::after{content:'';width:5px;height:3px;border-left:2px solid #000;border-bottom:2px solid #000;transform:rotate(-45deg) translateY(-1px);display:block}
+
+
+
+
+/* ── WORKOUT ELAPSED TIMER ───────────────────────────────────────── */
+.elapsed-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,107,182,.08);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.elapsed-time{font-family:'Chakra Petch',sans-serif;font-size:28px;font-weight:800;letter-spacing:2px;color:#F58426}
+.elapsed-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.elapsed-controls{display:flex;gap:8px}
+.elapsed-ctrl-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.elapsed-ctrl-btn:active{transform:scale(.94)}
+.elapsed-ctrl-btn.running{border-color:var(--accent);color:var(--accent)}
+
+/* ── EXERCISE SWAP ───────────────────────────────────────────────── */
+.swap-btn{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.swap-btn:active{border-color:var(--blue);color:var(--blue);transform:scale(.94)}
+
+/* ── SET LOG ─────────────────────────────────────────────────────── */
+.set-log-wrap{padding:10px 17px 14px;border-top:1px solid var(--border);background:rgba(255,107,53,.03)}
+.set-log-title{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.set-log-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.set-log-num{font-size:11px;font-weight:700;color:var(--accent);width:20px;flex-shrink:0}
+.set-log-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:13px;font-weight:600;text-align:center;-webkit-appearance:none}
+.set-log-input:focus{outline:none;border-color:var(--accent)}
+.set-log-label{font-size:10px;color:var(--muted);width:28px;text-align:center;flex-shrink:0}
+.set-log-add{background:none;border:1px dashed var(--border);border-radius:8px;padding:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
+.set-log-add:active{border-color:var(--accent);color:var(--accent)}
+.set-log-pr{font-size:10px;color:#F58426;font-weight:800;margin-left:4px}
+
+/* ── 1RM MODAL ───────────────────────────────────────────────────── */
+.orm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.orm-overlay.open{opacity:1;pointer-events:all}
+.orm-sheet{background:#111827;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:28px 24px 50px;transform:translateY(40px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.orm-overlay.open .orm-sheet{transform:translateY(0)}
+.orm-title{font-family:'Chakra Petch',sans-serif;font-size:26px;font-weight:900;letter-spacing:1px;margin-bottom:4px}
+.orm-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.orm-inputs{display:flex;gap:10px;margin-bottom:16px}
+.orm-input-wrap{flex:1;display:flex;flex-direction:column;gap:5px}
+.orm-input-wrap label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.orm-input{width:100%;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;text-align:center;-webkit-appearance:none}
+.orm-input:focus{outline:none;border-color:var(--accent)}
+.orm-result{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px}
+.orm-result-val{font-family:'Chakra Petch',sans-serif;font-size:52px;font-weight:900;color:var(--accent);line-height:1}
+.orm-result-lbl{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:4px}
+.orm-formula-row{display:flex;gap:8px;margin-bottom:18px}
+.orm-formula-btn{flex:1;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.orm-formula-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(255,107,53,.1)}
+.orm-close{width:100%;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
+
+/* ── BPM / ENERGY SLIDER ─────────────────────────────────────────── */
+.energy-wrap{margin-top:14px}
+.energy-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.energy-label{font-size:12px;color:var(--muted);font-weight:600}
+.energy-val{font-size:13px;font-weight:700;color:var(--accent)}
+.energy-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:var(--border);outline:none;cursor:pointer}
+.energy-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(255,107,53,.4)}
+.energy-ticks{display:flex;justify-content:space-between;margin-top:5px}
+.energy-tick{font-size:10px;color:var(--muted);font-weight:600}
+
+/* ── DIFFICULTY / MODE / EQUIPMENT TOGGLES ──────────────────────────── */
+.toggle-row{display:flex;gap:8px}
+.toggle-pill{flex:1;text-align:center;padding:10px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);transition:all .2s;line-height:1.3}
+.toggle-pill:active{transform:scale(.96)}
+.toggle-pill.on.beginner{border-color:#4ade80;color:#4ade80;background:rgba(74,222,128,.1)}
+.toggle-pill.on.intermediate{border-color:#facc15;color:#facc15;background:rgba(250,204,21,.1)}
+.toggle-pill.on.advanced{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1)}
+.toggle-pill.on.mode-std{border-color:#F58426;color:#000;background:#F58426}
+.toggle-pill.on.mode-ss{border-color:#4fc3f7;color:#4fc3f7;background:rgba(0,107,182,.1)}
+.toggle-pill.on.eq-gym{border-color:var(--blue);color:var(--blue);background:rgba(0,212,255,.1)}
+.toggle-pill.on.eq-bw{border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,.1)}
+
+/* ── SUPERSET CARD ───────────────────────────────────────────────────── */
+.ss-label{display:inline-flex;align-items:center;gap:5px;background:rgba(0,107,182,.15);border:1px solid #006BB6;color:#4fc3f7;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.ss-connector{width:2px;background:linear-gradient(#006BB6,#006BB655);margin:0 auto;height:16px}
+
+/* ── REST TIMER ──────────────────────────────────────────────────────── */
+.timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.timer-overlay.open{opacity:1;pointer-events:all}
+.timer-ring-wrap{position:relative;width:200px;height:200px;margin-bottom:24px}
+.timer-ring-bg{fill:none;stroke:#1e1e1e;stroke-width:10}
+.timer-ring-fg{fill:none;stroke:#F58426;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.5;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear;transform:rotate(-90deg);transform-origin:center}
+.timer-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Chakra Petch',sans-serif;font-size:72px;color:#fff;letter-spacing:2px}
+.timer-label{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:30px}
+.timer-ex-name{font-family:'Chakra Petch',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;margin-bottom:6px;text-align:center;padding:0 20px}
+.timer-actions{display:flex;gap:12px}
+.timer-btn{padding:14px 28px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.timer-btn:active{transform:scale(.95)}
+.timer-btn.skip{background:#1e1e1e;color:var(--muted)}
+.timer-btn.stop{background:var(--accent);color:#000}
+
+/* ── REST TIMER TRIGGER on card ──────────────────────────────────────── */
+.rest-trigger{display:flex;align-items:center;gap:6px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);transition:all .2s;white-space:nowrap}
+.rest-trigger:active{transform:scale(.95);border-color:var(--accent);color:var(--accent)}
+
+/* ── HISTORY PANEL ───────────────────────────────────────────────────── */
+.hist-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
+.hist-overlay.open{opacity:1;pointer-events:all}
+.hist-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#111;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
+.hist-panel.open{transform:translateX(0)}
+.hist-hdr{position:sticky;top:0;background:#0d0d16;padding:20px 18px 14px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;z-index:2}
+.hist-title{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:1px}
+.hist-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+.hist-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
+.hist-item{padding:14px 18px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .2s}
+.hist-item:active{background:#1a1a1a}
+.hist-item-date{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
+.hist-item-title{font-family:'Chakra Petch',sans-serif;font-size:18px;color:#fff;margin-bottom:4px}
+.hist-item-meta{font-size:12px;color:var(--muted)}
+.hist-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 6px;line-height:1}
+.hist-clear{width:calc(100% - 36px);margin:16px 18px 0;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px}
+
+/* ── SHARE CARD ──────────────────────────────────────────────────────── */
+.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:#1a1a1a;border:1px solid var(--border);border-radius:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:10px}
+.share-btn:active{transform:scale(.97);border-color:var(--accent);color:var(--accent)}
+.share-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:20px}
+.share-modal-overlay.open{opacity:1;pointer-events:all}
+.share-canvas-wrap{max-width:400px;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px}
+.share-canvas-wrap canvas{display:block;width:100%;height:auto}
+.share-actions{display:flex;gap:10px;width:100%;max-width:400px}
+.share-action-btn{flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.share-action-btn:active{transform:scale(.95)}
+.share-action-btn.save{background:var(--accent);color:#000}
+.share-action-btn.close{background:#1e1e1e;color:var(--muted)}
+
+/* ── HISTORY icon in header ──────────────────────────────────────────── */
+.hdr-hist-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px;line-height:1;margin-left:4px}
+
+/* ── PLATFORM TOGGLE ─────────────────────────────────────────────── */
+.platform-row{display:flex;gap:10px;margin-bottom:0px}
+.platform-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s}
+.platform-btn.on.spotify{border-color:#1DB954;color:#1DB954;background:rgba(29,185,84,.1)}
+.platform-btn.on.youtube{border-color:#FF0000;color:#FF0000;background:rgba(255,0,0,.1)}
+.platform-btn svg{width:18px;height:18px;flex-shrink:0}
+.yt-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;color:#fff;font-size:14px;font-weight:600;transition:all .2s}
+.yt-btn:active{transform:scale(.97)}
+.yt-btn.connected{border-color:#FF0000;background:rgba(255,0,0,.08)}
+.yt-ico{color:#FF0000;flex-shrink:0}
+
+/* ── GENRE ───────────────────────────────────────────────────────── */
+.genre-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;scrollbar-width:none}
+.genre-row::-webkit-scrollbar{display:none}
+.g-pill{flex-shrink:0;background:var(--card);border:2px solid var(--border);border-radius:50px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;white-space:nowrap}
+.g-pill.on{border-color:#F58426;color:#F58426;background:rgba(245,132,38,.12)}
+.g-pill:active{transform:scale(.95)}
+
+/* ── RAPIDAPI KEY INPUT ──────────────────────────────────────────── */
+
+/* ── GENERATE BTN ────────────────────────────────────────────────── */
+.gen-wrap{padding:18px 20px}
+.gen-btn{width:100%;padding:18px;background:linear-gradient(135deg,#F58426,#ff9944);border:none;border-radius:15px;font-family:'Chakra Petch',sans-serif;font-weight:900;font-size:22px;letter-spacing:3px;color:#000;cursor:pointer;transition:transform .15s}
+.gen-btn:active{transform:scale(.97)}
+
+/* ── RESULTS ─────────────────────────────────────────────────────── */
+#results{display:none}
+#results.vis{display:block}
+.res-hdr{padding:18px 20px;border-bottom:1px solid var(--border)}
+.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:#006BB6;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:10px}
+.res-title{font-family:'Chakra Petch',sans-serif;font-size:30px;font-weight:900;letter-spacing:1px}
+.res-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.badge{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.badge-t{background:rgba(232,255,61,.14);color:var(--accent)}
+.badge-m{background:rgba(0,212,255,.1);color:var(--blue)}
+
+/* ── WORKOUT CARDS ───────────────────────────────────────────────── */
+.wk-list{padding:14px 20px}
+.wk-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #F58426;border-radius:18px;margin-bottom:14px;overflow:hidden;transition:transform .15s}
+.wk-top{padding:15px 17px 11px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.wk-num{font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#F58426;opacity:.9;opacity:.9}
+.wk-name{font-family:'Chakra Petch',sans-serif;font-size:23px;font-weight:800;letter-spacing:.5px;margin-top:2px;line-height:1}
+.wk-desc{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500}
+.wk-muscle-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-top:5px;text-transform:uppercase}
+.wk-sets-box{text-align:right;flex-shrink:0}
+.wk-sets{font-family:'Chakra Petch',sans-serif;font-size:24px;color:#F58426;line-height:1}
+.wk-sets-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* ── EXERCISE ILLUSTRATION ───────────────────────────────────────── */
+.wk-illus{width:100%;height:230px;background:#0d0d0d;border-top:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.wk-illus img{width:100%;height:100%;object-fit:contain;display:block}
+.wk-illus img.loaded{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Skeleton loader */
+.skeleton{position:absolute;inset:0;background:var(--card)}
+.skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.04) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:1}
+.sk-circle{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.06)}
+.sk-bar{height:10px;border-radius:5px;background:rgba(255,255,255,.06)}
+.sk-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;margin-top:4px}
+
+/* No API key state */
+.illus-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;background:#0d0d0d}
+.illus-placeholder .ph-icon{font-size:36px;opacity:.3}
+.illus-placeholder .ph-text{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;max-width:180px}
+
+/* Muscle tag overlay on image */
+.muscle-tag{position:absolute;bottom:10px;left:10px;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(6px)}
+
+.wk-foot{padding:11px 17px;border-top:1px solid var(--border);display:flex;gap:14px}
+.wk-stat{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);font-weight:500}
+.wk-stat strong{color:var(--text)}
+
+/* ── PLAYLIST ────────────────────────────────────────────────────── */
+.pl-sec{padding:14px 20px 20px}
+.pl-label{font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:3px;color:#F58426;margin-bottom:12px}
+.pl-card{background:linear-gradient(135deg,#101a10,#090f09);border:1px solid #162016;border-radius:17px;overflow:hidden}
+.pl-hdr{padding:16px;display:flex;gap:13px;align-items:center;border-bottom:1px solid rgba(29,185,84,.12)}
+.pl-art{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#1DB954,#0a5228);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.pl-info{flex:1;min-width:0}
+.pl-name{font-family:'Chakra Petch',sans-serif;font-size:17px;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-meta{font-size:11px;color:rgba(29,185,84,.75);margin-top:3px;font-weight:500}
+.pl-open{padding:8px 13px;background:#1DB954;border:none;border-radius:9px;color:#000;font-weight:700;font-size:12px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.pl-open:active{transform:scale(.94)}
+.track-list{padding:8px 0}
+.track{padding:8px 16px;display:flex;align-items:center;gap:11px}
+.track-n{font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(29,185,84,.4);width:17px;text-align:center}
+.track-info{flex:1;min-width:0}
+.track-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-artist{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.track-dur{font-size:11px;color:rgba(255,255,255,.25);font-weight:500}
+
+/* ── STATUS MESSAGES ─────────────────────────────────────────────── */
+.msg{padding:11px 15px;border-radius:11px;font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.5}
+.msg-ok{background:rgba(29,185,84,.14);color:#1DB954;border:1px solid rgba(29,185,84,.28)}
+.msg-err{background:rgba(255,69,0,.13);color:#FF6030;border:1px solid rgba(255,69,0,.28)}
+.msg-info{background:rgba(0,212,255,.07);color:var(--blue);border:1px solid rgba(0,212,255,.18)}
+
+/* ── LOADING OVERLAY ─────────────────────────────────────────────── */
+.ov{display:none;position:fixed;inset:0;background:rgba(10,10,10,.97);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.ov.vis{display:flex}
+.ov-spin{width:52px;height:52px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.ov-txt{font-family:'Chakra Petch',sans-serif;font-size:16px;letter-spacing:3px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SPOTIFY MODAL ───────────────────────────────────────────────── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:300;align-items:flex-end}
+.modal-bg.vis{display:flex}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;padding:10px 20px calc(var(--safe-bottom)+20px);max-height:88vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:'Chakra Petch',sans-serif;font-size:21px;letter-spacing:2px;margin-bottom:14px}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.modal-inp{width:100%;background:var(--card);border:2px solid var(--border);border-radius:11px;padding:13px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;outline:none;transition:border-color .2s;margin-bottom:12px}
+.modal-inp:focus{border-color:var(--accent)}
+.modal-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:16px;letter-spacing:2px;color:#000;cursor:pointer}
+.modal-link{color:var(--accent)}
+
+/* ── EXERCISE MODAL ──────────────────────────────────────────────── */
+.ex-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.ex-modal-overlay.open{opacity:1;pointer-events:all}
+.ex-modal{background:#151515;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;padding:0 0 40px;transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.ex-modal-overlay.open .ex-modal{transform:translateY(0)}
+.ex-modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:24px 24px 0 0;display:block}
+.ex-modal-img-placeholder{width:100%;aspect-ratio:4/3;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:24px 24px 0 0}
+.ex-modal-body{padding:20px 22px 0}
+.ex-modal-num{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-bottom:4px}
+.ex-modal-name{font-family:'Chakra Petch',sans-serif;font-size:32px;color:#fff;line-height:1;margin-bottom:6px}
+.ex-modal-muscle{display:inline-block;padding:4px 12px;border-radius:50px;font-size:12px;font-weight:700;margin-bottom:16px}
+.ex-modal-stats{display:flex;gap:10px;margin-bottom:20px}
+.ex-modal-stat{flex:1;background:#1e1e1e;border-radius:12px;padding:12px;text-align:center}
+.ex-modal-stat strong{display:block;font-size:18px;color:#fff;font-family:'Chakra Petch',sans-serif;letter-spacing:.5px}
+.ex-modal-stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.ex-modal-section-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.ex-modal-how{color:#ccc;font-size:14px;line-height:1.7;margin-bottom:20px}
+.ex-modal-steps{list-style:none;padding:0;margin:0 0 20px}
+.ex-modal-steps li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #222;color:#ccc;font-size:14px;line-height:1.5}
+.ex-modal-steps li:last-child{border-bottom:none}
+.ex-modal-step-num{flex-shrink:0;width:24px;height:24px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
+.ex-modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;border:none;z-index:10}
+.wk-illus{cursor:pointer;position:relative}
+.wk-illus::after{content:'TAP FOR HOW-TO';position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:var(--accent);font-size:9px;font-weight:800;letter-spacing:1.5px;padding:4px 8px;border-radius:20px;pointer-events:none}
+
+
+/* ── YOUTUBE WATCH BUTTON in exercise modal ──────────────────────── */
+.yt-watch-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#ff0000;border-radius:14px;color:#fff;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:.3px;transition:all .2s;margin-top:4px;margin-bottom:8px}
+.yt-watch-btn:active{transform:scale(.97);background:#cc0000}
+.yt-watch-hint{text-align:center;font-size:11px;color:var(--muted);letter-spacing:.5px;margin-bottom:8px}
+
+
+/* ── PLAYLIST PROMPT ─────────────────────────────────────────────── */
+.pl-prompt{text-align:center;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pl-prompt-icon{font-size:36px}
+.pl-prompt-text{font-size:14px;color:var(--muted);font-weight:600}
+.pl-build-btn{padding:14px 28px;background:var(--green);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.pl-build-btn:active{transform:scale(.96)}
+/* ── PLAYLIST PREVIEW ────────────────────────────────────────────── */
+.pl-preview-bar{background:rgba(0,107,182,.1);border:1px solid rgba(0,107,182,.3);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.pl-preview-label{font-size:11px;font-weight:700;color:#4fc3f7;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.pl-preview-actions{display:flex;gap:8px}
+.pl-preview-btn{flex:1;padding:10px 8px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.pl-preview-btn:active{transform:scale(.95)}
+.pl-preview-btn.regen{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.pl-preview-btn.create{background:#1DB954;color:#000}
+.pl-preview-btn.cancel{background:var(--card);color:var(--muted);border:1px solid var(--border);flex:0;padding:10px 14px}
+.preview-list{border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+
+.set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;transition:color .15s}.set-log-del:active{color:#f87171}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="logo">
+      <svg class="logo-icon" width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="10" width="4" height="8" rx="2" fill="#F58426"/>
+        <rect x="5" y="8" width="3" height="12" rx="1.5" fill="#F58426"/>
+        <rect x="24" y="8" width="3" height="12" rx="1.5" fill="#F58426"/>
+        <rect x="27" y="10" width="4" height="8" rx="2" fill="#F58426"/>
+        <rect x="8" y="13" width="16" height="2.5" rx="1.25" fill="#006BB6"/>
+        <rect x="10" y="8" width="2" height="4" rx="1" fill="#006BB6" opacity=".9"/>
+        <rect x="14" y="6" width="2" height="6" rx="1" fill="#006BB6"/>
+        <rect x="18" y="8" width="2" height="4" rx="1" fill="#006BB6" opacity=".9"/>
+      </svg>
+      <span class="logo-iron">IRON</span><span class="logo-audio">AUDIO</span>
+    </div>
+    <button class="hdr-hist-btn" onclick="openHistory()" title="Workout History">📋</button>
+    <button class="sp-btn" id="spBtn" onclick="handleSpotifyConnect()">
+      <svg class="sp-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      <span id="spBtnTxt">Connect Spotify</span>
+    </button>
+  </div>
+
+  <!-- CONFIG VIEW -->
+  <div id="cfgView">
+
+    <!-- Duration -->
+    <div class="sec">
+      <div class="sec-tag">01 — DURATION</div>
+      <div class="sec-title">HOW LONG?</div>
+      <div class="dur-row">
+        <div class="dur-card on" onclick="setDur(30,this)"><div class="dur-num">30</div><div class="dur-lbl">Minutes</div></div>
+        <div class="dur-card" onclick="setDur(60,this)"><div class="dur-num">60</div><div class="dur-lbl">Minutes</div></div>
+      </div>
+    </div>
+
+    <!-- Muscles -->
+    <div class="sec">
+      <div class="sec-tag">02 — TARGET</div>
+      <div class="sec-title">MUSCLE GROUPS</div>
+      <div class="mg-grid">
+        <div class="mg-chip" onclick="toggleMuscle('chest',this)"><span class="mg-ico">💪</span><span class="mg-name">Chest</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('back',this)"><span class="mg-ico">🦴</span><span class="mg-name">Back</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('shoulders',this)"><span class="mg-ico">🏋️</span><span class="mg-name">Shoulders</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('biceps',this)"><span class="mg-ico">💥</span><span class="mg-name">Biceps</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('triceps',this)"><span class="mg-ico">⚡</span><span class="mg-name">Triceps</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('legs',this)"><span class="mg-ico">🦵</span><span class="mg-name">Legs</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('glutes',this)"><span class="mg-ico">🍑</span><span class="mg-name">Glutes</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('core',this)"><span class="mg-ico">🎯</span><span class="mg-name">Core / Abs</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('calves',this)"><span class="mg-ico">🦶</span><span class="mg-name">Calves</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('forearms',this)"><span class="mg-ico">🤜</span><span class="mg-name">Forearms</span><div class="mg-chk"></div></div>
+      </div>
+    </div>
+
+    <!-- Genre -->
+    <div class="sec">
+      <div class="sec-tag">03 — VIBE</div>
+      <div class="sec-title">PLAYLIST GENRE</div>
+      <div class="genre-row">
+        <div class="g-pill" onclick="setGenre('80s',this)">📼 80's</div>
+        <div class="g-pill" onclick="setGenre('Anime',this)">🎌 Anime</div>
+        <div class="g-pill" onclick="setGenre('EDM',this)">🎛️ EDM</div>
+        <div class="g-pill on" onclick="setGenre('Hip-Hop',this)">🎤 Hip-Hop</div>
+        <div class="g-pill" onclick="setGenre('Latin',this)">💃 Latin</div>
+        <div class="g-pill" onclick="setGenre('Pop',this)">🌟 Pop</div>
+        <div class="g-pill" onclick="setGenre('R&amp;B',this)">🎷 R&amp;B</div>
+        <div class="g-pill" onclick="setGenre('Reggae',this)">🌿 Reggae</div>
+        <div class="g-pill" onclick="setGenre('Reggaeton',this)">🌴 Reggaeton</div>
+        <div class="g-pill" onclick="setGenre('Rock',this)">🎸 Rock</div>
+        <div class="g-pill" onclick="setGenre('Mix',this)">🎲 Mix</div>
+      </div>
+    </div>
+
+    <!-- Equipment -->
+    <div class="sec">
+      <div class="sec-tag">04 — EQUIPMENT</div>
+      <div class="sec-title">WORKOUT TYPE</div>
+      <div class="toggle-row">
+        <div class="toggle-pill eq-gym on" id="eq-gym" onclick="setEquipment('gym',this)">🏋️<br>Gym</div>
+        <div class="toggle-pill eq-bw" id="eq-bodyweight" onclick="setEquipment('bodyweight',this)">💪<br>Bodyweight</div>
+      </div>
+    </div>
+
+    <div class="gen-wrap">
+      <button class="gen-btn" onclick="generate()">⚡ GENERATE WORKOUT</button>
+    </div>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div id="results">
+    <div class="res-hdr">
+      <button class="back-btn" onclick="showCfg()">← Back</button>
+      <div class="res-title">YOUR WORKOUT</div>
+      <div class="res-meta">
+        <span class="badge badge-t" id="timeBadge">30 MIN</span>
+        <span class="badge badge-m" id="muscleBadge">CHEST</span>
+      </div>
+    </div>
+    <div class="elapsed-bar">
+      <div>
+        <div class="elapsed-label">WORKOUT TIME</div>
+        <div class="elapsed-time" id="elapsedTime">00:00</div>
+      </div>
+      <div class="elapsed-controls">
+        <button class="elapsed-ctrl-btn" id="elapsedToggleBtn" onclick="toggleElapsedTimer()">▶ Start</button>
+        <button class="elapsed-ctrl-btn" onclick="open1RMCalc()">💪 1RM</button>
+        <button class="elapsed-ctrl-btn" onclick="resetElapsedTimer()">↺</button>
+      </div>
+    </div>
+    <div class="wk-list" id="wkList"></div>
+    <div class="pl-sec">
+      <div class="pl-label">🎵 YOUR PLAYLIST</div>
+      <div id="plContainer">
+        <div class="pl-prompt" id="plPrompt">
+          <div class="pl-prompt-icon">🎵</div>
+          <div class="pl-prompt-text">Ready to build your playlist?</div>
+          <button class="pl-build-btn" onclick="buildPlaylist()">Create Playlist on Spotify</button>
+        </div>
+      </div>
+      <button class="share-btn" onclick="openShareCard()">📸 Share Workout Card</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="ov" id="ov"><div class="ov-spin"></div><div class="ov-txt" id="ovTxt">BUILDING WORKOUT</div></div>
+
+<!-- SPOTIFY MODAL -->
+<div class="modal-bg" id="spModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎵 CONNECT SPOTIFY</div>
+    <p class="modal-desc">Enter your Netlify URL — must match the Redirect URI in your <a class="modal-link" href="https://developer.spotify.com/dashboard" target="_blank">Spotify Developer Dashboard</a>.</p>
+    <p class="modal-desc" style="color:rgba(232,255,61,.7)">Example: <strong>https://your-site.netlify.app</strong></p>
+    <p class="modal-desc" style="background:rgba(255,69,0,.1);border:1px solid rgba(255,69,0,.28);border-radius:10px;padding:10px;color:#FF6030;margin-bottom:14px">⚠️ <strong>Required step:</strong> In Spotify Dashboard → your app → <em>User Management</em> → add your Spotify account email. Without this, you get a 403 error.</p>
+    <input type="url" class="modal-inp" id="redirInp" placeholder="https://your-site.netlify.app" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="url">
+    <button class="modal-btn" onclick="doSpotifyAuth()">AUTHORIZE WITH SPOTIFY</button>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────
+const SPOTIFY_CLIENT_ID = '4ff1ebb0f69547138ab4d51f666dfd20';
+const EXERCISEDB_HOST   = 'exercisedb.p.rapidapi.com';
+const RAPIDAPI_KEY      = 'badc60844bmsh60fbf7a7686aac9p13a1f6jsn3936a41b11d3';
+
+// Muscle → { color, bg } palette
+const MUSCLE_COLORS = {
+  pectorals:       {color:'#FF6B6B', bg:'rgba(255,107,107,.18)'},
+  'upper chest':   {color:'#FF8E53', bg:'rgba(255,142,83,.18)'},
+  lats:            {color:'#4ECDC4', bg:'rgba(78,205,196,.18)'},
+  'upper back':    {color:'#45B7D1', bg:'rgba(69,183,209,.18)'},
+  traps:           {color:'#96CEB4', bg:'rgba(150,206,180,.18)'},
+  delts:           {color:'#A78BFA', bg:'rgba(0,107,182,.18)'},
+  'anterior deltoid':{color:'#C4B5FD',bg:'rgba(196,181,253,.18)'},
+  biceps:          {color:'#F59E0B', bg:'rgba(245,158,11,.18)'},
+  triceps:         {color:'#10B981', bg:'rgba(16,185,129,.18)'},
+  quads:           {color:'#3B82F6', bg:'rgba(59,130,246,.18)'},
+  hamstrings:      {color:'#8B5CF6', bg:'rgba(139,92,246,.18)'},
+  glutes:          {color:'#EC4899', bg:'rgba(236,72,153,.18)'},
+  calves:          {color:'#06B6D4', bg:'rgba(6,182,212,.18)'},
+  abs:             {color:'#84CC16', bg:'rgba(132,204,22,.18)'},
+  forearms:        {color:'#F97316', bg:'rgba(249,115,22,.18)'},
+  default:         {color:'#e8ff3d', bg:'rgba(232,255,61,.15)'}
+};
+
+function getMuscleColor(muscle) {
+  const key = (muscle||'').toLowerCase();
+  return MUSCLE_COLORS[key] || MUSCLE_COLORS.default;
+}
+
+// ─── APP STATE ────────────────────────────────────────────────────────
+let dur = 30, muscles = [], genre = 'Hip-Hop';
+let spToken = null, spUserId = null;
+
+
+// ─── EXERCISEDB ───────────────────────────────────────────────────────
+const exerciseCache = {};
+
+// Map each exercise to: bodyPart (for API) + keyword to find best match in results
+const EXERCISE_MAP = {
+  // CHEST
+  'Bench Press':           {bodyPart:'chest',     keyword:'barbell bench press'},
+  'Incline DB Press':      {bodyPart:'chest',     keyword:'incline'},
+  'Cable Fly':             {bodyPart:'chest',     keyword:'cable fly'},
+  'Push-Up':               {bodyPart:'chest',     keyword:'push-up'},
+  'Pec Deck':              {bodyPart:'chest',     keyword:'pec deck'},
+  // BACK
+  'Pull-Up':               {bodyPart:'back',      keyword:'pull-up'},
+  'Barbell Row':           {bodyPart:'back',      keyword:'bent over'},
+  'Lat Pulldown':          {bodyPart:'back',      keyword:'lat pulldown'},
+  'Seated Cable Row':      {bodyPart:'back',      keyword:'seated cable row'},
+  'Single-Arm DB Row':     {bodyPart:'back',      keyword:'single arm'},
+  // SHOULDERS
+  'Overhead Press':        {bodyPart:'shoulders', keyword:'overhead press'},
+  'Lateral Raise':         {bodyPart:'shoulders', keyword:'lateral raise'},
+  'Front Raise':           {bodyPart:'shoulders', keyword:'front raise'},
+  'Face Pull':             {bodyPart:'shoulders', keyword:'face pull'},
+  'Arnold Press':          {bodyPart:'shoulders', keyword:'arnold'},
+  // BICEPS
+  'Barbell Curl':          {bodyPart:'upper arms', keyword:'barbell curl'},
+  'Hammer Curl':           {bodyPart:'upper arms', keyword:'hammer curl'},
+  'Incline DB Curl':       {bodyPart:'upper arms', keyword:'incline curl'},
+  'Preacher Curl':         {bodyPart:'upper arms', keyword:'preacher'},
+  'Cable Curl':            {bodyPart:'upper arms', keyword:'cable curl'},
+  // TRICEPS
+  'Tricep Pushdown':       {bodyPart:'upper arms', keyword:'pushdown'},
+  'Skull Crusher':         {bodyPart:'upper arms', keyword:'skull crusher'},
+  'Overhead Extension':    {bodyPart:'upper arms', keyword:'overhead extension'},
+  'Dips':                  {bodyPart:'upper arms', keyword:'dip'},
+  'Close-Grip Bench':      {bodyPart:'upper arms', keyword:'close grip'},
+  // LEGS
+  'Squat':                 {bodyPart:'upper legs', keyword:'squat'},
+  'Romanian Deadlift':     {bodyPart:'upper legs', keyword:'romanian'},
+  'Leg Press':             {bodyPart:'upper legs', keyword:'leg press'},
+  'Walking Lunge':         {bodyPart:'upper legs', keyword:'lunge'},
+  'Leg Extension':         {bodyPart:'upper legs', keyword:'leg extension'},
+  // GLUTES
+  'Hip Thrust':            {bodyPart:'upper legs', keyword:'hip thrust'},
+  'Sumo Deadlift':         {bodyPart:'upper legs', keyword:'sumo'},
+  'Cable Kickback':        {bodyPart:'upper legs', keyword:'kickback'},
+  'Bulgarian Split Squat': {bodyPart:'upper legs', keyword:'split squat'},
+  'Abductor Machine':      {bodyPart:'upper legs', keyword:'abductor'},
+  // CORE
+  'Plank':                 {bodyPart:'waist',     keyword:'plank'},
+  'Cable Crunch':          {bodyPart:'waist',     keyword:'cable crunch'},
+  'Hanging Leg Raise':     {bodyPart:'waist',     keyword:'hanging leg raise'},
+  'Russian Twist':         {bodyPart:'waist',     keyword:'russian twist'},
+  'Ab Rollout':            {bodyPart:'waist',     keyword:'rollout'},
+  // CALVES
+  'Standing Calf Raise':   {bodyPart:'lower legs', keyword:'calf raise'},
+  'Seated Calf Raise':     {bodyPart:'lower legs', keyword:'seated calf'},
+  'Leg Press Calf Raise':  {bodyPart:'lower legs', keyword:'calf'},
+  // FOREARMS
+  'Wrist Curl':            {bodyPart:'lower arms', keyword:'wrist curl'},
+  'Reverse Curl':          {bodyPart:'lower arms', keyword:'reverse curl'},
+  'Farmer Carry':          {bodyPart:'lower arms', keyword:'farmer'}
+};
+
+// ─── EXERCISE IMAGE LOOKUP ────────────────────────────────────────────
+// Hardcoded map to yuhonas/free-exercise-db GitHub CDN — no API, no CORS, instant
+const EXERCISE_GIFS = {
+  "Bench Press":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg",
+  "Incline DB Press":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg",
+  "Cable Fly":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
+  "Push-Up":                "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Push-Up/0.jpg",
+  "Pec Deck":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pec_Deck_Fly/0.jpg",
+  "Pull-Up":                "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pull-up/0.jpg",
+  "Barbell Row":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg",
+  "Lat Pulldown":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+  "Seated Cable Row":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg",
+  "Single-Arm DB Row":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg",
+  "Overhead Press":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg",
+  "Lateral Raise":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg",
+  "Front Raise":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Front_Raise/0.jpg",
+  "Face Pull":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg",
+  "Arnold Press":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Arnold_Dumbbell_Press/0.jpg",
+  "Barbell Curl":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/0.jpg",
+  "Hammer Curl":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg",
+  "Incline DB Curl":        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Incline_Dumbbell_Curl/0.jpg",
+  "Preacher Curl":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg",
+  "Cable Curl":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hammer_Curls_-_Rope_Attachment/0.jpg",
+  "Tricep Pushdown":        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/0.jpg",
+  "Skull Crusher":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg",
+  "Overhead Extension":     "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_One_Arm_Triceps_Extension/0.jpg",
+  "Dips":                   "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Triceps_Version/0.jpg",
+  "Close-Grip Bench":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Barbell_Bench_Press/0.jpg",
+  "Squat":                  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg",
+  "Romanian Deadlift":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg",
+  "Leg Press":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
+  "Walking Lunge":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Lunges/0.jpg",
+  "Leg Extension":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+  "Hip Thrust":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg",
+  "Sumo Deadlift":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Sumo_Deadlift/0.jpg",
+  "Cable Kickback":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hip_Adduction/0.jpg",
+  "Bulgarian Split Squat":  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Lunges/0.jpg",
+  "Abductor Machine":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Adductor/0.jpg",
+  "Plank":                  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
+  "Cable Crunch":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crunch/0.jpg",
+  "Hanging Leg Raise":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg",
+  "Russian Twist":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Russian_Twist/0.jpg",
+  "Ab Rollout":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Roller/0.jpg",
+  "Standing Calf Raise":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
+  "Seated Calf Raise":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg",
+  "Leg Press Calf Raise":   "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Calf_Press_On_The_Leg_Press/0.jpg",
+  "Wrist Curl":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms_Up_Barbell_Wrist_Curl_Over_A_Bench/0.jpg",
+  "Reverse Curl":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Barbell_Curl/0.jpg",
+  "Farmer Carry":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmer_s_Walk/0.jpg",
+  // Extended exercises
+  "Decline Bench Press":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Barbell_Bench_Press/0.jpg",
+  "Dumbbell Pullover":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Pullover/0.jpg",
+  "Incline Cable Fly":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
+  "Deadlift":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Deadlift/0.jpg",
+  "T-Bar Row":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg",
+  "Chest-Supported Row":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Dumbbell_Row/0.jpg",
+  "Cable Straight-Arm Pulldown": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+  "Upright Row":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Upright_Row/0.jpg",
+  "Rear Delt Fly":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Flyes/0.jpg",
+  "Cable Lateral Raise":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg",
+  "Concentration Curl":     "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Concentration_Curls/0.jpg",
+  "Spider Curl":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Incline_Dumbbell_Curl/0.jpg",
+  "Single-Arm Cable Pushdown": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/0.jpg",
+  "Diamond Push-Up":        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Barbell_Bench_Press/0.jpg",
+  "Tate Press":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg",
+  "Leg Curl":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Curl/0.jpg",
+  "Hack Squat":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
+  "Reverse Hyperextension": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_%28Back_Extensions%29/0.jpg",
+  "Dead Bug":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
+  "Bicycle Crunch":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Air_Bike/0.jpg",
+  "Dragon Flag":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg",
+  "Single-Leg Calf Raise":  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
+  "Donkey Calf Raise":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
+  "Tibialis Raise":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg",
+  "Behind-Back Wrist Curl": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms_Up_Barbell_Wrist_Curl_Over_A_Bench/0.jpg",
+  "Plate Pinch":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmer_s_Walk/0.jpg",
+};
+
+async function fetchExerciseGif(exerciseName) {
+  const url = EXERCISE_GIFS[exerciseName] || null;
+  if (!url) return null;
+  return { gifUrl: url, target: '', bodyPart: '', id: '' };
+}
+
+// ─── WORKOUT DATABASE ─────────────────────────────────────────────────
+const DB = {
+  chest:[
+    {name:'Bench Press',sets:'4',reps:'8–10',rest:'90s',desc:'Flat barbell press · pectorals',muscle:'Pectorals',howto:['Lie flat on a bench, feet planted on the floor.','Grip the bar just wider than shoulder-width, wrists straight.','Unrack and lower the bar with control to mid-chest.','Press explosively back up, locking out at the top.','Keep shoulder blades pinched together throughout.']},
+    {name:'Incline DB Press',sets:'3',reps:'10–12',rest:'75s',desc:'Upper chest dumbbell press',muscle:'Upper Chest',howto:['Set bench to 30–45 degrees incline.','Hold dumbbells at chest level, palms facing forward.','Press up and slightly inward until arms are fully extended.','Lower slowly, feeling a stretch across the upper chest.','Keep core braced and back flat against the pad.']},
+    {name:'Cable Fly',sets:'3',reps:'12–15',rest:'60s',desc:'Cable crossover · chest isolation',muscle:'Pectorals',howto:['Set cables to chest height, one handle each side.','Stand in the centre, step forward slightly for stability.','With soft elbows, arc both handles together in front of you.','Squeeze the chest hard at the peak of the movement.','Slowly return arms out, feeling the stretch across your chest.']},
+    {name:'Push-Up',sets:'3',reps:'15–20',rest:'60s',desc:'Bodyweight chest & tricep press',muscle:'Pectorals',howto:['Start in a high plank with hands just outside shoulder-width.','Keep body in a straight line from head to heels.','Lower your chest to just above the floor, elbows at ~45°.','Push forcefully back up to full arm extension.','Squeeze the chest at the top of each rep.'],bw:true},
+    {name:'Pec Deck',sets:'3',reps:'12–15',rest:'60s',desc:'Machine fly · inner chest',muscle:'Pectorals',howto:['Sit upright with your back fully against the pad.','Place forearms on the pads with elbows at shoulder height.','Bring the pads together in a smooth arc, squeezing the chest.','Hold the contraction for 1 second at the centre.','Return slowly under control — do not let the weight crash.']},
+    {name:'Decline Bench Press',sets:'3',reps:'8–10',rest:'90s',desc:'Lower chest barbell press',muscle:'Lower Chest',howto:['Set bench to a 15–30 degree decline, secure ankles.','Grip bar slightly wider than shoulder-width.','Lower bar to the lower chest under full control.','Press back up in a straight line to full lockout.','Keep lower back pressed into the bench throughout.']},
+    {name:'Dumbbell Pullover',sets:'3',reps:'12–15',rest:'60s',desc:'Serratus & pec stretch movement',muscle:'Pectorals',howto:['Lie perpendicular across a flat bench, upper back on the pad.','Hold one dumbbell overhead with both hands, hips dropped slightly.','Lower the dumbbell back behind your head in a wide arc.','Feel the deep stretch across the chest and lats.','Pull back to the starting position using the chest, not arms.']},
+    {name:'Incline Cable Fly',sets:'3',reps:'13–15',rest:'60s',desc:'Upper chest cable isolation',muscle:'Upper Chest',howto:['Set pulleys to their lowest position.','Lie back on an incline bench set between the cable stacks.','Arc handles upward and inward toward the ceiling.','Squeeze the upper chest firmly at the top.','Slowly lower, maintaining tension the whole way down.']}
+  ],
+  back:[
+    {name:'Pull-Up',sets:'4',reps:'6–10',rest:'90s',desc:'Wide grip bodyweight pull-up',muscle:'Lats',howto:['Hang from a bar with an overhand grip wider than shoulders.','Brace your core and pull shoulder blades down and back.','Drive elbows toward your hips as you pull your chin over the bar.','Hold briefly at the top, then lower with full control.','Avoid swinging — keep every rep strict and controlled.'],bw:true},
+    {name:'Barbell Row',sets:'4',reps:'8–10',rest:'90s',desc:'Bent-over compound back row',muscle:'Upper Back',howto:['Stand with feet hip-width, hinge forward ~45 degrees at the hips.','Grip the barbell just outside your legs, arms straight.','Row the bar to your lower sternum, driving elbows back.','Squeeze your shoulder blades together hard at the top.','Lower the bar with control — do not let it drop.']},
+    {name:'Lat Pulldown',sets:'3',reps:'10–12',rest:'75s',desc:'Seated cable lat isolation',muscle:'Lats',howto:['Sit with thighs secured under the pad, grip bar wide overhand.','Lean back slightly, chest up, and pull the bar to your upper chest.','Drive elbows down and back, squeezing the lats at the bottom.','Slowly extend arms back up until fully stretched at the top.','Avoid using momentum — control the whole range.']},
+    {name:'Seated Cable Row',sets:'3',reps:'10–12',rest:'75s',desc:'Mid-back cable compound',muscle:'Upper Back',howto:['Sit on the bench, feet on the platform, slight bend in knees.','Keep your torso upright — do not lean back excessively.','Pull the handle to your navel, driving elbows past your sides.','Squeeze the mid-back and hold for a count at peak contraction.','Extend arms until fully stretched, maintaining posture.']},
+    {name:'Single-Arm DB Row',sets:'3',reps:'10–12',rest:'60s',desc:'Unilateral dumbbell row',muscle:'Lats',howto:['Place one hand and knee on a flat bench for support.','Hold the dumbbell in the opposite hand with arm fully extended.','Row the dumbbell to your hip, keeping the elbow close.','Think about pulling with your elbow, not your hand.','Lower to a full stretch before the next rep.']},
+    {name:'Deadlift',sets:'4',reps:'5–6',rest:'120s',desc:'King of all back movements',muscle:'Erectors',howto:['Stand with bar over mid-foot, feet hip-width apart.','Hinge down and grip just outside your legs — double overhand.','Brace your core hard, chest up, and flatten your back.','Drive through the floor, extending hips and knees together.','Lock out at the top, then hinge back down with control.']},
+    {name:'T-Bar Row',sets:'3',reps:'8–10',rest:'90s',desc:'Close-grip plate-loaded row',muscle:'Upper Back',howto:['Straddle the bar with feet planted firmly, hinge forward.','Grip the close-grip handle under the bar with both hands.','Row the weight to your chest, squeezing shoulder blades.','Hold the contraction for a moment at the top.','Lower with control until arms are fully extended.']},
+    {name:'Chest-Supported Row',sets:'3',reps:'10–12',rest:'75s',desc:'Incline bench dumbbell row',muscle:'Rhomboids',howto:['Set a bench to 30–45 degrees. Lie chest-down on the pad.','Hold dumbbells below the bench with arms hanging straight.','Row both dumbbells up to your sides, elbows flared out.','Squeeze your shoulder blades hard at the top.','Lower slowly back to the full stretch position.']},
+    {name:'Cable Straight-Arm Pulldown',sets:'3',reps:'12–15',rest:'60s',desc:'Long head lat isolation',muscle:'Lats',howto:['Stand at a high cable with a straight bar attachment.','Lean forward slightly with arms straight, slight elbow bend.','Pull the bar down to your thighs in a wide arc.','Squeeze the lats hard when the bar reaches your hips.','Return slowly, feeling the stretch at the top.']}
+  ],
+  shoulders:[
+    {name:'Overhead Press',sets:'4',reps:'8–10',rest:'90s',desc:'Barbell press · all delt heads',muscle:'Delts',howto:['Stand with the bar at upper chest height in a rack.','Grip just outside shoulder-width, brace your core tight.','Press the bar directly overhead to full lockout.','Keep your ribcage down — do not hyperextend your lower back.','Lower the bar back to just below chin level between reps.']},
+    {name:'Lateral Raise',sets:'3',reps:'12–15',rest:'60s',desc:'DB lateral raise · medial delt',muscle:'Delts',howto:['Stand holding dumbbells at your sides, slight forward lean.','Raise both arms out to the side until parallel to the floor.','Lead with your elbows, not your wrists.','Pause briefly at shoulder height, then lower slowly.','Keep a slight bend in the elbow throughout the movement.']},
+    {name:'Front Raise',sets:'3',reps:'12–15',rest:'60s',desc:'DB front raise · anterior delt',muscle:'Anterior Deltoid',howto:['Hold dumbbells in front of your thighs, palms facing down.','Raise one or both arms straight in front of you to shoulder height.','Keep the arm straight with only a slight elbow bend.','Pause at the top then lower with control.','Avoid swinging or using momentum from the lower back.']},
+    {name:'Face Pull',sets:'3',reps:'15–20',rest:'60s',desc:'Cable rear delt & rotator cuff',muscle:'Rear Delts',howto:['Set a rope attachment at upper chest or face height.','Grab the rope with both hands, palms facing each other.','Pull the rope toward your face, spreading the ends apart.','Externally rotate your shoulders at the peak — thumbs point back.','Slowly return, keeping tension on the rear delts throughout.']},
+    {name:'Arnold Press',sets:'3',reps:'10–12',rest:'75s',desc:'Rotating dumbbell shoulder press',muscle:'Delts',howto:['Sit holding dumbbells at shoulder height, palms facing you.','As you press up, rotate your palms to face forward.','Finish with arms fully extended overhead.','Reverse the rotation as you lower back to the start.','The rotation recruits all three delt heads through the range.']},
+    {name:'Upright Row',sets:'3',reps:'10–12',rest:'75s',desc:'Barbell trap & delt pull',muscle:'Traps',howto:['Hold a barbell with an overhand grip, hands shoulder-width.','Pull the bar straight up, leading with your elbows.','Raise until the bar is just below your chin.','Keep the bar close to your body throughout the movement.','Lower with control, avoiding any jerking or swinging.']},
+    {name:'Rear Delt Fly',sets:'3',reps:'15–20',rest:'60s',desc:'Bent-over reverse fly',muscle:'Rear Delts',howto:['Sit on the edge of a bench, lean forward with chest on thighs.','Hold dumbbells below your knees with palms facing each other.','Raise both arms out to the sides in a wide arc.','Lead with your elbows, squeezing the rear delts at the top.','Lower slowly — avoid dropping the weights with momentum.']},
+    {name:'Cable Lateral Raise',sets:'3',reps:'15–20',rest:'60s',desc:'Constant tension medial delt',muscle:'Delts',howto:['Stand beside a low cable pulley, grab the handle with the far hand.','Keep a slight lean away from the cable stack for balance.','Raise your arm out to the side until parallel to the floor.','Cable keeps constant tension unlike free weights.','Lower with control and complete all reps before switching sides.']}
+  ],
+  biceps:[
+    {name:'Barbell Curl',sets:'3',reps:'10–12',rest:'75s',desc:'Standard barbell bicep curl',muscle:'Biceps',howto:['Stand holding a barbell with underhand grip, shoulder-width.','Keep elbows pinned to your sides — they should not move.','Curl the bar up toward your shoulders in a smooth arc.','Squeeze the bicep hard at the top of the movement.','Lower with control to full arm extension before the next rep.']},
+    {name:'Hammer Curl',sets:'3',reps:'10–12',rest:'60s',desc:'Neutral grip · brachialis focus',muscle:'Biceps',howto:['Stand with dumbbells at sides, palms facing each other.','Keep elbows fixed and curl both dumbbells simultaneously.','Pause at the top, then lower back slowly.','The neutral grip targets the brachialis and brachioradialis.','Maintain an upright posture — do not rock your torso.']},
+    {name:'Incline DB Curl',sets:'3',reps:'10–12',rest:'60s',desc:'Stretched bicep on incline bench',muscle:'Biceps',howto:['Set a bench to 45–60 degrees incline and sit back.','Let arms hang straight down — this stretches the bicep fully.','Curl both dumbbells up toward your shoulders.','Squeeze hard at the top without letting elbows flare.','The incline angle provides a superior bicep stretch.']},
+    {name:'Preacher Curl',sets:'3',reps:'10–12',rest:'75s',desc:'Pad-supported strict curl',muscle:'Biceps',howto:['Sit at the preacher bench and drape your upper arms over the pad.','Grip an EZ-bar or dumbbells underhand.','Curl up until forearms are vertical, squeeze hard.','Lower slowly to full extension — do not lock out aggressively.','The pad prevents cheating and forces strict form.']},
+    {name:'Cable Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Constant tension cable curl',muscle:'Biceps',howto:['Stand at a low cable pulley with a straight or EZ bar.','Keep elbows tucked in and curl the bar up to chin height.','Squeeze the bicep at peak contraction.','Cables keep constant tension throughout the entire range.','Lower slowly to full arm extension before the next rep.']},
+    {name:'Concentration Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Seated peak contraction curl',muscle:'Biceps',howto:['Sit on a bench and brace your elbow against your inner thigh.','Curl a dumbbell upward with a full supination at the top.','Lower to full extension for maximum stretch.','Isolate the bicep completely — no body movement allowed.','This exercise is excellent for peak bicep development.']},
+    {name:'Spider Curl',sets:'3',reps:'10–12',rest:'60s',desc:'Prone incline strict curl',muscle:'Biceps',howto:['Set an incline bench to about 45–60 degrees.','Lie prone (face down) with arms hanging straight.','Curl the dumbbells up toward your shoulders.','The prone position locks out any cheating.','Squeeze the bicep peak hard at the top of every rep.']},
+    {name:'Reverse Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Overhand grip brachioradialis',muscle:'Forearms',howto:['Hold a barbell with an overhand (pronated) grip, shoulder-width.','Curl the bar up toward your shoulders, same path as a regular curl.','The overhand grip recruits the brachioradialis on the forearm.','Keep elbows pinned — do not let them drift forward.','Control the negative portion to maximise forearm work.']}
+  ],
+  triceps:[
+    {name:'Tricep Pushdown',sets:'3',reps:'12–15',rest:'60s',desc:'Cable rope pushdown',muscle:'Triceps',howto:['Stand at a high cable pulley with a rope or bar attachment.','Keep elbows pinned to your sides throughout the movement.','Push the attachment down until arms are fully extended.','Spread the rope ends apart at the bottom for full tricep contraction.','Return slowly — resist the weight on the way back up.']},
+    {name:'Skull Crusher',sets:'3',reps:'10–12',rest:'75s',desc:'Lying EZ-bar extension',muscle:'Triceps',howto:['Lie flat on a bench holding an EZ-bar above your chest.','Keep your upper arms perpendicular to the floor — do not let them flare.','Bend elbows to lower the bar toward your forehead.','Extend back to full lockout, squeezing the tricep.','Use a spotter for heavier weights as a safety measure.']},
+    {name:'Overhead Extension',sets:'3',reps:'12–15',rest:'60s',desc:'Long head overhead stretch',muscle:'Triceps',howto:['Hold a dumbbell or EZ-bar overhead with both hands.','Lower the weight behind your head by bending the elbows.','Keep elbows pointing straight up — do not let them flare.','Extend back up to full lockout, squeezing the tricep.','The overhead position maximises the long head stretch.']},
+    {name:'Dips',sets:'3',reps:'10–15',rest:'75s',desc:'Bodyweight parallel bar dip',muscle:'Triceps',howto:['Grip parallel bars with arms fully extended, slight forward lean.','Lower your body by bending elbows until upper arms are parallel.','Keep elbows from flaring too far out.','Press back up powerfully to full extension.','Add weight via a dip belt for progressive overload.'],bw:true},
+    {name:'Close-Grip Bench',sets:'4',reps:'8–10',rest:'90s',desc:'Compound tricep barbell press',muscle:'Triceps',howto:['Lie flat on a bench, grip bar about shoulder-width or slightly narrower.','Lower the bar to your lower chest under full control.','Keep elbows tucked in close to your sides.','Press back up to full lockout, squeezing the tricep.','Narrower grip shifts the focus from chest to triceps.']},
+    {name:'Single-Arm Cable Pushdown',sets:'3',reps:'12–15',rest:'60s',desc:'Unilateral isolation pushdown',muscle:'Triceps',howto:['Set a high cable with a D-handle attachment.','Grip with one hand and pin that elbow to your side.','Extend your arm fully, squeezing the tricep at lockout.','Return slowly, maintaining control throughout.','Unilateral work reveals and corrects side-to-side imbalances.']},
+    {name:'Diamond Push-Up',sets:'3',reps:'12–20',rest:'60s',desc:'Bodyweight close-grip push-up',muscle:'Triceps',howto:['Form a diamond shape with your hands on the floor.','Keep hands below your sternum.','Lower your chest to your hands, elbows tracking back.','Press back up to full arm extension.','Works all three tricep heads through bodyweight only.'],bw:true},
+    {name:'Tate Press',sets:'3',reps:'10–12',rest:'75s',desc:'Dumbbell elbows-out extension',muscle:'Triceps',howto:['Lie flat on a bench holding dumbbells over your chest.','Elbows point outward — unlike a regular press.','Lower the dumbbells by bending elbows toward your chest.','Press back to full extension.','The unique elbow angle targets all three tricep heads effectively.']}
+  ],
+  legs:[
+    {name:'Squat',sets:'4',reps:'6–8',rest:'120s',desc:'Barbell back squat · king of legs',muscle:'Quads',howto:['Stand with the bar across your upper traps, feet shoulder-width.','Brace your core, take a deep breath and hold it.','Descend by pushing your knees out and sitting your hips back.','Go to at least parallel — thighs level with the floor.','Drive up through your heels, extending hips and knees together.'],bw:true},
+    {name:'Romanian Deadlift',sets:'3',reps:'10–12',rest:'90s',desc:'Hip hinge · posterior chain',muscle:'Hamstrings',howto:['Hold a barbell in front of your thighs, feet hip-width.','Push your hips back and hinge forward, maintaining a flat back.','Lower the bar along your legs until you feel a deep hamstring stretch.','Drive your hips forward to stand back up.','Keep the bar close to the body the entire time.']},
+    {name:'Leg Press',sets:'3',reps:'12–15',rest:'90s',desc:'Machine quad compound press',muscle:'Quads',howto:['Sit in the machine, feet shoulder-width on the platform.','Lower the sled until your knees reach roughly 90 degrees.','Press through your heels to fully extend, without locking out.','Keep your lower back pressed against the seat at all times.','Foot position higher works hamstrings, lower works quads more.']},
+    {name:'Walking Lunge',sets:'3',reps:'12 each',rest:'75s',desc:'Dynamic single-leg movement',muscle:'Quads',howto:['Stand tall holding dumbbells at your sides.','Step forward with one leg and lower the back knee toward the floor.','Front thigh should be roughly parallel to the ground.','Drive through the front heel to step forward into the next rep.','Keep your torso upright throughout — do not lean forward.'],bw:true},
+    {name:'Leg Extension',sets:'3',reps:'15–20',rest:'60s',desc:'Machine quad isolation',muscle:'Quads',howto:['Sit in the machine with the pad resting on your lower shins.','Extend your legs fully, pausing at the top for a hard quad squeeze.','Lower slowly — do not let the weight crash down.','Control the negative portion for maximum tension.','Use this as an isolation finisher, not a heavy compound movement.']},
+    {name:'Hip Thrust',sets:'4',reps:'12–15',rest:'75s',desc:'Barbell glute isolation',muscle:'Glutes',howto:['Sit on the floor with your upper back against a bench.','Roll a barbell over your hips, use a pad for comfort.','Plant feet firmly, brace your core and drive your hips up.','Squeeze the glutes hard at the top — hips fully extended.','Lower under control without letting your hips touch the floor.'],bw:true},
+    {name:'Sumo Deadlift',sets:'4',reps:'6–8',rest:'120s',desc:'Wide stance hip-dominant pull',muscle:'Glutes',howto:['Take a wide stance, toes pointing outward at 45 degrees.','Grip the bar inside your legs with a double overhand grip.','Keep your chest up, core braced, and back flat.','Push the floor away as you drive your hips forward to stand.','The wide stance shifts emphasis from the back to glutes and inner thighs.']},
+    {name:'Bulgarian Split Squat',sets:'3',reps:'10 each',rest:'75s',desc:'Rear-foot elevated single leg',muscle:'Quads',howto:['Stand facing away from a bench, place one foot on top behind you.','Lower your back knee toward the floor under control.','Keep your front shin as vertical as possible.','Drive through the front heel to return to the start.','This single-leg movement challenges balance and stability.'],bw:true},
+    {name:'Leg Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Lying hamstring isolation',muscle:'Hamstrings',howto:['Lie face down on the leg curl machine, pad behind your calves.','Curl your heels toward your glutes through a full range.','Squeeze hard at maximum contraction.','Lower with control — do not let the weight drop.','Point toes slightly during the lift to maximise hamstring recruitment.']},
+    {name:'Hack Squat',sets:'3',reps:'10–12',rest:'90s',desc:'Machine quad-dominant squat',muscle:'Quads',howto:['Load the hack squat machine and position shoulders and back against the pads.','Feet shoulder-width, toes slightly flared.','Descend until thighs are parallel or below.','Drive through your heels to extend the legs.','Excellent for quad isolation without lower back stress.']}
+  ],
+  glutes:[
+    {name:'Hip Thrust',sets:'4',reps:'12–15',rest:'75s',desc:'Barbell glute isolation',muscle:'Glutes'},
+    {name:'Cable Kickback',sets:'3',reps:'15–20',rest:'60s',desc:'Cable glute kickback',muscle:'Glutes',howto:['Attach an ankle strap to a low cable and secure it to one ankle.','Face the cable stack, hold a support, and lean forward slightly.','Kick your leg back and up, squeezing the glute at full extension.','Hold the contraction for 1–2 seconds at the top.','Lower with control — avoid swinging the leg for momentum.']},
+    {name:'Sumo Deadlift',sets:'4',reps:'6–8',rest:'120s',desc:'Wide stance hip-dominant pull',muscle:'Glutes'},
+    {name:'Bulgarian Split Squat',sets:'3',reps:'10 each',rest:'75s',desc:'Rear-foot elevated split squat',muscle:'Glutes'},
+    {name:'Abductor Machine',sets:'3',reps:'15–20',rest:'60s',desc:'Hip abduction machine',muscle:'Glutes',howto:['Sit in the machine with pads on the outsides of your knees.','Push your legs outward against the resistance.','Squeeze the glutes and hip abductors at maximum width.','Return slowly — do not let the pads slam back together.','Upright posture recruits the glutes; leaning forward shifts to TFL.']},
+    {name:'Romanian Deadlift',sets:'3',reps:'10–12',rest:'90s',desc:'Hip hinge glute & hamstring',muscle:'Glutes'},
+    {name:'Squat',sets:'4',reps:'6–8',rest:'120s',desc:'Deep squat glute activation',muscle:'Glutes'},
+    {name:'Reverse Hyperextension',sets:'3',reps:'15–20',rest:'60s',desc:'Lower glute & lumbar extension',muscle:'Glutes',howto:['Lie prone on a bench with hips at the edge, legs hanging.','Hold the bench firmly for stability.','Raise your legs until your body forms a straight line.','Squeeze the glutes and lower back at full extension.','Lower slowly — this movement actively decompresses the lumbar spine.'],bw:true}
+  ],
+  core:[
+    {name:'Plank',sets:'3',reps:'45–60s',rest:'60s',desc:'Core anti-extension hold',muscle:'Core',howto:['Lie face down and prop yourself on your forearms and toes.','Form a straight line from head to heels — no sagging hips.','Brace your abs, glutes and quads simultaneously.','Breathe steadily — do not hold your breath.','Build duration progressively, aiming for quality over time.'],bw:true},
+    {name:'Cable Crunch',sets:'3',reps:'15–20',rest:'60s',desc:'Weighted cable abs crunch',muscle:'Abs',howto:['Kneel at a high cable with a rope attachment.','Hold the rope behind your head, hips back.','Crunch your elbows toward your knees by flexing the abs.','Round the back — you are crunching, not pulling with your arms.','Return to a full stretch at the top between every rep.']},
+    {name:'Hanging Leg Raise',sets:'3',reps:'12–15',rest:'75s',desc:'Hip flexor & lower ab pull',muscle:'Abs',howto:['Hang from a pull-up bar with an overhand grip.','Brace your core and raise your legs until they are parallel.','For more difficulty, raise straight legs to 90 degrees.','Lower slowly — avoid swinging to build real core strength.','Tuck version (knees to chest) is the easier regression.'],bw:true},
+    {name:'Russian Twist',sets:'3',reps:'20 total',rest:'60s',desc:'Rotational oblique work',muscle:'Obliques',howto:['Sit on the floor with knees bent, feet slightly raised.','Lean back to about 45 degrees — keep your back straight.','Hold a weight and rotate your torso side to side.','Touch the weight to the floor beside each hip.','Slow the rotation down to maximise oblique engagement.'],bw:true},
+    {name:'Ab Rollout',sets:'3',reps:'10–12',rest:'75s',desc:'Anti-extension ab wheel',muscle:'Abs',howto:['Kneel on the floor with an ab wheel in both hands.','Roll forward slowly, extending your body toward the floor.','Keep your core braced — do not let your lower back arch.','Roll out as far as you can control, then pull back in.','This is a demanding anti-extension exercise — start with short range.'],bw:true},
+    {name:'Dead Bug',sets:'3',reps:'10 each',rest:'60s',desc:'Spine-neutral core stability',muscle:'Core',howto:['Lie on your back, arms reaching straight to the ceiling.','Bend knees to 90 degrees, shins parallel to the floor.','Slowly extend the opposite arm and leg toward the floor.','The lower back must stay flat — this is the key cue.','Return and repeat on the other side for the prescribed reps.'],bw:true},
+    {name:'Bicycle Crunch',sets:'3',reps:'20 total',rest:'60s',desc:'Alternating oblique crunch',muscle:'Obliques',howto:['Lie flat with hands lightly behind your head.','Lift shoulder blades off the floor.','Bring one knee in and rotate the opposite elbow toward it.','Extend the other leg simultaneously.','Move slowly for maximum oblique engagement.'],bw:true},
+    {name:'Dragon Flag',sets:'3',reps:'6–10',rest:'90s',desc:'Advanced full-body core lever',muscle:'Abs',howto:['Lie on a bench and grip firmly behind your head.','Press your shoulders down and lift your entire body into a vertical line.','Lower the rigid body as one unit — do not pike at the hips.','Stop just short of the bench and hold briefly.','Scale by bending knees until full body control is developed.'],bw:true}
+  ],
+  calves:[
+    {name:'Standing Calf Raise',sets:'4',reps:'15–20',rest:'60s',desc:'Gastrocnemius mass builder',muscle:'Calves',howto:['Stand on the edge of a step or platform, heels hanging off.','Rise up onto your toes as high as possible.','Pause at the top and squeeze the calf hard.','Lower your heels below the step for a deep stretch.','Use slow, deliberate reps — calves respond poorly to fast reps.']},
+    {name:'Seated Calf Raise',sets:'4',reps:'15–20',rest:'60s',desc:'Soleus focused seated raise',muscle:'Calves',howto:['Sit with the pad resting just above your knees.','Lower heels to a full stretch below the platform.','Rise onto your toes as high as the machine allows.','The seated position targets the soleus, below the gastrocnemius.','Full range of motion matters more than heavy weight here.']},
+    {name:'Leg Press Calf Raise',sets:'3',reps:'20',rest:'60s',desc:'Calf raise on leg press plate',muscle:'Calves',howto:['Use a leg press machine, feet at the bottom edge of the platform.','Keep legs nearly straight, only a slight knee bend.','Press the platform away by plantar-flexing your feet.','Full extension at the top, full stretch at the bottom.','The leg press allows heavy loading safely for calf growth.']},
+    {name:'Single-Leg Calf Raise',sets:'3',reps:'15 each',rest:'60s',desc:'Unilateral balance & strength',muscle:'Calves',howto:['Stand on one foot on the edge of a step.','Hold a dumbbell in the same-side hand for added resistance.','Rise to full height, hold the top contraction.','Lower to a deep stretch before the next rep.','Single-leg work fixes strength imbalances between calves.'],bw:true},
+    {name:'Donkey Calf Raise',sets:'3',reps:'15–20',rest:'60s',desc:'Hip-hinged stretch emphasis',muscle:'Calves',howto:['Hinge forward at the waist with your toes on a platform.','Have a partner or pad provide resistance across your lower back.','Rise onto your toes through a full range of motion.','The hip-hinged position maximises the gastrocnemius stretch.','Use full range rather than bouncing at the bottom.']},
+    {name:'Tibialis Raise',sets:'3',reps:'15–20',rest:'45s',desc:'Anterior shin antagonist work',muscle:'Tibialis',howto:['Sit on a bench with heels on the floor.','Pull your toes toward your shins as high as possible.','The tibialis anterior, down the front of your shin, will burn.','Lower slowly and repeat for 15–20 reps.','Trains the muscle that opposes the calf — great for shin splints prevention.']}
+  ],
+  forearms:[
+    {name:'Wrist Curl',sets:'3',reps:'15–20',rest:'45s',desc:'Seated barbell wrist flexion',muscle:'Forearms',howto:['Sit on a bench and rest your forearms on your thighs, palms up.','Hold a barbell and let your wrists drop to a full extension.','Curl your wrists up through the full range of motion.','Keep the forearms stationary — only the wrists move.','Light weight and high reps work best for wrist flexors.']},
+    {name:'Reverse Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Overhand grip brachioradialis',muscle:'Forearms'},
+    {name:'Farmer Carry',sets:'3',reps:'30m walk',rest:'75s',desc:'Heavy dumbbell grip walk',muscle:'Forearms',howto:['Pick up two heavy dumbbells or kettlebells.','Stand tall — chest up, shoulders back, core tight.','Walk at a steady pace for the prescribed distance.','Avoid hunching or letting the weights pull your shoulders down.','The carry strengthens grip, traps, and core stability simultaneously.'],bw:true},
+    {name:'Hammer Curl',sets:'3',reps:'10–12',rest:'60s',desc:'Neutral grip brachioradialis',muscle:'Forearms'},
+    {name:'Behind-Back Wrist Curl',sets:'3',reps:'15–20',rest:'45s',desc:'Barbell reverse wrist curl',muscle:'Forearms',howto:['Stand with a barbell behind you in a hip-width stance.','Hold the bar with an underhand grip, hands shoulder-width.','Let the bar roll down to your fingertips, then curl the wrists up.','Full range from fingertips to full wrist flexion.','Isolates the forearm flexors from a different angle.']},
+    {name:'Plate Pinch',sets:'3',reps:'30s hold',rest:'60s',desc:'Finger & grip pinch strength',muscle:'Forearms',howto:['Take two weight plates and hold them together with one hand, smooth sides out.','Pinch the plates between your thumb and fingers.','Hold for the prescribed time without letting the plates separate.','Grip strength is the limiting factor — use challenging but controllable weight.','Switch hands immediately for the other side.']}
+  ]
+};
+
+// ─── SPOTIFY PKCE ─────────────────────────────────────────────────────
+function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+async function genChallenge(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+
+(async function init(){
+  const p=new URLSearchParams(window.location.search),code=p.get('code');
+  if(code){
+    const v=localStorage.getItem('pkce_v'),r=localStorage.getItem('sp_redirect');
+    if(v&&r){
+      try{
+        const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:r,client_id:SPOTIFY_CLIENT_ID,code_verifier:v})});
+        const d=await res.json();
+        if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);localStorage.removeItem('pkce_v');}
+        else console.error('Token exchange failed:',d);
+      }catch(e){console.error(e);}
+    }
+    window.history.replaceState(null,'',window.location.pathname);
+  }
+  const saved=localStorage.getItem('sp_token'),exp=parseInt(localStorage.getItem('sp_expiry')||'0');
+  if(saved&&Date.now()<exp){spToken=saved;}
+  else if(localStorage.getItem('sp_refresh'))await refreshTok();
+  updateSpBtn();
+  if(spToken)fetchSpUser();
+})();
+
+async function refreshTok(){
+  const rt=localStorage.getItem('sp_refresh');if(!rt)return;
+  try{const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:SPOTIFY_CLIENT_ID})});const d=await r.json();if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);}}catch(e){}
+}
+
+async function fetchSpUser(){
+  if(!spToken)return;
+  try{const r=await fetch('https://api.spotify.com/v1/me',{headers:{Authorization:'Bearer '+spToken}});if(r.status===401){spToken=null;localStorage.removeItem('sp_token');updateSpBtn();return;}const d=await r.json();spUserId=d.id;}catch(e){}
+}
+
+function updateSpBtn(){
+  const b=document.getElementById('spBtn'),t=document.getElementById('spBtnTxt');
+  if(spToken){b.classList.add('conn');t.textContent='✓ Connected';}
+  else{b.classList.remove('conn');t.textContent='Connect Spotify';}
+}
+
+function handleSpotifyConnect(){
+  if(spToken){if(!confirm('Disconnect Spotify?'))return;spToken=null;spUserId=null;['sp_token','sp_refresh','sp_expiry','sp_redirect','pkce_v'].forEach(k=>localStorage.removeItem(k));updateSpBtn();}
+  else{document.getElementById('spModal').classList.add('vis');const s=localStorage.getItem('sp_redirect');if(s)document.getElementById('redirInp').value=s;}
+}
+
+function closeModal(e){if(e.target===document.getElementById('spModal'))document.getElementById('spModal').classList.remove('vis');}
+
+async function doSpotifyAuth(){
+  const redir=document.getElementById('redirInp').value.trim();if(!redir){alert('Please enter your Netlify URL.');return;}
+  localStorage.setItem('sp_redirect',redir);
+  const v=genVerifier(),ch=await genChallenge(v);localStorage.setItem('pkce_v',v);
+  const u=new URL('https://accounts.spotify.com/authorize');
+  u.searchParams.set('client_id',SPOTIFY_CLIENT_ID);u.searchParams.set('response_type','code');u.searchParams.set('redirect_uri',redir);
+  u.searchParams.set('scope','playlist-modify-public playlist-modify-private user-read-private user-read-email');
+  u.searchParams.set('code_challenge_method','S256');u.searchParams.set('code_challenge',ch);
+  window.location.href=u.toString();
+}
+
+// ─── SPOTIFY PLAYLIST ─────────────────────────────────────────────────
+async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return!!spUserId;}
+
+async function searchTracks(g, count){
+  // Genre query pools — 6 varied queries each, randomly sampled for variety each session
+  // Mix genre: sample one query from each active genre
+  if (g === 'Mix') return searchMixTracks(count);
+
+  const qMap={
+    'Hip-Hop': [
+      'hip hop hits','top rap songs','best hip hop','rap classics',
+      'hip hop anthems','popular rap music','rap bangers','hip hop essentials'
+    ],
+    'Rock': [
+      'artist:"Foo Fighters"','artist:"AC/DC"','artist:"Guns N Roses"',
+      'artist:"Red Hot Chili Peppers"','artist:"Linkin Park"','artist:"Metallica"',
+      'artist:"The Killers"','artist:"Green Day"','artist:Nirvana',
+      'artist:"Pearl Jam"','artist:Soundgarden','artist:"Rage Against the Machine"',
+      'artist:"Black Sabbath"','artist:"Led Zeppelin"','artist:Queen',
+      'artist:Aerosmith','artist:U2','artist:"The Rolling Stones"',
+      'artist:"Tom Petty"','artist:Coldplay','artist:Radiohead',
+      'artist:"Arctic Monkeys"','artist:Muse','artist:"Nine Inch Nails"',
+      'artist:"Smashing Pumpkins"','artist:Audioslave','artist:"Stone Temple Pilots"',
+      'artist:"The Who"','artist:"Pink Floyd"','artist:"Deep Purple"',
+      'artist:"Def Leppard"','artist:"Van Halen"','artist:"Ozzy Osbourne"',
+      'artist:"Iron Maiden"','artist:"System of a Down"','artist:Tool',
+      'artist:"Alice in Chains"','artist:Pantera','artist:Slipknot',
+      'artist:Disturbed','artist:"Breaking Benjamin"','artist:Incubus',
+      'artist:Weezer','artist:"The Strokes"','artist:"Jimmy Eat World"',
+      'artist:"Third Eye Blind"','artist:"Matchbox Twenty"','artist:Kansas',
+      'artist:"Jimi Hendrix"','artist:"The Police"','artist:Wolfmother',
+      'artist:"The White Stripes"','artist:"Queens of the Stone Age"'
+    ],
+    'EDM': [
+      'artist:"Martin Garrix"','artist:"Calvin Harris"','artist:Marshmello',
+      'artist:Avicii','artist:"David Guetta"','artist:Tiesto',
+      'artist:Zedd','artist:"The Chainsmokers"','artist:Skrillex',
+      'artist:Deadmau5','artist:Diplo','artist:Kygo',
+      'artist:"Alan Walker"','artist:Flume','artist:Illenium',
+      'artist:"Porter Robinson"','artist:Odesza','artist:"Above & Beyond"',
+      'artist:"Armin van Buuren"','artist:"Eric Prydz"','artist:"Daft Punk"',
+      'artist:"Swedish House Mafia"','artist:Alesso','artist:Hardwell',
+      'artist:"RL Grime"','artist:Meduza','artist:"John Summit"',
+      'artist:"Bingo Players"','artist:Matroda','artist:Fisher',
+      'artist:"Chris Lake"','artist:"Dom Dolla"','artist:"Fred Again"',
+      'artist:Disclosure','artist:"Duke Dumont"','artist:MK',
+      'artist:"Armand Van Helden"','artist:"Peggy Gou"','artist:"Jamie xx"',
+      'artist:"Four Tet"','artist:"Frankie Knuckles"','artist:Solomun',
+      'artist:"Black Coffee"','artist:"Honey Dijon"','artist:"Maceo Plex"',
+      'artist:"Seth Troxler"','artist:"Nicolas Jaar"'
+    ],
+    '80s': [
+      'artist:"Michael Jackson"','artist:Prince','artist:Madonna',
+      'artist:"Whitney Houston"','artist:"Bon Jovi"','artist:"Cyndi Lauper"',
+      'artist:"Tina Turner"','artist:"Bruce Springsteen"','artist:"George Michael"',
+      'artist:"Duran Duran"','artist:"The Police"','artist:"David Bowie"',
+      'artist:"Billy Joel"','artist:"Elton John"','artist:"Hall & Oates"',
+      'artist:"Lionel Richie"','artist:"Fleetwood Mac"','artist:INXS',
+      'artist:"Depeche Mode"','artist:"New Order"','artist:"Tears for Fears"',
+      'artist:"A-ha"','artist:"Pat Benatar"','artist:"Rick Springfield"',
+      'artist:Journey','artist:Foreigner','artist:"REO Speedwagon"',
+      'artist:"Steve Winwood"','artist:"Dire Straits"','artist:"The Cars"',
+      'artist:"Talking Heads"','artist:"Simple Minds"','artist:"Culture Club"',
+      'artist:"Wham!"','artist:"Pet Shop Boys"','artist:"Human League"',
+      'artist:Eurythmics','artist:Blondie','artist:"Huey Lewis and the News"',
+      'artist:"John Mellencamp"','artist:"Don Henley"','artist:"Bryan Adams"',
+      'artist:Sting','artist:"Paul Simon"','artist:"Kenny Loggins"',
+      'artist:Survivor','artist:Heart','artist:Starship'
+    ],
+    'Pop': [
+      'artist:"The Weeknd"','artist:"Bruno Mars"','artist:Adele',
+      'artist:"Maroon 5"','artist:"Ed Sheeran"','artist:"Taylor Swift"',
+      'artist:"Dua Lipa"','artist:"Harry Styles"','artist:"Ariana Grande"',
+      'artist:"Billie Eilish"','artist:"Justin Bieber"','artist:"Katy Perry"',
+      'artist:"Lady Gaga"','artist:Rihanna','artist:Beyonce',
+      'artist:"Michael Jackson"','artist:"Justin Timberlake"','artist:"Sam Smith"',
+      'artist:"Olivia Rodrigo"','artist:Lizzo','artist:"Miley Cyrus"',
+      'artist:"Charlie Puth"','artist:"Shawn Mendes"','artist:"Selena Gomez"',
+      'artist:Halsey','artist:Pink','artist:Coldplay',
+      'artist:"Camila Cabello"','artist:"Jennifer Lopez"','artist:"Nelly Furtado"',
+      'artist:"Kelly Clarkson"','artist:"Christina Aguilera"','artist:"Britney Spears"',
+      'artist:"Backstreet Boys"','artist:"Gwen Stefani"','artist:"Natasha Bedingfield"',
+      'artist:"Jason Mraz"','artist:"John Mayer"','artist:"Doja Cat"',
+      'artist:SZA'
+    ],
+    'Latin': [
+      'genre:bachata','genre:salsa','genre:merengue'
+    ],
+    'R&B': [
+      'artist:"Frank Ocean"','artist:SZA','artist:"H.E.R."',
+      'artist:Usher','artist:Beyonce','artist:"John Legend"',
+      'artist:"Alicia Keys"','artist:Miguel','artist:"Chris Brown"',
+      'artist:"Ne-Yo"','artist:"Mary J. Blige"','artist:"Janet Jackson"',
+      'artist:"Marvin Gaye"','artist:"Stevie Wonder"','artist:"Luther Vandross"',
+      'artist:"Anita Baker"','artist:"Toni Braxton"',
+      'artist:"Erykah Badu"','artist:Maxwell','artist:"Jazmine Sullivan"',
+      'artist:"Ella Mai"','artist:Giveon','artist:"Brent Faiyaz"',
+      'artist:"Summer Walker"','artist:"Ari Lennox"','artist:"Boyz II Men"',
+      'artist:TLC','artist:Brandy',
+      'artist:Monica','artist:Aaliyah','artist:Sade',
+      'artist:"Lauryn Hill"','artist:"Jill Scott"','artist:"Musiq Soulchild"',
+      'artist:Joe','artist:Ginuwine','artist:Tank',
+      'artist:Jeremih','artist:"Bryson Tiller"','artist:Jacquees',
+      'artist:Khalid','artist:"Daniel Caesar"','artist:"Lucky Daye"',
+      'artist:"Snoh Aalegra"','artist:Ledisi','artist:"India Arie"'
+    ],
+    'Reggae': [
+      'artist:"Bob Marley"','artist:"Jimmy Cliff"','artist:"Toots and the Maytals"',
+      'artist:"Burning Spear"','artist:"Steel Pulse"','artist:"Ziggy Marley"',
+      'artist:"Damian Marley"','artist:"Stephen Marley"','artist:Sizzla',
+      'artist:"Buju Banton"','artist:Capleton','artist:"Beenie Man"',
+      'artist:"Sean Paul"','artist:Shaggy','artist:UB40',
+      'artist:"Inner Circle"','artist:"Third World"','artist:Culture',
+      'artist:"Black Uhuru"','artist:Luciano','artist:"Barrington Levy"',
+      'artist:"Dennis Brown"','artist:"Gregory Isaacs"','artist:"Freddie McGregor"',
+      'artist:"Sugar Minott"','artist:Yellowman','artist:Chronixx',
+      'artist:"Junior Gong"'
+    ],
+    'Reggaeton': [
+      'artist:"Bad Bunny"','artist:"J Balvin"','artist:"Daddy Yankee"',
+      'artist:Ozuna','artist:"Nicky Jam"','artist:Maluma',
+      'artist:"Rauw Alejandro"','artist:"Karol G"','artist:"Don Omar"',
+      'artist:"Wisin & Yandel"','artist:Pitbull','artist:Farruko',
+      'artist:Arcangel','artist:"De La Ghetto"','artist:"Anuel AA"',
+      'artist:"Myke Towers"','artist:"Jhay Cortez"','artist:Sech',
+      'artist:Lunay','artist:"Justin Quiles"','artist:"Zion & Lennox"',
+      'artist:"Plan B"','artist:"Tego Calderon"','artist:Cosculluela',
+      'artist:"Alex Rose"','artist:"Eladio Carrion"','artist:Mora',
+      'artist:Amenazzy'
+    ],
+    'Anime': [
+      'artist:LiSA','artist:"Linked Horizon"','artist:"Hiroyuki Sawano"',
+      'artist:"Myth & Roid"','artist:FLOW','artist:"JAM Project"',
+      'artist:"Eir Aoi"','artist:"TK from Ling Tosite Sigure"','artist:YUI',
+      'artist:Younha','artist:SiM','artist:"Man With a Mission"',
+      'artist:Aimer','artist:"Kenshi Yonezu"','artist:"One Ok Rock"',
+      'artist:Ado','artist:Yoasobi','artist:Eve',
+      'artist:Minami','artist:Animenz'
+    ],
+    'Random': [
+      'artist:"Michael Jackson"','artist:"The Weeknd"','artist:Drake',
+      'artist:Beyonce','artist:"Ed Sheeran"','artist:"Bruno Mars"',
+      'artist:Rihanna','artist:Eminem','artist:"Ariana Grande"',
+      'artist:"Taylor Swift"','artist:"Justin Timberlake"','artist:Adele',
+      'artist:"Maroon 5"','artist:"Dua Lipa"','artist:"Billie Eilish"',
+      'artist:"Post Malone"','artist:"Lady Gaga"','artist:"Katy Perry"',
+      'artist:Coldplay','artist:U2','artist:"AC/DC"',
+      'artist:"Foo Fighters"','artist:"Jay-Z"','artist:"Kendrick Lamar"',
+      'artist:"Bad Bunny"','artist:"Calvin Harris"','artist:"Daddy Yankee"',
+      'artist:"Olivia Rodrigo"','artist:"Harry Styles"','artist:"Doja Cat"',
+      'artist:"Tyler the Creator"','artist:"Frank Ocean"','artist:"Travis Scott"',
+      'artist:"The Killers"','artist:"Arctic Monkeys"','artist:"Tame Impala"',
+      'artist:SZA','artist:Lizzo','artist:Shakira',
+      'artist:"Janet Jackson"','artist:"Stevie Wonder"','artist:"Marvin Gaye"',
+      'artist:Prince','artist:"Fleetwood Mac"','artist:"Led Zeppelin"',
+      'artist:"The Rolling Stones"','artist:Queen','artist:Nirvana',
+      'artist:"David Bowie"'
+    ]
+  };
+  const pool = qMap[g] || qMap['Random'];
+
+  // Latin: always use all 3 genre filters every session
+  // Other genres: shuffle pool, pick 4 artist queries for variety
+  let queries;
+  if (g === 'Latin') {
+    queries = pool;
+  } else {
+    const shuffledPool = [...pool].sort(() => Math.random() - .5);
+    queries = shuffledPool.slice(0, 4);
+  }
+
+  let allTracks = [];
+
+  for (const q of queries) {
+    // Randomise offset so repeated sessions surface different tracks
+    const offset = (g === 'Latin') ? 0 : Math.floor(Math.random() * 4) * 10;
+    try {
+      const r = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(buildEnergyQuery(q))}&type=track&limit=10&offset=${offset}`,
+        {headers:{Authorization:'Bearer '+spToken}}
+      );
+      if (!r.ok) {
+        const e = await r.json();
+        throw new Error(`Search ${r.status}: ${e.error?.message||JSON.stringify(e)}`);
+      }
+      const d = await r.json();
+      // Dedupe by track name+artist (catches same song from different albums/versions)
+      const items = (d.tracks?.items||[]).filter(t => {
+        if (!t.uri) return false;
+        const key = (t.name + '|' + (t.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
+        if (allTracks.find(x => {
+          const xk = (x.name + '|' + (x.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
+          return xk === key;
+        })) return false;
+        return true;
+      });
+      allTracks = allTracks.concat(items);
+    } catch(e) {
+      if (allTracks.length === 0) throw e;
+    }
+  }
+
+  // Sort by Spotify popularity score (0-100) descending, then add slight shuffle
+  // to keep top tracks prominent but vary order each session
+  allTracks.sort((a, b) => (b.popularity||0) - (a.popularity||0));
+  // Keep top 60% by popularity in first half, shuffle the rest
+  const cutoff = Math.ceil(allTracks.length * 0.6);
+  const topTracks = allTracks.slice(0, cutoff).sort(() => Math.random() - .3);
+  const restTracks = allTracks.slice(cutoff).sort(() => Math.random() - .5);
+  return [...topTracks, ...restTracks].slice(0, count);
+}
+
+async function createPlaylist(name, uris){
+  const ok=await ensureUserId();
+  if(!ok) throw new Error('Could not get Spotify user ID. Try reconnecting.');
+
+  // Create the playlist
+  const cr=await fetch('https://api.spotify.com/v1/me/playlists',{
+    method:'POST',
+    headers:{Authorization:'Bearer '+spToken,'Content-Type':'application/json'},
+    body:JSON.stringify({name,description:`Generated by IRON AUDIO · ${new Date().toLocaleDateString()}`,public:false})
+  });
+  if(!cr.ok){const e=await cr.json();throw new Error(`Create playlist ${cr.status}: ${e.error?.message||JSON.stringify(e)}`);}
+  const pl=await cr.json();
+
+  // Add tracks using new /items endpoint (Spotify Feb 2026 migration — /tracks is deprecated)
+  const ar=await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{
+    method:'POST',
+    headers:{Authorization:'Bearer '+spToken,'Content-Type':'application/json'},
+    body:JSON.stringify({uris:uris.slice(0,100)})
+  });
+  if(!ar.ok){const e=await ar.json();throw new Error(`Add tracks ${ar.status}: ${e.error?.message||JSON.stringify(e)}`);}
+  return pl;
+}
+
+// ─── UI CONTROLS ──────────────────────────────────────────────────────
+function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];}
+function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+function showCfg(){document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');}
+
+// ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
+function renderExerciseCard(ex, index) {
+  const mc = getMuscleColor(ex.muscle.toLowerCase());
+  const ssLabel = ex.ssGroup !== undefined
+    ? '<div class="ss-label">⚡ SUPERSET ' + (ex.ssGroup % 2 === 0 ? 'A' : 'B') + '</div>'
+    : '';
+  const restSecs = parseRestSecs(ex.rest);
+  const connector = ex.ssConnector ? '<div class="ss-connector"></div>' : '';
+  const safeName = ex.name.replace(/"/g, '&quot;');
+
+  return ssLabel +
+    '<div class="wk-card" id="card-' + index + '">' +
+      '<div class="wk-top">' +
+        '<div>' +
+          '<div class="wk-num">EXERCISE ' + String(index+1).padStart(2,'0') + '</div>' +
+          '<div class="wk-name">' + ex.name + '</div>' +
+          '<div class="wk-desc">' + ex.desc + '</div>' +
+          '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + ex.muscle + '</span>' +
+        '</div>' +
+        '<div class="wk-sets-box">' +
+          '<div class="wk-sets">' + ex.sets + '</div>' +
+          '<div class="wk-sets-lbl">Sets</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="wk-illus" id="ill-' + index + '" data-idx="' + index + '" onclick="openExModal(+this.dataset.idx)">' +
+        '<div class="skeleton"><div class="skeleton-inner">' +
+          '<div class="sk-circle"></div>' +
+          '<div class="sk-bar" style="width:120px"></div>' +
+          '<div class="sk-bar" style="width:80px"></div>' +
+          '<div class="sk-label">LOADING EXERCISE GIF</div>' +
+        '</div></div>' +
+      '</div>' +
+      '<div class="wk-foot">' +
+        '<div class="wk-stat">🔁 <strong>' + ex.reps + '</strong> reps</div>' +
+        '<div class="wk-stat">⏱️ <strong>' + ex.rest + '</strong> rest</div>' +
+        '<button class="rest-trigger" data-secs="' + restSecs + '" data-name="' + safeName + '" onclick="startRestTimer(+this.dataset.secs,this.dataset.name)">⏱ Rest</button>' +
+        '<button class="swap-btn" data-idx="' + index + '" onclick="swapExercise(+this.dataset.idx)">🔀 Swap</button>' +
+      '</div>' +
+      '<div class="set-log-wrap" id="setlog-' + index + '">' +
+        '<div class="set-log-title">LOG SETS</div>' +
+        buildSetLogRows(ex, index) +
+        '<button class="set-log-add" data-idx="' + index + '" onclick="addSetLogRow(+this.dataset.idx)">+ Add Set</button>' +
+      '</div>' +
+    '</div>' + connector;
+}
+function parseRestSecs(restStr) {
+  if (!restStr) return 60;
+  const m = restStr.match(/(\d+)/);
+  return m ? parseInt(m[1]) : 60;
+}
+
+async function loadExerciseGif(ex, index) {
+  
+  const container = document.getElementById(`ill-${index}`);
+  if (!container) return;
+
+  const data = await fetchExerciseGif(ex.name);
+  if (data) window._exerciseGifs[index] = data; // store for modal access
+
+  if (!data || !data.gifUrl) {
+    container.innerHTML = `
+      <div class="illus-placeholder">
+        <div class="ph-icon">💪</div>
+        <div class="ph-text">${ex.name}</div>
+      </div>`;
+    return;
+  }
+
+  const mc = getMuscleColor((data.target || ex.muscle).toLowerCase());
+
+  container.innerHTML = `
+    <img src="${data.gifUrl}" alt="${ex.name}"
+      onload="this.style.opacity='1';this.classList.add('loaded')"
+      onerror="this.parentElement.innerHTML='<div class=\\'illus-placeholder\\'><div class=\\'ph-icon\\'>💪</div><div class=\\'ph-text\\'>${ex.name}</div></div>'"
+      style="opacity:0;transition:opacity .5s;width:100%;height:100%;object-fit:contain;background:#0d0d0d">
+    <div class="muscle-tag" style="background:${mc.bg};color:${mc.color};border:1px solid ${mc.color}40">
+      ${data.target || ex.muscle}
+    </div>`;
+}
+
+// ─── GENERATE ─────────────────────────────────────────────────────────
+async function generate() {
+  if (!muscles.length) { alert('Select at least one muscle group!'); return; }
+
+  const ov = document.getElementById('ov');
+  ov.classList.add('vis');
+  document.getElementById('ovTxt').textContent = 'BUILDING WORKOUT';
+
+  const perMuscle = dur === 30 ? 2 : 3;
+
+  // Fixed intermediate difficulty — no scaling needed
+  function applyDifficulty(ex) { return ex; }
+
+  let exercises = [];
+  for (const m of muscles) {
+    let pool = DB[m] || [];
+    // Filter by equipment mode
+    if (equipmentMode === 'bodyweight') {
+      const bwPool = pool.filter(e => e.bw);
+      // Only fall back if truly zero BW exercises — and mark fallbacks clearly
+      pool = bwPool.length ? bwPool : pool.filter(e => e.bw).length === 0
+        ? pool.filter(e => ['Push-Up','Pull-Up','Dips','Plank','Squat','Lunge','Hip Thrust','Dead Bug','Bicycle Crunch','Hanging Leg Raise','Russian Twist','Ab Rollout','Dragon Flag','Walking Lunge','Bulgarian Split Squat','Single-Leg Calf Raise'].includes(e.name))
+        : bwPool;
+      if (!pool.length) pool = bwPool.length ? bwPool : []; // empty is better than gym leak
+    }
+    exercises = exercises.concat(
+      [...pool].sort(()=>Math.random()-.5).slice(0, perMuscle).map(e => applyDifficulty({...e, muscleGroup:m}))
+    );
+  }
+  exercises = exercises.sort(()=>Math.random()-.5);
+
+
+
+  document.getElementById('timeBadge').textContent = `${dur} MIN`;
+  document.getElementById('muscleBadge').textContent = muscles.map(m=>m.toUpperCase()).join(' · ');
+
+  // Store workout globally so modal can access exercise data
+  window._currentWorkout = exercises;
+  // Save to history
+  saveWorkoutToHistory(exercises);
+  window._exerciseGifs = {};
+
+  // Render all cards with skeletons
+  const list = document.getElementById('wkList');
+  list.innerHTML = exercises.map((ex, i) => renderExerciseCard(ex, i)).join('');
+
+  // Show results
+  ov.classList.remove('vis');
+  document.getElementById('cfgView').style.display = 'none';
+  document.getElementById('results').classList.add('vis');
+  startElapsedOnGenerate();
+  window._setLogs = {}; // reset set logs for new workout
+  document.getElementById('app').scrollTo({top:0, behavior:'smooth'});
+
+  // Load GIFs asynchronously — stagger requests to avoid rate limits
+  for (let i = 0; i < exercises.length; i++) {
+    loadExerciseGif(exercises[i], i);
+    await new Promise(r => setTimeout(r, 150)); // 150ms between requests
+  }
+
+  // Playlist built on-demand when user taps button
+}
+
+// ─── PLAYLIST ─────────────────────────────────────────────────────────
+window._previewTracks = null;
+window._previewPlName = '';
+window._previewEmoji  = '';
+
+function openSpotifyPlaylist() {
+  if (window._lastPlaylistUrl) window.open(window._lastPlaylistUrl, '_blank');
+}
+
+async function buildPlaylist() {
+  const container = document.getElementById('plContainer');
+  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Reggae':'🌿','Reggaeton':'🌴','Anime':'🎌','Mix':'🎲','Random':'🎲'};
+  const emoji = emojiMap[genre] || '🎵';
+  const trackCount = dur === 30 ? 8 : 15;
+  const plName = 'IRON AUDIO · ' + genre + ' · ' + dur + 'min';
+  window._activeGenre = genre;
+  window._playlistCount = trackCount;
+  window._previewEmoji  = emoji;
+  window._previewPlName = plName;
+
+  if (!spToken) { renderOffline(container, emoji, plName, trackCount); return; }
+
+  container.innerHTML = '<div class="msg msg-info">🔍 Finding tracks for your ' + genre + ' playlist...</div>';
+  try {
+    const tracks = await searchTracks(genre, trackCount);
+    if (!tracks.length) throw new Error('No tracks found. Try a different genre.');
+    window._previewTracks = tracks;
+    renderPreview(container, tracks, emoji, plName);
+  } catch(err) {
+    console.error('Playlist error:', err);
+    container.innerHTML = '<div class="msg msg-err">❌ ' + err.message + '<br><small style="opacity:.7;display:block;margin-top:4px">Try disconnecting and reconnecting Spotify.</small></div>';
+    renderOffline(container, emoji, plName, trackCount, true);
+  }
+}
+
+function renderPreview(container, tracks, emoji, plName) {
+  const totalMin = Math.round(tracks.reduce(function(s,t){ return s+t.duration_ms; },0)/60000);
+  var html = '<div class="pl-preview-bar">' +
+    '<div class="pl-preview-label">👀 PREVIEW — ' + tracks.length + ' tracks · ~' + totalMin + ' min</div>' +
+    '<div class="pl-preview-actions">' +
+      '<button class="pl-preview-btn regen" onclick="regenPlaylist()">🔀 Regenerate</button>' +
+      '<button class="pl-preview-btn create" onclick="confirmCreatePlaylist()">✅ Create on Spotify</button>' +
+      '<button class="pl-preview-btn cancel" onclick="cancelPreview()">✕</button>' +
+    '</div></div><div class="track-list preview-list">';
+  tracks.forEach(function(t, i) {
+    var mins = Math.floor(t.duration_ms/60000);
+    var secs = String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0');
+    html += '<div class="track"><div class="track-n">' + (i+1) + '</div>' +
+      '<div class="track-info"><div class="track-name">' + t.name + '</div>' +
+      '<div class="track-artist">' + (t.artists ? t.artists.map(function(a){return a.name;}).join(', ') : '') + '</div></div>' +
+      '<div class="track-dur">' + mins + ':' + secs + '</div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+async function regenPlaylist() {
+  window._previewTracks = null;
+  buildPlaylist();
+}
+
+function cancelPreview() {
+  var container = document.getElementById('plContainer');
+  container.innerHTML = '<div class="pl-prompt"><div class="pl-prompt-icon">🎵</div>' +
+    '<div class="pl-prompt-text">Ready to build your playlist?</div>' +
+    '<button class="pl-build-btn" onclick="buildPlaylist()">Create Playlist on Spotify</button></div>';
+}
+
+async function confirmCreatePlaylist() {
+  var tracks = window._previewTracks;
+  var plName = window._previewPlName;
+  var emoji  = window._previewEmoji;
+  if (!tracks || !tracks.length) { buildPlaylist(); return; }
+
+  var container = document.getElementById('plContainer');
+  container.innerHTML = '<div class="msg msg-info">⏳ Creating playlist in your Spotify library...</div>';
+  try {
+    const pl = await createPlaylist(plName, tracks.map(function(t){ return t.uri; }));
+    const totalMin = Math.round(tracks.reduce(function(s,t){ return s+t.duration_ms; },0)/60000);
+    window._lastPlaylistUrl = (pl.external_urls && pl.external_urls.spotify) ? pl.external_urls.spotify : 'https://open.spotify.com';
+    var rows = '';
+    tracks.forEach(function(t,i) {
+      var mins = Math.floor(t.duration_ms/60000);
+      var secs = String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0');
+      rows += '<div class="track"><div class="track-n">'+(i+1)+'</div>' +
+        '<div class="track-info"><div class="track-name">'+t.name+'</div>' +
+        '<div class="track-artist">'+(t.artists?t.artists.map(function(a){return a.name;}).join(', '):'')+'</div></div>' +
+        '<div class="track-dur">'+mins+':'+secs+'</div></div>';
+    });
+    container.innerHTML = '<div class="msg msg-ok">✅ Playlist created in your Spotify library!</div>' +
+      '<div class="pl-card"><div class="pl-hdr">' +
+        '<div class="pl-art">' + emoji + '</div>' +
+        '<div class="pl-info"><div class="pl-name">' + plName + '</div>' +
+        '<div class="pl-meta">' + tracks.length + ' tracks · ~' + totalMin + ' min</div></div>' +
+        '<button class="pl-open" onclick="openSpotifyPlaylist()">OPEN ↗</button>' +
+      '</div><div class="track-list">' + rows + '</div></div>';
+  } catch(err) {
+    container.innerHTML = '<div class="msg msg-err">❌ ' + err.message + '</div>';
+  }
+}
+
+
+function renderOffline(container, emoji, name, count, append=false) {
+  const pools = {
+    'Hip-Hop':[['HUMBLE.','Kendrick Lamar','3:02'],["God's Plan",'Drake','3:18'],['Sicko Mode','Travis Scott','5:12'],['Congratulations','Post Malone','3:39'],['Rockstar','Post Malone','3:39'],['XO TOUR Llif3','Lil Uzi Vert','3:08'],['Bad and Boujee','Migos','5:43'],['POWER','Kanye West','4:52'],["Lose Yourself",'Eminem','5:26'],["Can't Hold Us",'Macklemore','4:18'],['Stronger','Kanye West','5:11'],['DNA.','Kendrick Lamar','3:05'],['Alright','Kendrick Lamar','3:39'],['Going Bad','Meek Mill','2:50'],['Jumpman','Drake','3:07']],
+    'Rock':[['Eye of the Tiger','Survivor','4:02'],['Welcome to the Jungle',"Guns N' Roses",'4:33'],['Back in Black','AC/DC','4:15'],['Enter Sandman','Metallica','5:31'],['Smells Like Teen Spirit','Nirvana','5:01'],['Seven Nation Army','White Stripes','3:51'],['Thunderstruck','AC/DC','4:52'],['Run to the Hills','Iron Maiden','3:54'],['Bulls on Parade','RATM','3:50'],['Walk','Pantera','5:00'],['Best of You','Foo Fighters','4:16'],['Learn to Fly','Foo Fighters','3:57'],['All the Small Things','Blink-182','2:51'],['Everlong','Foo Fighters','4:10'],['My Hero','Foo Fighters','4:19']],
+    'EDM':[['Animals','Martin Garrix','3:26'],['Titanium','David Guetta','4:05'],['Wake Me Up','Avicii','4:07'],['One More Time','Daft Punk','5:20'],["Don't You Worry Child",'SHM','3:45'],['Levels','Avicii','3:18'],['Clarity','Zedd','4:28'],['Bangarang','Skrillex','3:34'],['Turn Down for What','DJ Snake','3:32'],['Lean On','Major Lazer','2:57'],['Summer','Calvin Harris','3:44'],['Beautiful Now','Zedd','3:31'],['Alone','Alan Walker','2:39'],['Faded','Alan Walker','3:32'],['Spectre','Alan Walker','3:35']],
+    '80s':[['Eye of the Tiger','Survivor','4:02'],['Physical','Olivia Newton-John','3:38'],['Push It','Salt-N-Pepa','3:19'],['Jump','Van Halen','4:03'],["Don't Stop Me Now",'Queen','3:29'],['Living on a Prayer','Bon Jovi','4:10'],['Take On Me','a-ha','3:46'],['Final Countdown','Europe','5:09'],['Here I Go Again','Whitesnake','4:39'],['We Will Rock You','Queen','2:02'],['Girls Just Wanna Have Fun','Cyndi Lauper','3:58'],["Sweet Child O' Mine","Guns N' Roses",'5:55'],['Pour Some Sugar on Me','Def Leppard','4:26'],['I Love Rock and Roll','Joan Jett','2:55'],['Like a Prayer','Madonna','5:41']],
+    'Metal':[['Enter Sandman','Metallica','5:31'],['Master of Puppets','Metallica','8:35'],['Raining Blood','Slayer','4:17'],['Chop Suey!','System of a Down','3:30'],['B.Y.O.B.','System of a Down','4:14'],['Down with the Sickness','Disturbed','4:39'],['Bat Country','Avenged Sevenfold','5:12'],['Paranoid','Black Sabbath','2:48'],['The Beautiful People','Marilyn Manson','3:37'],['Killing in the Name','RATM','5:13'],['Walk','Pantera','5:00'],['Cowboys from Hell','Pantera','4:08'],['Toxicity','System of a Down','3:38'],['Before I Forget','Slipknot','4:14'],['The Trooper','Iron Maiden','4:09']],
+    'Pop':[['Blinding Lights','The Weeknd','3:20'],['Levitating','Dua Lipa','3:23'],['Save Your Tears','The Weeknd','3:35'],['Watermelon Sugar','Harry Styles','2:54'],["Don't Start Now",'Dua Lipa','3:03'],['Uptown Funk','Bruno Mars','4:30'],['24K Magic','Bruno Mars','3:46'],['Shake It Off','Taylor Swift','3:39'],['Roar','Katy Perry','3:43'],['Firework','Katy Perry','3:47'],["Can't Stop the Feeling",'Justin Timberlake','3:56'],['Happy','Pharrell','3:53'],['As It Was','Harry Styles','2:37'],['Anti-Hero','Taylor Swift','3:20'],['Flowers','Miley Cyrus','3:21']],
+    'Latin':[['Con Calma','Daddy Yankee','3:48'],['Mi Gente','J Balvin','3:42'],['Taki Taki','DJ Snake','3:29'],['Chantaje','Shakira','3:37'],['Despacito','Luis Fonsi','3:49'],['MIA','Bad Bunny','3:56'],['Krippy Kush','Bad Bunny','3:02'],['Reggaetón Lento','CNCO','3:53'],['X','Nicky Jam','3:38'],['Lean On','Major Lazer','2:57'],['Baila Baila Baila','Ozuna','3:22'],['Dakiti','Bad Bunny','3:35'],['Tusa','Karol G','3:18'],['Hawái','Maluma','3:18'],['La Canción','J Balvin','3:27']],
+    'Random':[['Eye of the Tiger','Survivor','4:02'],["Lose Yourself",'Eminem','5:26'],['Titanium','David Guetta','4:05'],['Enter Sandman','Metallica','5:31'],['Blinding Lights','The Weeknd','3:20'],["God's Plan",'Drake','3:18'],['Animals','Martin Garrix','3:26'],['Despacito','Luis Fonsi','3:49'],['Roar','Katy Perry','3:43'],['Seven Nation Army','White Stripes','3:51'],['B.Y.O.B.','System of a Down','4:14'],['Happy','Pharrell','3:53'],['Uptown Funk','Bruno Mars','4:30'],['Wake Me Up','Avicii','4:07'],['Stronger','Kanye West','5:11']]
+  };
+  const pool = [...(pools[genre]||pools['Random'])].sort(()=>Math.random()-.5).slice(0, count);
+  const html = `
+    ${!append ? '<div class="msg msg-info">💡 Connect Spotify to auto-create this playlist in your library!</div>' : ''}
+    <div class="pl-card">
+      <div class="pl-hdr">
+        <div class="pl-art">${emoji}</div>
+        <div class="pl-info">
+          <div class="pl-name">${name}</div>
+          <div class="pl-meta">${pool.length} tracks · ~${dur} min · ${genre}</div>
+        </div>
+      </div>
+      <div class="track-list">
+        ${pool.map((t,i) => `
+          <div class="track">
+            <div class="track-n">${i+1}</div>
+            <div class="track-info">
+              <div class="track-name">${t[0]}</div>
+              <div class="track-artist">${t[1]}</div>
+            </div>
+            <div class="track-dur">${t[2]}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  if (append) container.innerHTML += html;
+  else container.innerHTML = html;
+}
+
+// ── EXERCISE MODAL ─────────────────────────────────────────────────
+function openExModal(index) {
+  const ex = window._currentWorkout && window._currentWorkout[index];
+  if (!ex) return;
+  const mc = getMuscleColor(ex.muscle.toLowerCase());
+
+  // Image
+  const imgEl = document.getElementById('exModalImg');
+  const placeholder = document.getElementById('exModalImgPlaceholder');
+  const gifData = window._exerciseGifs && window._exerciseGifs[index];
+  if (gifData && gifData.gifUrl) {
+    imgEl.src = gifData.gifUrl;
+    imgEl.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    imgEl.style.display = 'none';
+    placeholder.style.display = 'flex';
+  }
+
+  document.getElementById('exModalNum').textContent = 'EXERCISE ' + String(index+1).padStart(2,'0');
+  document.getElementById('exModalName').textContent = ex.name;
+  const muscleEl = document.getElementById('exModalMuscle');
+  muscleEl.textContent = ex.muscle;
+  muscleEl.style.background = mc.bg;
+  muscleEl.style.color = mc.color;
+
+  document.getElementById('exModalStats').innerHTML =
+    '<div class="ex-modal-stat"><strong>' + ex.sets + '</strong><span>Sets</span></div>' +
+    '<div class="ex-modal-stat"><strong>' + ex.reps + '</strong><span>Reps</span></div>' +
+    '<div class="ex-modal-stat"><strong>' + ex.rest + '</strong><span>Rest</span></div>';
+
+  // Build YouTube search URL — opens YouTube app on iPhone, YouTube mobile site otherwise
+  // Query: "[exercise name] proper form tutorial" — always surfaces current best videos
+  const ytQuery = encodeURIComponent(ex.name + ' proper form tutorial');
+  const ytUrl = 'https://www.youtube.com/results?search_query=' + ytQuery;
+  document.getElementById('exModalYTBtn').href = ytUrl;
+
+  document.getElementById('exModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeExModal(e) {
+  // Close if clicking the backdrop (overlay itself), not the modal card
+  if (e && e.target !== document.getElementById('exModal')) return;
+  document.getElementById('exModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+
+
+
+// ── FEATURE STATE ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+let difficulty    = 'intermediate'; // beginner | intermediate | advanced
+let workoutMode   = 'standard';     // standard | superset
+let equipmentMode = 'gym';          // gym | bodyweight
+
+function setDifficulty(d) {
+  difficulty = d;
+  ['beginner','intermediate','advanced'].forEach(x => {
+    const el = document.getElementById('diff-' + x);
+    if (el) { el.classList.toggle('on', x === d); }
+  });
+}
+function setMode(m) {
+  workoutMode = m;
+  const std = document.getElementById('mode-standard');
+  const ss  = document.getElementById('mode-superset');
+  if (std) { std.classList.toggle('on', m === 'standard'); }
+  if (ss)  { ss.classList.toggle('on', m === 'superset'); }
+}
+function setEquipment(e) {
+  equipmentMode = e;
+  const gym = document.getElementById('eq-gym');
+  const bw  = document.getElementById('eq-bodyweight');
+  if (gym) { gym.classList.toggle('on', e === 'gym'); }
+  if (bw)  { bw.classList.toggle('on', e === 'bodyweight'); }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE 1: REST TIMER ──────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+let timerInterval  = null;
+let timerRemaining = 0;
+let timerTotal     = 0;
+let timerEndTime   = 0; // wall-clock ms when timer expires
+
+function beep(freq, dur, vol) {
+  freq = freq || 880; dur = dur || 0.15; vol = vol || 0.4;
+  try {
+    var ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    var osc  = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.start(); osc.stop(ctx.currentTime + dur);
+    setTimeout(function(){ try { ctx.close(); } catch(e){} }, (dur + 0.3) * 1000);
+  } catch(e) {}
+}
+
+function timerFinished() {
+  stopTimer();
+  beep(784, 0.18, 0.6);
+  setTimeout(function(){ beep(1047, 0.18, 0.6); }, 180);
+  setTimeout(function(){ beep(1319, 0.45, 0.8); }, 360);
+  if (navigator.vibrate) navigator.vibrate([100, 70, 100, 70, 300]);
+}
+
+function tickTimer() {
+  var remaining = Math.max(0, Math.round((timerEndTime - Date.now()) / 1000));
+  if (remaining !== timerRemaining) {
+    timerRemaining = remaining;
+    var countEl = document.getElementById('timerCount');
+    var ringEl  = document.getElementById('timerRing');
+    if (countEl) countEl.textContent = remaining;
+    if (ringEl) {
+      var progress = timerTotal > 0 ? (1 - remaining / timerTotal) : 0;
+      ringEl.style.strokeDashoffset = 565.5 * progress;
+    }
+    if (remaining <= 3 && remaining > 0) {
+      beep(remaining === 1 ? 1047 : 880, 0.1, 0.5);
+      if (navigator.vibrate) navigator.vibrate(40);
+    }
+  }
+  if (remaining <= 0) timerFinished();
+}
+
+function startRestTimer(secs, exName) {
+  if (timerInterval) clearInterval(timerInterval);
+  timerTotal = secs; timerRemaining = secs;
+  timerEndTime = Date.now() + secs * 1000;
+  var overlay = document.getElementById('timerOverlay');
+  var countEl = document.getElementById('timerCount');
+  var ringEl  = document.getElementById('timerRing');
+  var nameEl  = document.getElementById('timerExName');
+  if (nameEl)  nameEl.textContent = exName || 'REST';
+  if (countEl) countEl.textContent = secs;
+  if (ringEl)  ringEl.style.strokeDashoffset = '0';
+  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  beep(660, 0.1, 0.4);
+  timerInterval = setInterval(tickTimer, 250);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  var overlay = document.getElementById('timerOverlay');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function skipTimer() { stopTimer(); }
+
+document.addEventListener('visibilitychange', function() {
+  if (!timerInterval) return;
+  if (document.visibilityState === 'visible') {
+    if (Date.now() >= timerEndTime) { timerFinished(); }
+    else { tickTimer(); }
+  }
+});
+// ── FEATURE 2: WORKOUT HISTORY ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+function saveWorkoutToHistory(exercises) {
+  try {
+    const history = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    const entry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
+      setLogs: collectSetLogs(),
+      time: new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}),
+      duration: dur,
+      difficulty,
+      mode: workoutMode,
+      equipment: equipmentMode,
+      genre,
+      muscles: [...muscles],
+      exercises: exercises.map(e => ({name:e.name, sets:e.sets, reps:e.reps, muscle:e.muscle}))
+    };
+    history.unshift(entry);
+    if (history.length > 30) history.splice(30); // keep last 30
+    localStorage.setItem('iron_history', JSON.stringify(history));
+  } catch(e) { console.warn('History save failed:', e); }
+}
+
+function openHistory() {
+  renderHistoryList();
+  document.getElementById('histOverlay').classList.add('open');
+  document.getElementById('histPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHistory() {
+  document.getElementById('histOverlay').classList.remove('open');
+  document.getElementById('histPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function clearHistory() {
+  if (!confirm('Clear all workout history?')) return;
+  localStorage.removeItem('iron_history');
+  renderHistoryList();
+}
+
+function toggleHistDetail(index) {
+  const el = document.getElementById('hist-detail-' + index);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderHistoryList() {
+  const list = document.getElementById('histList');
+  if (!list) return;
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) {}
+
+  if (!history.length) {
+    list.innerHTML = '<div class="hist-empty">No workouts yet.<br>Generate your first workout to start tracking!</div>';
+    return;
+  }
+
+  list.innerHTML = history.map((entry, i) => `
+    <div class="hist-item">
+      <div onclick="toggleHistDetail(${i})" style="cursor:pointer">
+        <div class="hist-item-date">${entry.date} · ${entry.time}</div>
+        <div class="hist-item-title">${entry.duration}MIN · ${(entry.muscles||[]).map(m=>m.toUpperCase()).join(', ')}</div>
+        <div class="hist-item-meta">${entry.exercises?.length || 0} exercises · ${entry.difficulty || 'intermediate'} · ${entry.mode || 'standard'} · ${entry.genre || ''}</div>
+        ${Object.keys(entry.setLogs||{}).length ? `<div class="hist-item-meta" style="color:var(--accent);margin-top:2px">📊 ${Object.keys(entry.setLogs).length} exercises logged</div>` : ''}
+      </div>
+      <div id="hist-detail-${i}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        ${(entry.exercises||[]).map(ex => {
+          const logs = (entry.setLogs||{})[ex.name];
+          return `<div style="margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${ex.name}</div>
+            ${logs ? logs.map((l,si) => `<div style="font-size:11px;color:var(--muted);margin-top:2px">Set ${si+1}: ${l.weight||'—'}lbs × ${l.reps||'—'} reps</div>`).join('') : '<div style="font-size:11px;color:var(--muted)">No sets logged</div>'}
+          </div>`;
+        }).join('')}
+        <button onclick="loadHistoryEntry(${i})" style="width:100%;padding:8px;background:var(--accent);border:none;border-radius:8px;color:#000;font-weight:700;font-size:12px;cursor:pointer;margin-top:6px">↻ Redo This Workout</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadHistoryEntry(index) {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) {}
+  const entry = history[index];
+  if (!entry) return;
+  closeHistory();
+  // Restore settings
+  if (entry.duration) { dur = entry.duration; document.querySelectorAll('.dur-card').forEach(c => c.classList.toggle('on', parseInt(c.querySelector('.dur-num').textContent) === dur)); }
+  if (entry.muscles)  { muscles = [...entry.muscles]; document.querySelectorAll('.mg-chip').forEach(c => { const m = c.getAttribute('onclick')?.match(/'([^']+)'/)?.[1]; if(m) c.classList.toggle('on', muscles.includes(m)); }); }
+  if (entry.difficulty) setDifficulty(entry.difficulty);
+  if (entry.mode)      setMode(entry.mode);
+  if (entry.equipment) setEquipment(entry.equipment);
+  // Regenerate
+  generate();
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE 3: SHARE CARD ──────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+function openShareCard() {
+  const exercises = window._currentWorkout;
+  if (!exercises || !exercises.length) { alert('Generate a workout first!'); return; }
+
+  const canvas = document.getElementById('shareCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W = 800, H = 120 + exercises.length * 68 + 100;
+  canvas.width = W; canvas.height = H;
+
+  // Background
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Accent bar
+  ctx.fillStyle = '#e8ff3d';
+  ctx.fillRect(0, 0, W, 6);
+
+  // Logo
+  ctx.font = 'bold 36px "Arial Black", Arial';
+  ctx.fillStyle = '#e8ff3d';
+  ctx.fillText('IRON', 32, 60);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(' AUDIO', 96, 60);
+
+  // Subtitle
+  ctx.font = '14px Arial';
+  ctx.fillStyle = '#888';
+  const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  ctx.fillText(dateStr.toUpperCase(), 32, 84);
+
+  // Workout meta pills
+  ctx.font = 'bold 12px Arial';
+  ctx.fillStyle = '#e8ff3d';
+  const metaText = `${dur} MIN  ·  ${difficulty.toUpperCase()}  ·  ${workoutMode.toUpperCase()}`;
+  ctx.fillText(metaText, 32, 108);
+
+  // Divider
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(32, 118); ctx.lineTo(W-32, 118); ctx.stroke();
+
+  // Exercise list
+  exercises.forEach((ex, i) => {
+    const y = 138 + i * 68;
+    // Number
+    ctx.font = 'bold 11px Arial';
+    ctx.fillStyle = '#e8ff3d';
+    ctx.fillText(String(i+1).padStart(2,'0'), 32, y+14);
+    // Name
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(ex.name, 58, y+14);
+    // Sets · Reps · Rest
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#666';
+    ctx.fillText(`${ex.sets} sets  ·  ${ex.reps} reps  ·  ${ex.rest} rest`, 58, y+34);
+    // Muscle badge
+    const mc = getMuscleColor(ex.muscle.toLowerCase());
+    const bw = ctx.measureText(ex.muscle).width + 16;
+    ctx.fillStyle = mc.bg;
+    roundRect(ctx, 58, y+42, bw, 18, 9);
+    ctx.font = 'bold 10px Arial';
+    ctx.fillStyle = mc.color;
+    ctx.fillText(ex.muscle.toUpperCase(), 66, y+55);
+    // Row divider
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.beginPath(); ctx.moveTo(32, y+64); ctx.lineTo(W-32, y+64); ctx.stroke();
+  });
+
+  // Footer
+  const footerY = H - 36;
+  ctx.fillStyle = '#333';
+  ctx.fillRect(0, footerY-10, W, 46);
+  ctx.font = '11px Arial';
+  ctx.fillStyle = '#666';
+  ctx.fillText('Generated with IRON AUDIO', 32, footerY+14);
+  ctx.fillStyle = '#e8ff3d';
+  ctx.fillText(new Date().toLocaleTimeString(), W-120, footerY+14);
+
+  document.getElementById('shareModal').classList.add('open');
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r, y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x, y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath(); ctx.fill();
+}
+
+function downloadShareCard() {
+  const canvas = document.getElementById('shareCanvas');
+  const link   = document.createElement('a');
+  link.download = `iron-audio-workout-${Date.now()}.png`;
+  link.href      = canvas.toDataURL('image/png');
+  link.click();
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE: WORKOUT ELAPSED TIMER ────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+let elapsedSecs = 0;
+let elapsedInterval = null;
+let elapsedRunning = false;
+
+function toggleElapsedTimer() {
+  if (elapsedRunning) {
+    clearInterval(elapsedInterval);
+    elapsedRunning = false;
+    document.getElementById('elapsedToggleBtn').textContent = '▶ Resume';
+    document.getElementById('elapsedToggleBtn').classList.remove('running');
+  } else {
+    elapsedRunning = true;
+    document.getElementById('elapsedToggleBtn').textContent = '⏸ Pause';
+    document.getElementById('elapsedToggleBtn').classList.add('running');
+    elapsedInterval = setInterval(() => {
+      elapsedSecs++;
+      const m = String(Math.floor(elapsedSecs / 60)).padStart(2,'0');
+      const s = String(elapsedSecs % 60).padStart(2,'0');
+      const el = document.getElementById('elapsedTime');
+      if (el) el.textContent = m + ':' + s;
+    }, 1000);
+  }
+}
+
+function resetElapsedTimer() {
+  clearInterval(elapsedInterval);
+  elapsedRunning = false;
+  elapsedSecs = 0;
+  const btn = document.getElementById('elapsedToggleBtn');
+  if (btn) { btn.textContent = '▶ Start'; btn.classList.remove('running'); }
+  const el = document.getElementById('elapsedTime');
+  if (el) el.textContent = '00:00';
+}
+
+// Auto-start timer when workout generates
+function startElapsedOnGenerate() {
+  resetElapsedTimer();
+  setTimeout(() => toggleElapsedTimer(), 300);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE: EXERCISE SWAP ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+function swapExercise(index) {
+  const workout = window._currentWorkout;
+  if (!workout) return;
+  const ex = workout[index];
+  const muscleGroup = ex.muscleGroup || ex.muscle?.toLowerCase() || 'chest';
+  const pool = DB[muscleGroup] || [];
+
+  // Get candidates: same muscle group, not the current exercise, not already in workout
+  const currentNames = new Set(workout.map(e => e.name));
+  let candidates = pool.filter(e => e.name !== ex.name && !currentNames.has(e.name));
+  // Also respect equipment mode
+  if (equipmentMode === 'bodyweight') candidates = candidates.filter(e => e.bw);
+  if (!candidates.length) candidates = pool.filter(e => e.name !== ex.name);
+  if (!candidates.length) { alert('No other exercises available for this muscle group.'); return; }
+
+  // Pick a random candidate, apply difficulty
+  const picked = candidates[Math.floor(Math.random() * candidates.length)];
+  const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
+  const dm = diffMap[difficulty] || diffMap.intermediate;
+  const s = Math.max(2, Math.round(parseFloat(picked.sets) * dm.setsM));
+  const restSecs = parseRestSecs(picked.rest);
+  const newRest = Math.round(restSecs * dm.restM);
+  const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';
+  const newEx = { ...picked, sets: String(s), rest: restStr, muscleGroup, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
+
+  workout[index] = newEx;
+
+  // Re-render just this card
+  const card = document.getElementById('card-' + index);
+  if (card) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = renderExerciseCard(newEx, index);
+    const newCard = tmp.firstElementChild;
+    card.parentNode.replaceChild(newCard, card);
+    // Reload GIF
+    loadExerciseGif(newEx, index);
+    // Subtle flash
+    newCard.style.borderLeftColor = 'var(--blue)';
+    setTimeout(() => { newCard.style.borderLeftColor = ''; }, 800);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE: SET LOG ───────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// setLogs[index] = [{weight:'', reps:'', done:false}, ...]
+window._setLogs = {};
+
+function buildSetLogRows(ex, index) {
+  const setCount = parseInt(ex.sets) || 3;
+  const logs = window._setLogs[index] || [];
+  let html = '';
+  for (let s = 0; s < setCount; s++) {
+    const log = logs[s] || {weight:'', reps:''};
+    const pr = checkPR(ex.name, log.weight, log.reps);
+    html += `
+      <div class="set-log-row" id="setrow-${index}-${s}">
+        <div class="set-log-num">${s+1}</div>
+        <input class="set-log-input" type="number" placeholder="lbs" value="${log.weight}"
+          oninput="logSet(${index},${s},'weight',this.value)" inputmode="decimal">
+        <div class="set-log-label">×</div>
+        <input class="set-log-input" type="number" placeholder="reps" value="${log.reps}"
+          oninput="logSet(${index},${s},'reps',this.value)" inputmode="numeric">
+        ${pr ? '<span class="set-log-pr">🏆 PR!</span>' : ''}
+      </div>`;
+  }
+  return html;
+}
+
+function logSet(exIndex, setIndex, field, value) {
+  if (!window._setLogs[exIndex]) window._setLogs[exIndex] = [];
+  if (!window._setLogs[exIndex][setIndex]) window._setLogs[exIndex][setIndex] = {weight:'', reps:''};
+  window._setLogs[exIndex][setIndex][field] = value;
+  // Check PR live
+  const log = window._setLogs[exIndex][setIndex];
+  if (log.weight && log.reps) {
+    const ex = window._currentWorkout?.[exIndex];
+    if (ex && checkPR(ex.name, log.weight, log.reps)) {
+      const row = document.getElementById(`setrow-${exIndex}-${setIndex}`);
+      if (row && !row.querySelector('.set-log-pr')) {
+        const badge = document.createElement('span');
+        badge.className = 'set-log-pr'; badge.textContent = '🏆 PR!';
+        row.appendChild(badge);
+        if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+      }
+      savePR(ex.name, log.weight, log.reps);
+    }
+  }
+}
+
+function addSetLogRow(exIndex) {
+  const wrap = document.getElementById('setlog-' + exIndex);
+  if (!wrap) return;
+  const ex = window._currentWorkout?.[exIndex];
+  if (!ex) return;
+  const s = (window._setLogs[exIndex] || []).length;
+  window._setLogs[exIndex] = window._setLogs[exIndex] || [];
+  window._setLogs[exIndex].push({weight:'', reps:''});
+  const addBtn = wrap.querySelector('.set-log-add');
+  const row = document.createElement('div');
+  row.className = 'set-log-row';
+  row.id = `setrow-${exIndex}-${s}`;
+  row.innerHTML = `
+    <div class="set-log-num">${s+1}</div>
+    <input class="set-log-input" type="number" placeholder="lbs" inputmode="decimal"
+      oninput="logSet(${exIndex},${s},'weight',this.value)">
+    <div class="set-log-label">×</div>
+    <input class="set-log-input" type="number" placeholder="reps" inputmode="numeric"
+      oninput="logSet(${exIndex},${s},'reps',this.value)">`;
+  wrap.insertBefore(row, addBtn);
+}
+
+function deleteSetRow(exIndex, setIndex) {
+  if (window._setLogs[exIndex]) window._setLogs[exIndex].splice(setIndex, 1);
+  var wrap = document.getElementById('setlog-' + exIndex);
+  if (!wrap) return;
+  var addBtn = wrap.querySelector('.set-log-add');
+  wrap.querySelectorAll('.set-log-row').forEach(function(r){ r.remove(); });
+  var logs = window._setLogs[exIndex] || [];
+  logs.forEach(function(log, s) {
+    var row = document.createElement('div');
+    row.className = 'set-log-row';
+    row.id = 'setrow-' + exIndex + '-' + s;
+    row.innerHTML =
+      '<div class="set-log-num">' + (s+1) + '</div>' +
+      '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight||'') + '"' +
+        ' inputmode="decimal" data-ex="' + exIndex + '" data-s="' + s + '" data-field="weight"' +
+        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
+      '<div class="set-log-label">×</div>' +
+      '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps||'') + '"' +
+        ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + s + '" data-field="reps"' +
+        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
+      '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + s + '"' +
+        ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove">✕</button>';
+    wrap.insertBefore(row, addBtn);
+  });
+}
+
+// PR tracking
+function getPRs() {
+  try { return JSON.parse(localStorage.getItem('iron_prs') || '{}'); } catch(e) { return {}; }
+}
+function checkPR(name, weight, reps) {
+  if (!weight || !reps) return false;
+  const prs = getPRs();
+  const w = parseFloat(weight), r = parseInt(reps);
+  if (!w || !r) return false;
+  const key = name.toLowerCase().replace(/\s+/g,'_');
+  const prev = prs[key];
+  if (!prev) return true; // first time = always a PR
+  return w > prev.weight || (w === prev.weight && r > prev.reps);
+}
+function savePR(name, weight, reps) {
+  const prs = getPRs();
+  const key = name.toLowerCase().replace(/\s+/g,'_');
+  prs[key] = { weight: parseFloat(weight), reps: parseInt(reps), date: new Date().toISOString() };
+  localStorage.setItem('iron_prs', JSON.stringify(prs));
+}
+
+// Save set logs to history entry
+function collectSetLogs() {
+  const result = {};
+  const workout = window._currentWorkout || [];
+  workout.forEach((ex, i) => {
+    const logs = (window._setLogs[i] || []).filter(l => l.weight || l.reps);
+    if (logs.length) result[ex.name] = logs;
+  });
+  return result;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE: 1RM CALCULATOR ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+let ormFormula = 'epley';
+
+const ORM_FORMULAS = {
+  epley:   { fn: (w,r) => w * (1 + r/30),           desc: "Epley: w × (1 + r/30) — most common, works well for moderate reps" },
+  brzycki: { fn: (w,r) => w * (36 / (37 - r)),      desc: "Brzycki: w × 36/(37−r) — accurate for reps ≤ 10" },
+  lander:  { fn: (w,r) => (100 * w) / (101.3 - 2.67123 * r), desc: "Lander: (100w) / (101.3 − 2.67r) — good for higher rep ranges" },
+};
+
+function open1RMCalc(prefillWeight, prefillReps) {
+  document.getElementById('ormOverlay').classList.add('open');
+  if (prefillWeight) document.getElementById('ormWeight').value = prefillWeight;
+  if (prefillReps)   document.getElementById('ormReps').value   = prefillReps;
+  if (prefillWeight || prefillReps) calcORM();
+}
+function close1RMCalc() {
+  document.getElementById('ormOverlay').classList.remove('open');
+}
+function setFormula(f) {
+  ormFormula = f;
+  ['epley','brzycki','lander'].forEach(x => {
+    document.getElementById('frm-' + x).classList.toggle('on', x === f);
+  });
+  document.getElementById('ormFormulaDesc').textContent = ORM_FORMULAS[f].desc;
+  calcORM();
+}
+function calcORM() {
+  const w = parseFloat(document.getElementById('ormWeight').value);
+  const r = parseInt(document.getElementById('ormReps').value);
+  const el = document.getElementById('ormResult');
+  if (!w || !r || r < 1) { el.textContent = '—'; return; }
+  if (r === 1) { el.textContent = w.toFixed(1); return; }
+  const result = ORM_FORMULAS[ormFormula].fn(w, r);
+  el.textContent = Math.round(result * 10) / 10;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── FEATURE: BPM / ENERGY SLIDER ──────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+const ENERGY_LEVELS = ['Chill / Recovery', 'Warm-up', 'Moderate', 'High Energy', 'Maximum Intensity'];
+// Maps energy level 1-5 to Spotify audio feature params
+const ENERGY_PARAMS = [
+  { min_energy: 0.0, max_energy: 0.4, min_tempo: 60,  max_tempo: 100 },
+  { min_energy: 0.3, max_energy: 0.6, min_tempo: 90,  max_tempo: 120 },
+  { min_energy: 0.5, max_energy: 0.75,min_tempo: 110, max_tempo: 140 },
+  { min_energy: 0.7, max_energy: 0.92,min_tempo: 125, max_tempo: 160 },
+  { min_energy: 0.85,max_energy: 1.0, min_tempo: 140, max_tempo: 220 },
+];
+
+
+
+
+
+// Patch into searchTracks — called inside the function
+
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── IMAGE FALLBACK RETRY ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+const IMG_FALLBACKS = {
+  // Extra alternate folder names to try if primary 404s
+  'Decline Bench Press':   'Decline_Barbell_Bench_Press',
+  'Dumbbell Pullover':     'Dumbbell_Pullover',
+  'T-Bar Row':             'T_Bar_Row',
+  'Chest-Supported Row':   'Bent_Over_Dumbbell_Row',
+  'Upright Row':           'Upright_Row',
+  'Concentration Curl':    'Concentration_Curls',
+  'Leg Curl':              'Leg_Curl',
+  'Hack Squat':            'Barbell_Full_Squat',
+  'Reverse Hyperextension':'Hyperextensions',
+  'Dragon Flag':           'Hanging_Leg_Raise',
+  'Donkey Calf Raise':     'Standing_Calf_Raises',
+};
+const BASE_IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
+
+function handleImgError(imgEl, exName) {
+  const fallbackFolder = IMG_FALLBACKS[exName];
+  if (fallbackFolder && !imgEl.dataset.retriedFallback) {
+    imgEl.dataset.retriedFallback = '1';
+    imgEl.src = BASE_IMG + fallbackFolder + '/0.jpg';
+    return;
+  }
+  // Try /1.jpg as last resort
+  if (!imgEl.dataset.retriedAlt && imgEl.src.includes('/0.jpg')) {
+    imgEl.dataset.retriedAlt = '1';
+    imgEl.src = imgEl.src.replace('/0.jpg', '/1.jpg');
+    return;
+  }
+  // All retries exhausted — show placeholder
+  imgEl.parentElement.innerHTML =
+    `<div class="illus-placeholder"><div class="ph-icon">💪</div><div class="ph-text">${exName}</div></div>`;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── ENERGY MODE (2-mode) ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// Energy mode removed — query passed through unchanged
+function buildEnergyQuery(q) { return q; }
+</script>
+
+<!-- ── EXERCISE HOW-TO MODAL ───────────────────────────────────────── -->
+<div class="ex-modal-overlay" id="exModal" onclick="closeExModal(event)">
+  <div class="ex-modal" id="exModalInner">
+    <button class="ex-modal-close" onclick="document.getElementById('exModal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    <img id="exModalImg" class="ex-modal-img" src="" alt="" onerror="this.style.display='none';document.getElementById('exModalImgPlaceholder').style.display='flex'">
+    <div id="exModalImgPlaceholder" class="ex-modal-img-placeholder" style="display:none">💪</div>
+    <div class="ex-modal-body">
+      <div class="ex-modal-num" id="exModalNum">EXERCISE 01</div>
+      <div class="ex-modal-name" id="exModalName">Exercise Name</div>
+      <span class="ex-modal-muscle" id="exModalMuscle">Muscle</span>
+      <div class="ex-modal-stats" id="exModalStats"></div>
+      <a class="yt-watch-btn" id="exModalYTBtn" href="#" target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        Watch Tutorial on YouTube
+      </a>
+      <div class="yt-watch-hint">Opens YouTube app · search for proper form</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REST TIMER OVERLAY ──────────────────────────────────────────── -->
+<div class="timer-overlay" id="timerOverlay">
+  <div class="timer-ex-name" id="timerExName">REST</div>
+  <div class="timer-label">NEXT SET IN</div>
+  <div class="timer-ring-wrap">
+    <svg width="200" height="200" viewBox="0 0 200 200">
+      <circle class="timer-ring-bg" cx="100" cy="100" r="90"/>
+      <circle class="timer-ring-fg" id="timerRing" cx="100" cy="100" r="90"/>
+    </svg>
+    <div class="timer-count" id="timerCount">60</div>
+  </div>
+  <div class="timer-actions">
+    <button class="timer-btn skip" onclick="skipTimer()">Skip ⏭</button>
+    <button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
+  </div>
+</div>
+
+<!-- ── HISTORY PANEL ────────────────────────────────────────────────── -->
+<div class="hist-overlay" id="histOverlay" onclick="closeHistory()"></div>
+<div class="hist-panel" id="histPanel">
+  <div class="hist-hdr">
+    <div class="hist-title">📋 HISTORY</div>
+    <button class="hist-close" onclick="closeHistory()">✕</button>
+  </div>
+  <div id="histList"></div>
+  <button class="hist-clear" onclick="clearHistory()">🗑 CLEAR ALL HISTORY</button>
+</div>
+
+<!-- ── SHARE CARD MODAL ──────────────────────────────────────────────── -->
+<div class="share-modal-overlay" id="shareModal">
+  <div class="share-canvas-wrap">
+    <canvas id="shareCanvas" width="800" height="1000"></canvas>
+  </div>
+  <div class="share-actions">
+    <button class="share-action-btn save" onclick="downloadShareCard()">💾 Save Image</button>
+    <button class="share-action-btn close" onclick="document.getElementById('shareModal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+
+<!-- ── 1RM CALCULATOR ──────────────────────────────────────────────── -->
+<div class="orm-overlay" id="ormOverlay" onclick="if(event.target===this)close1RMCalc()">
+  <div class="orm-sheet">
+    <div class="orm-title">💪 1RM CALCULATOR</div>
+    <div class="orm-sub">Estimate your one-rep max from any set</div>
+    <div class="orm-inputs">
+      <div class="orm-input-wrap">
+        <label>Weight (lbs/kg)</label>
+        <input class="orm-input" id="ormWeight" type="number" placeholder="135" oninput="calcORM()">
+      </div>
+      <div class="orm-input-wrap">
+        <label>Reps Performed</label>
+        <input class="orm-input" id="ormReps" type="number" placeholder="8" min="1" max="30" oninput="calcORM()">
+      </div>
+    </div>
+    <div class="orm-result">
+      <div class="orm-result-val" id="ormResult">—</div>
+      <div class="orm-result-lbl">ESTIMATED 1RM</div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700">Formula</div>
+    <div class="orm-formula-row">
+      <div class="orm-formula-btn on" id="frm-epley" onclick="setFormula('epley')">Epley</div>
+      <div class="orm-formula-btn" id="frm-brzycki" onclick="setFormula('brzycki')">Brzycki</div>
+      <div class="orm-formula-btn" id="frm-lander" onclick="setFormula('lander')">Lander</div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.5" id="ormFormulaDesc">Epley: w × (1 + r/30) — most common, works well for moderate reps</div>
+    <button class="orm-close" onclick="close1RMCalc()">Close</button>
+  </div>
+</div>
+
+</body>
+</html>
