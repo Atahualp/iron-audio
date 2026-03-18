@@ -464,13 +464,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     <div class="wk-list" id="wkList"></div>
     <div class="pl-sec">
       <div class="pl-label">🎵 YOUR PLAYLIST</div>
-      <div id="plContainer">
-        <div class="pl-prompt" id="plPrompt">
-          <div class="pl-prompt-icon">🎵</div>
-          <div class="pl-prompt-text">Tap to generate your playlist</div>
-          <button class="pl-build-btn" onclick="buildPlaylist()">🎵 Generate Playlist</button>
-        </div>
-      </div>
+      <div id="plContainer"></div>
       <button class="share-btn" onclick="openShareCard()">📸 Share Workout Card</button>
     </div>
   </div>
@@ -1221,7 +1215,8 @@ async function generate() {
     await new Promise(r => setTimeout(r, 150)); // 150ms between requests
   }
 
-  // Playlist built on-demand when user taps button
+  // Auto-build playlist after workout generates
+  buildPlaylist();
 }
 
 // ─── PLAYLIST ─────────────────────────────────────────────────────────
@@ -1287,9 +1282,7 @@ async function regenPlaylist() {
 
 function cancelPreview() {
   var container = document.getElementById('plContainer');
-  container.innerHTML = '<div class="pl-prompt"><div class="pl-prompt-icon">🎵</div>' +
-    '<div class="pl-prompt-text">Tap to generate your playlist</div>' +
-    '<button class="pl-build-btn" onclick="buildPlaylist()">🎵 Generate Playlist</button></div>';
+  container.innerHTML = '';
 }
 
 async function confirmCreatePlaylist() {
