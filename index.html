@@ -427,9 +427,9 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
         <div class="mg-chip" onclick="toggleMuscle('biceps',this)"><span class="mg-ico">💥</span><span class="mg-name">Biceps</span><div class="mg-chk"></div></div>
         <div class="mg-chip" onclick="toggleMuscle('triceps',this)"><span class="mg-ico">⚡</span><span class="mg-name">Triceps</span><div class="mg-chk"></div></div>
         <div class="mg-chip" onclick="toggleMuscle('legs',this)"><span class="mg-ico">🦵</span><span class="mg-name">Legs</span><div class="mg-chk"></div></div>
-        <div class="mg-chip" onclick="toggleMuscle('glutes',this)"><span class="mg-ico">🍑</span><span class="mg-name">Glutes</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('fullbody',this)"><span class="mg-ico">⚡</span><span class="mg-name">Full Body</span><div class="mg-chk"></div></div>
         <div class="mg-chip" onclick="toggleMuscle('core',this)"><span class="mg-ico">🎯</span><span class="mg-name">Core / Abs</span><div class="mg-chk"></div></div>
-        <div class="mg-chip" onclick="toggleMuscle('calves',this)"><span class="mg-ico">🦶</span><span class="mg-name">Calves</span><div class="mg-chk"></div></div>
+        <div class="mg-chip" onclick="toggleMuscle('traps',this)"><span class="mg-ico">🏔️</span><span class="mg-name">Traps</span><div class="mg-chk"></div></div>
         <div class="mg-chip" onclick="toggleMuscle('forearms',this)"><span class="mg-ico">🤜</span><span class="mg-name">Forearms</span><div class="mg-chk"></div></div>
       </div>
     </div>
@@ -497,7 +497,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v4.5</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v4.9</div>
 
 </div>
 
@@ -651,9 +651,9 @@ const EXERCISE_GIFS = {
   "Leg Extension":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
   "Hip Thrust":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg",
   "Sumo Deadlift":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Sumo_Deadlift/0.jpg",
-  "Cable Kickback":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hip_Adduction/0.jpg",
-  "Bulgarian Split Squat":  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Lunges/0.jpg",
-  "Abductor Machine":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Adductor/0.jpg",
+  "Cable Kickback":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Donkey_Kickbacks/0.jpg",
+  "Bulgarian Split Squat":  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg",
+  "Abductor Machine":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hip_Abductors_(stretch)/0.jpg",
   "Plank":                  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
   "Cable Crunch":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crunch/0.jpg",
   "Hanging Leg Raise":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg",
@@ -665,26 +665,41 @@ const EXERCISE_GIFS = {
   "Wrist Curl":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms_Up_Barbell_Wrist_Curl_Over_A_Bench/0.jpg",
   "Reverse Curl":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Barbell_Curl/0.jpg",
   "Farmer Carry":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmer_s_Walk/0.jpg",
+  // Traps
+  "Barbell Shrug":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg",
+  "Dumbbell Shrug":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shrug/0.jpg",
+  "Rack Pull":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rack_Pull/0.jpg",
+  "Trap Bar Deadlift":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Trap_Bar_Deadlift/0.jpg",
+  // Full Body
+  "Kettlebell Swing":       "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Kettlebell_Swings/0.jpg",
+  "Power Clean":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Power_Clean/0.jpg",
+  "Burpee":                 "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Burpees/0.jpg",
+  "Box Jump":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Box_Jump/0.jpg",
+  "Thruster":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Thruster/0.jpg",
+  "Man Maker":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Man_Makers/0.jpg",
+  "Renegade Row":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternating_Renegade_Row/0.jpg",
+  "Turkish Get-Up":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Turkish_Get-Up_-_Kettlebell/0.jpg",
+  "Clean and Press":        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Clean_and_Press/0.jpg",
   // Extended exercises
   "Decline Bench Press":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Barbell_Bench_Press/0.jpg",
   "Dumbbell Pullover":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Pullover/0.jpg",
   "Incline Cable Fly":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
   "Deadlift":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Deadlift/0.jpg",
-  "T-Bar Row":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg",
+  "T-Bar Row":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/T-Bar_Row/0.jpg",
   "Chest-Supported Row":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Dumbbell_Row/0.jpg",
-  "Cable Straight-Arm Pulldown": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+  "Cable Straight-Arm Pulldown": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Straight-Arm_Pulldown/0.jpg",
   "Upright Row":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Upright_Row/0.jpg",
   "Rear Delt Fly":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Flyes/0.jpg",
   "Cable Lateral Raise":    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg",
   "Concentration Curl":     "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Concentration_Curls/0.jpg",
-  "Spider Curl":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Incline_Dumbbell_Curl/0.jpg",
+  "Spider Curl":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg",
   "Single-Arm Cable Pushdown": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/0.jpg",
   "Diamond Push-Up":        "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Push-Up/0.jpg",
   "Tate Press":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg",
   "Leg Curl":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Curl/0.jpg",
-  "Hack Squat":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
+  "Hack Squat":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hack_Squat/0.jpg",
   "Reverse Hyperextension": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_%28Back_Extensions%29/0.jpg",
-  "Dead Bug":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
+  "Dead Bug":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Roller/0.jpg",
   "Bicycle Crunch":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Air_Bike/0.jpg",
   "Dragon Flag":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg",
   "Single-Leg Calf Raise":  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
@@ -692,6 +707,21 @@ const EXERCISE_GIFS = {
   "Tibialis Raise":         "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg",
   "Behind-Back Wrist Curl": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms_Up_Barbell_Wrist_Curl_Over_A_Bench/0.jpg",
   "Plate Pinch":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmer_s_Walk/0.jpg",
+  // Full Body & Traps
+  "Deadlift":                  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Deadlift/0.jpg",
+  "Power Clean":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hang_Power_Clean/0.jpg",
+  "Thruster":                  "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg",
+  "Kettlebell Swing":          "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Kettlebell_Swing/0.jpg",
+  "Clean and Press":           "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Clean-and-Press/0.jpg",
+  "Burpee":                    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Burpees/0.jpg",
+  "Bear Complex":              "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg",
+  "Snatch Grip Deadlift":      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Deadlift/0.jpg",
+  "Barbell Shrug":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg",
+  "Dumbbell Shrug":            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg",
+  "Rack Pull":                 "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Deadlift/0.jpg",
+  "Cable Shrug":               "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg",
+  "Hex Bar Shrug":             "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg",
+
 };
 
 async function fetchExerciseGif(exerciseName) {
@@ -765,15 +795,15 @@ const DB = {
     {name:'Leg Curl',sets:'3',reps:'12–15',rest:'60s',desc:'Lying hamstring isolation',muscle:'Hamstrings',howto:['Lie face down on the leg curl machine, pad behind your calves.','Curl your heels toward your glutes through a full range.','Squeeze hard at maximum contraction.','Lower with control — do not let the weight drop.','Point toes slightly during the lift to maximise hamstring recruitment.']},
     {name:'Hack Squat',sets:'3',reps:'10–12',rest:'90s',desc:'Machine quad-dominant squat',muscle:'Quads',howto:['Load the hack squat machine and position shoulders and back against the pads.','Feet shoulder-width, toes slightly flared.','Descend until thighs are parallel or below.','Drive through your heels to extend the legs.','Excellent for quad isolation without lower back stress.']}
   ],
-  glutes:[
-    {name:'Hip Thrust',sets:'4',reps:'12–15',rest:'75s',desc:'Barbell glute isolation',muscle:'Glutes'},
-    {name:'Cable Kickback',sets:'3',reps:'15–20',rest:'60s',desc:'Cable glute kickback',muscle:'Glutes',howto:['Attach an ankle strap to a low cable and secure it to one ankle.','Face the cable stack, hold a support, and lean forward slightly.','Kick your leg back and up, squeezing the glute at full extension.','Hold the contraction for 1–2 seconds at the top.','Lower with control — avoid swinging the leg for momentum.']},
-    {name:'Sumo Deadlift',sets:'4',reps:'6–8',rest:'120s',desc:'Wide stance hip-dominant pull',muscle:'Glutes'},
-    {name:'Bulgarian Split Squat',sets:'3',reps:'10 each',rest:'75s',desc:'Rear-foot elevated split squat',muscle:'Glutes'},
-    {name:'Abductor Machine',sets:'3',reps:'15–20',rest:'60s',desc:'Hip abduction machine',muscle:'Glutes',howto:['Sit in the machine with pads on the outsides of your knees.','Push your legs outward against the resistance.','Squeeze the glutes and hip abductors at maximum width.','Return slowly — do not let the pads slam back together.','Upright posture recruits the glutes; leaning forward shifts to TFL.']},
-    {name:'Romanian Deadlift',sets:'3',reps:'10–12',rest:'90s',desc:'Hip hinge glute & hamstring',muscle:'Glutes'},
-    {name:'Squat',sets:'4',reps:'6–8',rest:'120s',desc:'Deep squat glute activation',muscle:'Glutes'},
-    {name:'Reverse Hyperextension',sets:'3',reps:'15–20',rest:'60s',desc:'Lower glute & lumbar extension',muscle:'Glutes',howto:['Lie prone on a bench with hips at the edge, legs hanging.','Hold the bench firmly for stability.','Raise your legs until your body forms a straight line.','Squeeze the glutes and lower back at full extension.','Lower slowly — this movement actively decompresses the lumbar spine.'],bw:true}
+  fullbody:[
+    {name:'Deadlift',sets:'4',reps:'5–6',rest:'120s',desc:'King of all lifts · full posterior chain',muscle:'Full Body',howto:['Stand with bar over mid-foot, feet hip-width apart.','Hinge down and grip just outside your legs.','Brace your core hard, chest up, flatten your back.','Drive through the floor, extending hips and knees together.','Lock out at the top, then hinge back down with control.']},
+    {name:'Power Clean',sets:'4',reps:'4–5',rest:'120s',desc:'Explosive pull to rack position',muscle:'Full Body',howto:['Stand with bar over mid-foot, grip just outside legs.','Pull the bar explosively, extending hips, knees and ankles.','As the bar rises, pull yourself under it into a quarter squat.','Catch the bar on your shoulders in the rack position.','Stand up to complete the rep, then lower under control.'],bw:false},
+    {name:'Thruster',sets:'4',reps:'8–10',rest:'90s',desc:'Squat to overhead press · total body',muscle:'Full Body',howto:['Hold a barbell or dumbbells at shoulder height.','Descend into a full squat, thighs below parallel.','Drive up explosively from the bottom.','Use the momentum to press the bar overhead.','Lock out overhead before lowering back to rack.'],bw:false},
+    {name:'Kettlebell Swing',sets:'4',reps:'15–20',rest:'75s',desc:'Hip hinge power · glutes and back',muscle:'Full Body',howto:['Stand with kettlebell on the floor between your feet.','Hinge at the hips and grip the bell with both hands.','Hike the bell back between your legs like a hike snap.','Drive the hips forward explosively to swing the bell to chest height.','Let the bell fall back and hinge into the next rep immediately.'],bw:false},
+    {name:'Clean and Press',sets:'4',reps:'5–6',rest:'120s',desc:'Full body barbell complex',muscle:'Full Body',howto:['Deadlift the bar to your hips, then power clean to the rack position.','From the shoulders, press the bar overhead to full lockout.','Lower the bar back to shoulders, then to the floor.','Each rep is a clean followed immediately by a press.','Reset your brace at the bottom before each rep.'],bw:false},
+    {name:'Burpee',sets:'3',reps:'10–15',rest:'75s',desc:'Full body conditioning movement',muscle:'Full Body',howto:['Stand tall, then drop your hands to the floor.','Jump or step your feet back into a push-up position.','Perform a push-up, then jump feet back to your hands.','Explosively jump up with arms overhead.','Land softly and repeat without pausing.'],bw:true},
+    {name:'Bear Complex',sets:'3',reps:'5 rounds',rest:'120s',desc:'5-movement barbell complex',muscle:'Full Body',howto:['One round = power clean, front squat, push press, back squat, push press.','Complete all 5 movements without setting the bar down.','Use a moderate weight you can sustain for all 5 movements.','Rest only between complete rounds, not within.','Focus on smooth transitions between movements.'],bw:false},
+    {name:'Snatch Grip Deadlift',sets:'4',reps:'5–6',rest:'120s',desc:'Wide grip deadlift · posterior chain',muscle:'Full Body',howto:['Take a very wide snatch-width grip on the barbell.','The wide grip lowers your hips and increases range of motion.','Brace hard and drive through the floor.','The wider grip places more demand on the upper back.','Lower with control — the increased ROM makes this harder.'],bw:false}
   ],
   core:[
     {name:'Plank',sets:'3',reps:'45–60s',rest:'60s',desc:'Core anti-extension hold',muscle:'Core',howto:['Lie face down and prop yourself on your forearms and toes.','Form a straight line from head to heels — no sagging hips.','Brace your abs, glutes and quads simultaneously.','Breathe steadily — do not hold your breath.','Build duration progressively, aiming for quality over time.'],bw:true},
@@ -785,13 +815,15 @@ const DB = {
     {name:'Bicycle Crunch',sets:'3',reps:'20 total',rest:'60s',desc:'Alternating oblique crunch',muscle:'Obliques',howto:['Lie flat with hands lightly behind your head.','Lift shoulder blades off the floor.','Bring one knee in and rotate the opposite elbow toward it.','Extend the other leg simultaneously.','Move slowly for maximum oblique engagement.'],bw:true},
     {name:'Dragon Flag',sets:'3',reps:'6–10',rest:'90s',desc:'Advanced full-body core lever',muscle:'Abs',howto:['Lie on a bench and grip firmly behind your head.','Press your shoulders down and lift your entire body into a vertical line.','Lower the rigid body as one unit — do not pike at the hips.','Stop just short of the bench and hold briefly.','Scale by bending knees until full body control is developed.'],bw:true}
   ],
-  calves:[
-    {name:'Standing Calf Raise',sets:'4',reps:'15–20',rest:'60s',desc:'Gastrocnemius mass builder',muscle:'Calves',howto:['Stand on the edge of a step or platform, heels hanging off.','Rise up onto your toes as high as possible.','Pause at the top and squeeze the calf hard.','Lower your heels below the step for a deep stretch.','Use slow, deliberate reps — calves respond poorly to fast reps.']},
-    {name:'Seated Calf Raise',sets:'4',reps:'15–20',rest:'60s',desc:'Soleus focused seated raise',muscle:'Calves',howto:['Sit with the pad resting just above your knees.','Lower heels to a full stretch below the platform.','Rise onto your toes as high as the machine allows.','The seated position targets the soleus, below the gastrocnemius.','Full range of motion matters more than heavy weight here.']},
-    {name:'Leg Press Calf Raise',sets:'3',reps:'20',rest:'60s',desc:'Calf raise on leg press plate',muscle:'Calves',howto:['Use a leg press machine, feet at the bottom edge of the platform.','Keep legs nearly straight, only a slight knee bend.','Press the platform away by plantar-flexing your feet.','Full extension at the top, full stretch at the bottom.','The leg press allows heavy loading safely for calf growth.']},
-    {name:'Single-Leg Calf Raise',sets:'3',reps:'15 each',rest:'60s',desc:'Unilateral balance & strength',muscle:'Calves',howto:['Stand on one foot on the edge of a step.','Hold a dumbbell in the same-side hand for added resistance.','Rise to full height, hold the top contraction.','Lower to a deep stretch before the next rep.','Single-leg work fixes strength imbalances between calves.'],bw:true},
-    {name:'Donkey Calf Raise',sets:'3',reps:'15–20',rest:'60s',desc:'Hip-hinged stretch emphasis',muscle:'Calves',howto:['Hinge forward at the waist with your toes on a platform.','Have a partner or pad provide resistance across your lower back.','Rise onto your toes through a full range of motion.','The hip-hinged position maximises the gastrocnemius stretch.','Use full range rather than bouncing at the bottom.']},
-    {name:'Tibialis Raise',sets:'3',reps:'15–20',rest:'45s',desc:'Anterior shin antagonist work',muscle:'Tibialis',howto:['Sit on a bench with heels on the floor.','Pull your toes toward your shins as high as possible.','The tibialis anterior, down the front of your shin, will burn.','Lower slowly and repeat for 15–20 reps.','Trains the muscle that opposes the calf — great for shin splints prevention.']}
+  traps:[
+    {name:'Barbell Shrug',sets:'4',reps:'15–20',rest:'60s',desc:'Heavy shrug · upper trap mass builder',muscle:'Traps',howto:['Hold a barbell in front of your thighs with an overhand grip.','Keep arms straight and shrug your shoulders straight up.','Hold the contraction at the top for 1–2 seconds.','Lower with control to a full stretch.','Avoid rolling your shoulders — straight up and down only.']},
+    {name:'Dumbbell Shrug',sets:'3',reps:'15–20',rest:'60s',desc:'Unilateral shrug · full trap squeeze',muscle:'Traps',howto:['Hold a dumbbell in each hand at your sides.','Shrug both shoulders straight up toward your ears.','Pause at the top and squeeze the traps hard.','Lower slowly to a full stretch.','Dumbbells allow a greater range of motion than a barbell.']},
+    {name:'Rack Pull',sets:'4',reps:'5–6',rest:'120s',desc:'Partial deadlift · heavy trap overload',muscle:'Traps',howto:['Set safety pins in a rack at just below knee height.','Load the bar heavier than your full deadlift.','Grip the bar and brace your entire back.','Pull to full lockout, squeezing traps and glutes hard.','The shortened range allows heavier loading for trap development.']},
+    {name:'Face Pull',sets:'3',reps:'15–20',rest:'60s',desc:'Cable rear delt and trap pull',muscle:'Traps',howto:['Set a rope attachment at upper chest or face height.','Pull the rope toward your face, spreading ends apart.','Externally rotate your shoulders at the peak.','Squeeze the rear delts and mid-traps hard at contraction.','Return slowly with full control.']},
+    {name:'Upright Row',sets:'3',reps:'10–12',rest:'75s',desc:'Barbell trap and delt pull',muscle:'Traps',howto:['Hold a barbell with an overhand grip, hands shoulder-width.','Pull the bar straight up, leading with your elbows.','Raise until the bar is just below your chin.','Keep the bar close to your body throughout.','Lower with control, avoiding any jerking.']},
+    {name:'Farmer Carry',sets:'3',reps:'30m walk',rest:'75s',desc:'Heavy loaded carry · traps under sustained tension',muscle:'Traps',howto:['Pick up two heavy dumbbells or kettlebells.','Stand tall — chest up, shoulders back, core tight.','Walk at a steady pace for the prescribed distance.','Let the weight pull your shoulders slightly down to create trap tension.','Keep your neck neutral throughout the carry.']},
+    {name:'Cable Shrug',sets:'3',reps:'15–20',rest:'60s',desc:'Constant tension cable shrug',muscle:'Traps',howto:['Stand between two low cable pulleys holding a handle in each hand.','Shrug both shoulders straight up against the cable resistance.','Cables provide constant tension throughout the full range.','Hold the top contraction for 1–2 seconds.','Lower slowly to maximize time under tension.']},
+    {name:'Hex Bar Shrug',sets:'4',reps:'15–20',rest:'60s',desc:'Trap bar shrug · neutral grip',muscle:'Traps',howto:['Stand inside a hex bar with handles at your sides.','The neutral grip reduces wrist strain versus a barbell.','Shrug straight up to full contraction.','Pause at the top, then lower to a full stretch.','Load heavier than a barbell shrug for greater overload.']}
   ],
   forearms:[
     {name:'Wrist Curl',sets:'3',reps:'15–20',rest:'45s',desc:'Seated barbell wrist flexion',muscle:'Forearms',howto:['Sit on a bench and rest your forearms on your thighs, palms up.','Hold a barbell and let your wrists drop to a full extension.','Curl your wrists up through the full range of motion.','Keep the forearms stationary — only the wrists move.','Light weight and high reps work best for wrist flexors.']},
@@ -1492,7 +1524,7 @@ async function generate() {
       const bwPool = pool.filter(e => e.bw);
       // Only fall back if truly zero BW exercises — and mark fallbacks clearly
       pool = bwPool.length ? bwPool : pool.filter(e => e.bw).length === 0
-        ? pool.filter(e => ['Push-Up','Pull-Up','Dips','Plank','Squat','Lunge','Hip Thrust','Dead Bug','Bicycle Crunch','Hanging Leg Raise','Russian Twist','Ab Rollout','Dragon Flag','Walking Lunge','Bulgarian Split Squat','Single-Leg Calf Raise'].includes(e.name))
+        ? pool.filter(e => ['Push-Up','Pull-Up','Dips','Plank','Squat','Lunge','Dead Bug','Bicycle Crunch','Hanging Leg Raise','Russian Twist','Ab Rollout','Dragon Flag','Walking Lunge','Bulgarian Split Squat','Burpee'].includes(e.name))
         : bwPool;
       if (!pool.length) pool = bwPool.length ? bwPool : []; // empty is better than gym leak
     }
@@ -1987,45 +2019,77 @@ function downloadShareCard() {
 // ═══════════════════════════════════════════════════════════════════════
 // ── FEATURE: WORKOUT ELAPSED TIMER ────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
-let elapsedSecs = 0;
+// Wall-clock elapsed timer — survives screen lock, backgrounding, and page refresh
+// Uses localStorage to persist start time across sessions
 let elapsedInterval = null;
-let elapsedRunning = false;
+let elapsedRunning  = false;
+let elapsedPausedAt = 0; // accumulated seconds before last pause
+
+const ELAPSED_KEY = 'ia_elapsed_start';
+const ELAPSED_PAUSED_KEY = 'ia_elapsed_paused';
+
+function getElapsedSecs() {
+  var paused = parseFloat(localStorage.getItem(ELAPSED_PAUSED_KEY) || '0');
+  var start  = parseFloat(localStorage.getItem(ELAPSED_KEY) || '0');
+  if (!elapsedRunning || !start) return paused;
+  return paused + Math.floor((Date.now() - start) / 1000);
+}
+
+function updateElapsedDisplay() {
+  var secs = getElapsedSecs();
+  var m = String(Math.floor(secs / 60)).padStart(2, '0');
+  var s = String(secs % 60).padStart(2, '0');
+  var el = document.getElementById('elapsedTime');
+  if (el) el.textContent = m + ':' + s;
+}
 
 function toggleElapsedTimer() {
   if (elapsedRunning) {
+    // Pause — save accumulated seconds, clear start
+    var accumulated = getElapsedSecs();
+    localStorage.setItem(ELAPSED_PAUSED_KEY, accumulated);
+    localStorage.removeItem(ELAPSED_KEY);
     clearInterval(elapsedInterval);
+    elapsedInterval = null;
     elapsedRunning = false;
-    document.getElementById('elapsedToggleBtn').textContent = '▶ Resume';
-    document.getElementById('elapsedToggleBtn').classList.remove('running');
+    var btn = document.getElementById('elapsedToggleBtn');
+    if (btn) { btn.textContent = '▶ Resume'; btn.classList.remove('running'); }
   } else {
+    // Start / Resume — record wall-clock start time
+    localStorage.setItem(ELAPSED_KEY, Date.now());
     elapsedRunning = true;
-    document.getElementById('elapsedToggleBtn').textContent = '⏸ Pause';
-    document.getElementById('elapsedToggleBtn').classList.add('running');
-    elapsedInterval = setInterval(() => {
-      elapsedSecs++;
-      const m = String(Math.floor(elapsedSecs / 60)).padStart(2,'0');
-      const s = String(elapsedSecs % 60).padStart(2,'0');
-      const el = document.getElementById('elapsedTime');
-      if (el) el.textContent = m + ':' + s;
-    }, 1000);
+    var btn = document.getElementById('elapsedToggleBtn');
+    if (btn) { btn.textContent = '⏸ Pause'; btn.classList.add('running'); }
+    elapsedInterval = setInterval(updateElapsedDisplay, 500);
+    updateElapsedDisplay();
   }
 }
 
 function resetElapsedTimer() {
   clearInterval(elapsedInterval);
-  elapsedRunning = false;
-  elapsedSecs = 0;
-  const btn = document.getElementById('elapsedToggleBtn');
+  elapsedInterval = null;
+  elapsedRunning  = false;
+  localStorage.removeItem(ELAPSED_KEY);
+  localStorage.removeItem(ELAPSED_PAUSED_KEY);
+  var btn = document.getElementById('elapsedToggleBtn');
   if (btn) { btn.textContent = '▶ Start'; btn.classList.remove('running'); }
-  const el = document.getElementById('elapsedTime');
+  var el = document.getElementById('elapsedTime');
   if (el) el.textContent = '00:00';
 }
+
+// Restore display when app comes back into focus
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && elapsedRunning) {
+    updateElapsedDisplay();
+  }
+});
 
 // Auto-start timer when workout generates
 function startElapsedOnGenerate() {
   resetElapsedTimer();
-  setTimeout(() => toggleElapsedTimer(), 300);
+  setTimeout(function() { toggleElapsedTimer(); }, 300);
 }
+
 
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -2280,6 +2344,27 @@ const IMG_FALLBACKS = {
   'Reverse Hyperextension':'Hyperextensions',
   'Dragon Flag':           'Hanging_Leg_Raise',
   'Donkey Calf Raise':     'Standing_Calf_Raises',
+  // Image fixes - fallbacks for corrected mappings
+  'T-Bar Row':             'Bent_Over_Barbell_Row',
+  'Cable Straight-Arm Pulldown': 'Wide-Grip_Lat_Pulldown',
+  'Hack Squat':            'Barbell_Full_Squat',
+  'Abductor Machine':      'Adductor',
+  'Cable Kickback':        'Donkey_Kickbacks',
+  // Traps fallbacks
+  'Barbell Shrug':         'Dumbbell_Shrug',
+  'Dumbbell Shrug':        'Barbell_Shrug',
+  'Rack Pull':             'Deadlift',
+  'Trap Bar Deadlift':     'Deadlift',
+  // Full Body fallbacks
+  'Kettlebell Swing':      'Advanced_Kettlebell_Windmill',
+  'Power Clean':           'Deadlift',
+  'Burpee':                'Push-Up',
+  'Box Jump':              'Barbell_Full_Squat',
+  'Thruster':              'Barbell_Full_Squat',
+  'Man Maker':             'Alternating_Renegade_Row',
+  'Renegade Row':          'Alternating_Renegade_Row',
+  'Turkish Get-Up':        'Advanced_Kettlebell_Windmill',
+  'Clean and Press':       'Deadlift',
 };
 const BASE_IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
 
