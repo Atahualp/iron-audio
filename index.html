@@ -348,6 +348,33 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
 .preview-list{border-radius:14px;overflow:hidden;border:1px solid var(--border)}
 
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;transition:color .15s}.set-log-del:active{color:#f87171}
+
+/* ── SETTINGS PANEL ──────────────────────────────────────────────── */
+.settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
+.settings-overlay.open{opacity:1;pointer-events:all}
+.settings-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#111;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
+.settings-panel.open{transform:translateX(0)}
+.settings-hdr{position:sticky;top:0;background:#111;padding:20px 18px 14px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;z-index:2}
+.settings-title{font-family:'Chakra Petch',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px}
+.settings-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+.settings-section{padding:18px 18px 0}
+.settings-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block}
+.settings-input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;box-sizing:border-box;margin-bottom:8px}
+.settings-input:focus{outline:none;border-color:var(--accent)}
+.settings-save-btn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#000;font-size:14px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;letter-spacing:1px;transition:all .2s}
+.settings-save-btn:active{transform:scale(.97)}
+.settings-info{font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px}
+.settings-cost-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:14px}
+.settings-cost-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.settings-cost-label{font-size:12px;color:var(--muted)}
+.settings-cost-val{font-size:14px;font-weight:700;color:var(--text)}
+.settings-cost-val.warn{color:#f87171}
+.settings-cost-val.accent{color:var(--accent)}
+.settings-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.settings-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:10px 14px;border-radius:10px;margin-top:10px}
+.settings-status.active{background:rgba(245,132,38,.1);color:var(--accent)}
+.settings-status.inactive{background:var(--card);color:var(--muted)}
+
 </style>
 </head>
 <body>
@@ -369,6 +396,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
       <span class="logo-iron">IRON</span><span class="logo-audio">AUDIO</span>
     </div>
     <button class="hdr-hist-btn" onclick="openHistory()" title="Workout History">📋</button>
+    <button class="hdr-hist-btn" onclick="openSettings()" title="Settings">⚙️</button>
     <button class="sp-btn" id="spBtn" onclick="handleSpotifyConnect()">
       <svg class="sp-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
       <span id="spBtnTxt">Connect Spotify</span>
@@ -469,7 +497,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v3.0</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v4.0</div>
 
 </div>
 
@@ -837,265 +865,460 @@ async function doSpotifyAuth(){
 // ─── SPOTIFY PLAYLIST ─────────────────────────────────────────────────
 async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return!!spUserId;}
 
-async function searchTracks(g, count) {
-  if (g === 'Mix') return searchMixTracks(count);
 
-  const qMap={
+// ═══════════════════════════════════════════════════════════════════════
+// ── SETTINGS / API KEY ─────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+function openSettings() {
+  var key = localStorage.getItem('anthropic_key') || '';
+  var inp = document.getElementById('anthropicKeyInput');
+  if (inp) inp.value = key ? '••••••••••••••••' : '';
+  updateSettingsStatus();
+  updateCostDisplay();
+  document.getElementById('settingsOverlay').classList.add('open');
+  document.getElementById('settingsPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+  document.getElementById('settingsPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function saveAnthropicKey() {
+  var inp = document.getElementById('anthropicKeyInput');
+  var val = inp.value.trim();
+  if (val && !val.startsWith('•')) {
+    localStorage.setItem('anthropic_key', val);
+    inp.value = '••••••••••••••••';
+    alert('✅ API key saved!');
+  } else if (!val) {
+    localStorage.removeItem('anthropic_key');
+    alert('Key cleared.');
+  }
+  updateSettingsStatus();
+}
+function updateSettingsStatus() {
+  var el = document.getElementById('settingsStatus');
+  if (!el) return;
+  var hasKey = !!localStorage.getItem('anthropic_key');
+  el.className = 'settings-status ' + (hasKey ? 'active' : 'inactive');
+  el.textContent = hasKey ? '● Claude DJ: Active' : '○ Claude DJ: Not configured';
+}
+
+// Cost tracker — ~$0.001 per playlist (Haiku input+output estimate)
+var COST_PER_CALL = 0.001;
+var BUDGET_LIMIT  = 4.50;
+
+function getCostData() {
+  try { return JSON.parse(localStorage.getItem('ia_cost') || '{"calls":0,"cost":0}'); }
+  catch(e) { return {calls:0, cost:0}; }
+}
+function saveCostData(d) {
+  localStorage.setItem('ia_cost', JSON.stringify(d));
+}
+function recordCostCall() {
+  var d = getCostData();
+  d.calls++;
+  d.cost = Math.round((d.cost + COST_PER_CALL) * 10000) / 10000;
+  saveCostData(d);
+  updateCostDisplay();
+}
+function updateCostDisplay() {
+  var d = getCostData();
+  var remaining = Math.max(0, 5 - d.cost);
+  var el = document.getElementById('costPlaylists');
+  var el2 = document.getElementById('costTotal');
+  var el3 = document.getElementById('costRemaining');
+  if (el)  el.textContent  = d.calls;
+  if (el2) { el2.textContent = '$' + d.cost.toFixed(4); el2.className = 'settings-cost-val accent' + (d.cost >= BUDGET_LIMIT ? ' warn' : ''); }
+  if (el3) { el3.textContent = '$' + remaining.toFixed(2); el3.className = 'settings-cost-val' + (remaining < 0.5 ? ' warn' : ''); }
+}
+function resetCostTracker() {
+  if (!confirm('Reset usage counter?')) return;
+  saveCostData({calls:0, cost:0});
+  updateCostDisplay();
+}
+function isOverBudget() {
+  return getCostData().cost >= BUDGET_LIMIT;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── CLAUDE DJ PLAYLIST GENERATOR ───────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+async function claudeDJSearch(g, count) {
+  var apiKey = localStorage.getItem('anthropic_key');
+  if (!apiKey || isOverBudget()) return null;
+
+  // Genre-specific prompt additions
+  var genreNotes = {
+    'Hip-Hop': 'Include a healthy mix spanning different decades — legends from the 80s and 90s (Nas, Biggie, Jay-Z, Rakim, LL Cool J, DMX, Big Pun, Big L) alongside current artists (Drake, Kendrick Lamar, Travis Scott, Post Malone). Do NOT include any of the following as a primary artist: Cardi B, Nicki Minaj, Lizzo, Megan Thee Stallion, Sexyy Red, GloRilla, Ice Spice, Latto, Flo Milli, JT, Anycia. They may appear as featured artists only.',
+    'Rock':    'Include a mix of classic rock legends (Led Zeppelin, AC/DC, Black Sabbath, Pink Floyd, The Rolling Stones) and modern rock (Foo Fighters, Linkin Park, Muse, System of a Down). Prioritize high-energy anthems.',
+    'EDM':     'Mix iconic tracks from the golden era of EDM (Avicii, Deadmau5, Daft Punk) with current underground and mainstage artists. Prioritize big drops and relentless energy.',
+    '80s':     'Strictly 1980s artists and songs only. Mix pop, rock, new wave and synth-pop. Focus on tracks with driving, upbeat rhythms.',
+    'Pop':     'Mix chart-topping current pop with iconic pop hits from the 2000s and 2010s. High energy, anthemic tracks only.',
+    'Latin':   'Mix across sub-genres: include reggaeton, bachata, salsa, and Latin pop. Mix classic Latin artists with current ones.',
+    'R&B':     'Mix classic soul/R&B legends (Marvin Gaye, Stevie Wonder, Luther Vandross) with modern R&B (The Weeknd, Frank Ocean, SZA, Usher). Focus on tracks with strong groove and energy.',
+    'Reggae':  'Mix classic roots reggae (Bob Marley, Jimmy Cliff, Burning Spear) with modern dancehall and reggae fusion. Keep the energy upbeat and positive.',
+    'Reggaeton': 'Mix classic reggaeton (Daddy Yankee, Don Omar, Wisin & Yandel) with current artists (Bad Bunny, J Balvin, Rauw Alejandro). Maximum energy and rhythm.',
+    'Anime':   'Select iconic opening and ending themes from well-known anime series. Prioritize high-energy tracks from shows like Attack on Titan, Demon Slayer, Naruto, Dragon Ball, My Hero Academia.',
+    'Mix':     'Select one song from each of these genres: Hip-Hop, Rock, EDM, 80s, Pop, Latin, R&B, Reggaeton. Mix eras and styles for maximum variety.',
+    'Random':  'Select from across all genres and decades. Maximum variety — no two songs should feel like they belong to the same genre.'
+  };
+
+  var genreNote = genreNotes[g] || '';
+  var systemPrompt = "You are an expert Fitness DJ and Workout Programmer. Your specialty is selecting high-energy, chart-topping hits that keep athletes motivated and moving.\n\nCore Constraints:\n- Popularity Only: Select only well-known, A-List tracks and stadium-fillers. No obscure deep cuts.\n- Strict Diversity: Zero artist repetition. Each song must be by a completely different primary artist.\n- High-Tempo: Every track must have a fast, driving rhythm suitable for lifting or cardio.\n- No Slow Starts: Avoid songs with long quiet introductions.\n- Era Mix: Include artists spanning different decades of the genre, not just current artists.\n\nEnergy Profile: Focus on tracks with Aggressive, Triumphant, or Relentless emotional tones.\n\nRespond ONLY with a valid JSON array. No markdown, no explanation. Format:\n[{\"artist\":\"Artist Name\",\"title\":\"Song Title\"}]";
+
+  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '.' + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '') + '\n\nReturn ONLY the JSON array, no other text.';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!resp.ok) {
+      var err = await resp.json();
+      console.warn('Claude DJ error:', err.error?.message || resp.status);
+      return null;
+    }
+
+    var data = await resp.json();
+    var text = (data.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
+    // Extract JSON array if Claude added any surrounding text
+    var match = text.match(/\[[\s\S]*\]/);
+    if (!match) return null;
+    var songs = JSON.parse(match[0]);
+    if (!Array.isArray(songs) || !songs.length) return null;
+
+    recordCostCall();
+
+    // Spotify lookup for each song
+    var tracks = [];
+    var seenArtists = new Set();
+
+    for (var i = 0; i < songs.length; i++) {
+      var song = songs[i];
+      if (!song.artist || !song.title) continue;
+
+      var artistFirst = song.artist.split(' ')[0];
+      var found = null;
+
+      // Tier 1: plain text "Song Title Artist Name" — most reliable, no flaky operators
+      try {
+        var q1 = song.title + ' ' + song.artist;
+        var r1 = await fetch(
+          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q1) + '&type=track&limit=5&market=US',
+          { headers: { Authorization: 'Bearer ' + spToken } }
+        );
+        if (r1.ok) {
+          var d1 = await r1.json();
+          var items1 = d1.tracks?.items || [];
+          // Score each result: prefer exact artist + title match
+          found = scoreSpotifyResults(items1, song.artist, song.title);
+        }
+      } catch(e) {}
+
+      // Tier 2: track: operator with first name only (avoids fuzzy full-name mismatch)
+      if (!found) {
+        try {
+          var q2 = 'track:' + song.title + ' artist:' + artistFirst;
+          var r2 = await fetch(
+            'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q2) + '&type=track&limit=5&market=US',
+            { headers: { Authorization: 'Bearer ' + spToken } }
+          );
+          if (r2.ok) {
+            var d2 = await r2.json();
+            found = scoreSpotifyResults(d2.tracks?.items || [], song.artist, song.title);
+          }
+        } catch(e) {}
+      }
+
+      // Tier 3: just the song title — last resort, accept anything with matching artist first word
+      if (!found) {
+        try {
+          var r3 = await fetch(
+            'https://api.spotify.com/v1/search?q=' + encodeURIComponent(song.title) + '&type=track&limit=10&market=US',
+            { headers: { Authorization: 'Bearer ' + spToken } }
+          );
+          if (r3.ok) {
+            var d3 = await r3.json();
+            var items3 = d3.tracks?.items || [];
+            found = items3.find(function(t) {
+              return t.artists && t.artists.some(function(a) {
+                return a.name.toLowerCase().includes(artistFirst.toLowerCase());
+              });
+            }) || null;
+          }
+        } catch(e) {}
+      }
+
+      if (found && found.uri) {
+        var aKey = (found.artists?.[0]?.name || '').toLowerCase();
+        if (!seenArtists.has(aKey)) {
+          seenArtists.add(aKey);
+          tracks.push(found);
+        }
+      }
+    }
+
+    return tracks.length >= Math.floor(count * 0.6) ? tracks.slice(0, count) : null;
+
+  } catch(e) {
+    console.warn('Claude DJ failed:', e);
+    return null;
+  }
+}
+
+// Score Spotify search results — prefer exact artist + title match
+function scoreSpotifyResults(items, wantArtist, wantTitle) {
+  if (!items || !items.length) return null;
+  var wantArtistLower = wantArtist.toLowerCase();
+  var wantTitleLower  = wantTitle.toLowerCase();
+  var wantFirst       = wantArtist.split(' ')[0].toLowerCase();
+
+  var scored = items.map(function(t) {
+    if (!t || !t.uri) return { track: t, score: -1 };
+    var tArtist = (t.artists?.[0]?.name || '').toLowerCase();
+    var tTitle  = t.name.toLowerCase();
+    var score   = 0;
+    if (tArtist === wantArtistLower)                         score += 4;
+    else if (tArtist.includes(wantFirst))                    score += 2;
+    else if (wantArtistLower.includes(tArtist))              score += 1;
+    if (tTitle === wantTitleLower)                           score += 4;
+    else if (tTitle.includes(wantTitleLower))                score += 2;
+    else if (wantTitleLower.includes(tTitle))                score += 1;
+    return { track: t, score: score };
+  });
+
+  scored.sort(function(a, b) { return b.score - a.score; });
+  return scored[0].score >= 2 ? scored[0].track : null;
+}
+
+
+async function spotifyArtistSearch(g, count) {
+  const artistPools = {
     'Hip-Hop': [
-      'hip hop hits','top rap songs','best hip hop','rap classics',
-      'hip hop anthems','popular rap music','rap bangers','hip hop essentials'
+      'Drake','Kendrick Lamar','Jay-Z','Eminem','Kanye West','Lil Wayne',
+      'Post Malone','Travis Scott','J. Cole','21 Savage','Lil Baby','Future',
+      'A$AP Rocky','Tyler the Creator','Childish Gambino','Meek Mill',
+      'Big Sean','Wiz Khalifa','50 Cent','Snoop Dogg','Nas','2Pac',
+      'The Notorious B.I.G.','DMX','LL Cool J','Rakim','Big Pun','Busta Rhymes',
+      'Method Man','Redman','Ice Cube','Common','Talib Kweli','Mos Def'
     ],
     'Rock': [
-      'artist:"Foo Fighters"','artist:"AC/DC"','artist:"Guns N Roses"',
-      'artist:"Red Hot Chili Peppers"','artist:"Linkin Park"','artist:"Metallica"',
-      'artist:"The Killers"','artist:"Green Day"','artist:Nirvana',
-      'artist:"Pearl Jam"','artist:Soundgarden','artist:"Rage Against the Machine"',
-      'artist:"Black Sabbath"','artist:"Led Zeppelin"','artist:Queen',
-      'artist:Aerosmith','artist:U2','artist:"The Rolling Stones"',
-      'artist:"Tom Petty"','artist:Coldplay','artist:Radiohead',
-      'artist:"Arctic Monkeys"','artist:Muse','artist:"Nine Inch Nails"',
-      'artist:"Smashing Pumpkins"','artist:Audioslave','artist:"Stone Temple Pilots"',
-      'artist:"The Who"','artist:"Pink Floyd"','artist:"Deep Purple"',
-      'artist:"Def Leppard"','artist:"Van Halen"','artist:"Ozzy Osbourne"',
-      'artist:"Iron Maiden"','artist:"System of a Down"','artist:Tool',
-      'artist:"Alice in Chains"','artist:Pantera','artist:Slipknot',
-      'artist:Disturbed','artist:"Breaking Benjamin"','artist:Incubus',
-      'artist:Weezer','artist:"The Strokes"','artist:"Jimmy Eat World"',
-      'artist:"Third Eye Blind"','artist:"Matchbox Twenty"','artist:Kansas',
-      'artist:"Jimi Hendrix"','artist:"The Police"','artist:Wolfmother',
-      'artist:"The White Stripes"','artist:"Queens of the Stone Age"'
+      'Foo Fighters','AC/DC','Guns N Roses','Red Hot Chili Peppers','Linkin Park',
+      'Metallica','The Killers','Green Day','Nirvana','Pearl Jam','Soundgarden',
+      'Rage Against the Machine','Black Sabbath','Led Zeppelin','Queen','Aerosmith',
+      'U2','The Rolling Stones','Tom Petty','Coldplay','Radiohead','Arctic Monkeys',
+      'Muse','Nine Inch Nails','Smashing Pumpkins','Audioslave','The Who',
+      'Pink Floyd','Deep Purple','Def Leppard','Van Halen','Ozzy Osbourne',
+      'Iron Maiden','System of a Down','Tool','Alice in Chains','Pantera','Slipknot',
+      'Disturbed','Breaking Benjamin','Incubus','Weezer','The White Stripes',
+      'Queens of the Stone Age','Jimi Hendrix','The Police','Kansas'
     ],
     'EDM': [
-      'artist:"Martin Garrix"','artist:"Calvin Harris"','artist:Marshmello',
-      'artist:Avicii','artist:"David Guetta"','artist:Tiesto',
-      'artist:Zedd','artist:"The Chainsmokers"','artist:Skrillex',
-      'artist:Deadmau5','artist:Diplo','artist:Kygo',
-      'artist:"Alan Walker"','artist:Flume','artist:Illenium',
-      'artist:"Porter Robinson"','artist:Odesza','artist:"Above & Beyond"',
-      'artist:"Armin van Buuren"','artist:"Eric Prydz"','artist:"Daft Punk"',
-      'artist:"Swedish House Mafia"','artist:Alesso','artist:Hardwell',
-      'artist:"RL Grime"','artist:Meduza','artist:"John Summit"',
-      'artist:"Bingo Players"','artist:Matroda','artist:Fisher',
-      'artist:"Chris Lake"','artist:"Dom Dolla"','artist:"Fred Again"',
-      'artist:Disclosure','artist:"Duke Dumont"','artist:MK',
-      'artist:"Armand Van Helden"','artist:"Peggy Gou"','artist:"Jamie xx"',
-      'artist:"Four Tet"','artist:"Frankie Knuckles"','artist:Solomun',
-      'artist:"Black Coffee"','artist:"Honey Dijon"','artist:"Maceo Plex"',
-      'artist:"Seth Troxler"','artist:"Nicolas Jaar"'
+      'Martin Garrix','Calvin Harris','Marshmello','Avicii','David Guetta','Tiesto',
+      'Zedd','The Chainsmokers','Skrillex','Deadmau5','Diplo','Kygo','Alan Walker',
+      'Flume','Illenium','Porter Robinson','Odesza','Above & Beyond','Armin van Buuren',
+      'Daft Punk','Swedish House Mafia','Alesso','Hardwell','Fisher','Chris Lake',
+      'Dom Dolla','Fred Again','Disclosure','Duke Dumont','Solomun','Black Coffee'
     ],
     '80s': [
-      'artist:"Michael Jackson"','artist:Prince','artist:Madonna',
-      'artist:"Whitney Houston"','artist:"Bon Jovi"','artist:"Cyndi Lauper"',
-      'artist:"Tina Turner"','artist:"Bruce Springsteen"','artist:"George Michael"',
-      'artist:"Duran Duran"','artist:"The Police"','artist:"David Bowie"',
-      'artist:"Billy Joel"','artist:"Elton John"','artist:"Hall & Oates"',
-      'artist:"Lionel Richie"','artist:"Fleetwood Mac"','artist:INXS',
-      'artist:"Depeche Mode"','artist:"New Order"','artist:"Tears for Fears"',
-      'artist:"A-ha"','artist:"Pat Benatar"','artist:"Rick Springfield"',
-      'artist:Journey','artist:Foreigner','artist:"REO Speedwagon"',
-      'artist:"Steve Winwood"','artist:"Dire Straits"','artist:"The Cars"',
-      'artist:"Talking Heads"','artist:"Simple Minds"','artist:"Culture Club"',
-      'artist:"Wham!"','artist:"Pet Shop Boys"','artist:"Human League"',
-      'artist:Eurythmics','artist:Blondie','artist:"Huey Lewis and the News"',
-      'artist:"John Mellencamp"','artist:"Don Henley"','artist:"Bryan Adams"',
-      'artist:Sting','artist:"Paul Simon"','artist:"Kenny Loggins"',
-      'artist:Survivor','artist:Heart','artist:Starship'
+      'Michael Jackson','Prince','Madonna','Whitney Houston','Bon Jovi','Cyndi Lauper',
+      'Tina Turner','Bruce Springsteen','George Michael','Duran Duran','The Police',
+      'David Bowie','Billy Joel','Elton John','Hall & Oates','Lionel Richie',
+      'Fleetwood Mac','INXS','Depeche Mode','New Order','Tears for Fears','A-ha',
+      'Pat Benatar','Journey','Foreigner','REO Speedwagon','Dire Straits','The Cars',
+      'Talking Heads','Eurythmics','Blondie','Bryan Adams','Sting','Survivor','Heart'
     ],
     'Pop': [
-      'artist:"The Weeknd"','artist:"Bruno Mars"','artist:Adele',
-      'artist:"Maroon 5"','artist:"Ed Sheeran"','artist:"Taylor Swift"',
-      'artist:"Dua Lipa"','artist:"Harry Styles"','artist:"Ariana Grande"',
-      'artist:"Billie Eilish"','artist:"Justin Bieber"','artist:"Katy Perry"',
-      'artist:"Lady Gaga"','artist:Rihanna','artist:Beyonce',
-      'artist:"Michael Jackson"','artist:"Justin Timberlake"','artist:"Sam Smith"',
-      'artist:"Olivia Rodrigo"','artist:Lizzo','artist:"Miley Cyrus"',
-      'artist:"Charlie Puth"','artist:"Shawn Mendes"','artist:"Selena Gomez"',
-      'artist:Halsey','artist:Pink','artist:Coldplay',
-      'artist:"Camila Cabello"','artist:"Jennifer Lopez"','artist:"Nelly Furtado"',
-      'artist:"Kelly Clarkson"','artist:"Christina Aguilera"','artist:"Britney Spears"',
-      'artist:"Backstreet Boys"','artist:"Gwen Stefani"','artist:"Natasha Bedingfield"',
-      'artist:"Jason Mraz"','artist:"John Mayer"','artist:"Doja Cat"',
-      'artist:SZA'
+      'The Weeknd','Bruno Mars','Adele','Maroon 5','Ed Sheeran','Taylor Swift',
+      'Dua Lipa','Harry Styles','Ariana Grande','Billie Eilish','Justin Bieber',
+      'Katy Perry','Lady Gaga','Rihanna','Beyonce','Michael Jackson',
+      'Justin Timberlake','Sam Smith','Olivia Rodrigo','Miley Cyrus',
+      'Charlie Puth','Shawn Mendes','Selena Gomez','Pink','Coldplay',
+      'Camila Cabello','Kelly Clarkson','Christina Aguilera','Doja Cat','SZA'
     ],
     'Latin': [
-      'genre:bachata','genre:salsa','genre:merengue'
+      'Romeo Santos','Prince Royce','Marc Anthony','Juan Luis Guerra','Elvis Crespo',
+      'Bad Bunny','Shakira','J Balvin','Ozuna','Daddy Yankee','Maluma','Nicky Jam',
+      'Karol G','Rauw Alejandro','Becky G','Aventura','Gilberto Santa Rosa',
+      'Victor Manuelle','Frankie Ruiz','Hector Lavoe','Willie Colon','Leslie Grace'
     ],
     'R&B': [
-      'artist:"Frank Ocean"','artist:SZA','artist:"H.E.R."',
-      'artist:Usher','artist:Beyonce','artist:"John Legend"',
-      'artist:"Alicia Keys"','artist:Miguel','artist:"Chris Brown"',
-      'artist:"Ne-Yo"','artist:"Mary J. Blige"','artist:"Janet Jackson"',
-      'artist:"Marvin Gaye"','artist:"Stevie Wonder"','artist:"Luther Vandross"',
-      'artist:"Anita Baker"','artist:"Toni Braxton"',
-      'artist:"Erykah Badu"','artist:Maxwell','artist:"Jazmine Sullivan"',
-      'artist:"Ella Mai"','artist:Giveon','artist:"Brent Faiyaz"',
-      'artist:"Summer Walker"','artist:"Ari Lennox"','artist:"Boyz II Men"',
-      'artist:TLC','artist:Brandy',
-      'artist:Monica','artist:Aaliyah','artist:Sade',
-      'artist:"Lauryn Hill"','artist:"Jill Scott"','artist:"Musiq Soulchild"',
-      'artist:Joe','artist:Ginuwine','artist:Tank',
-      'artist:Jeremih','artist:"Bryson Tiller"','artist:Jacquees',
-      'artist:Khalid','artist:"Daniel Caesar"','artist:"Lucky Daye"',
-      'artist:"Snoh Aalegra"','artist:Ledisi','artist:"India Arie"'
+      'Frank Ocean','SZA','H.E.R.','Usher','Beyonce','John Legend','Alicia Keys',
+      'Miguel','Chris Brown','Ne-Yo','Mary J. Blige','Janet Jackson','Marvin Gaye',
+      'Stevie Wonder','Luther Vandross','Anita Baker','Toni Braxton',
+      'Erykah Badu','Maxwell','Jazmine Sullivan','Ella Mai','Giveon',
+      'Brent Faiyaz','Summer Walker','Ari Lennox','Boyz II Men','TLC',
+      'Brandy','Monica','Aaliyah','Sade','Lauryn Hill','Musiq Soulchild',
+      'Ginuwine','Tank','Bryson Tiller','Khalid','Daniel Caesar','Lucky Daye'
     ],
     'Reggae': [
-      'artist:"Bob Marley"','artist:"Jimmy Cliff"','artist:"Toots and the Maytals"',
-      'artist:"Burning Spear"','artist:"Steel Pulse"','artist:"Ziggy Marley"',
-      'artist:"Damian Marley"','artist:"Stephen Marley"','artist:Sizzla',
-      'artist:"Buju Banton"','artist:Capleton','artist:"Beenie Man"',
-      'artist:"Sean Paul"','artist:Shaggy','artist:UB40',
-      'artist:"Inner Circle"','artist:"Third World"','artist:Culture',
-      'artist:"Black Uhuru"','artist:Luciano','artist:"Barrington Levy"',
-      'artist:"Dennis Brown"','artist:"Gregory Isaacs"','artist:"Freddie McGregor"',
-      'artist:"Sugar Minott"','artist:Yellowman','artist:Chronixx',
-      'artist:"Junior Gong"'
+      'Bob Marley','Jimmy Cliff','Toots and the Maytals','Burning Spear',
+      'Steel Pulse','Ziggy Marley','Damian Marley','Stephen Marley','Sizzla',
+      'Buju Banton','Beenie Man','Sean Paul','Shaggy','UB40',
+      'Inner Circle','Black Uhuru','Barrington Levy','Dennis Brown',
+      'Gregory Isaacs','Chronixx'
     ],
     'Reggaeton': [
-      'artist:"Bad Bunny"','artist:"J Balvin"','artist:"Daddy Yankee"',
-      'artist:Ozuna','artist:"Nicky Jam"','artist:Maluma',
-      'artist:"Rauw Alejandro"','artist:"Karol G"','artist:"Don Omar"',
-      'artist:"Wisin & Yandel"','artist:Pitbull','artist:Farruko',
-      'artist:Arcangel','artist:"De La Ghetto"','artist:"Anuel AA"',
-      'artist:"Myke Towers"','artist:"Jhay Cortez"','artist:Sech',
-      'artist:Lunay','artist:"Justin Quiles"','artist:"Zion & Lennox"',
-      'artist:"Plan B"','artist:"Tego Calderon"','artist:Cosculluela',
-      'artist:"Alex Rose"','artist:"Eladio Carrion"','artist:Mora',
-      'artist:Amenazzy'
+      'Bad Bunny','J Balvin','Daddy Yankee','Ozuna','Nicky Jam','Maluma',
+      'Rauw Alejandro','Karol G','Don Omar','Wisin & Yandel','Pitbull',
+      'Farruko','Arcangel','Anuel AA','Myke Towers','Jhay Cortez',
+      'Sech','Lunay','Zion & Lennox','Tego Calderon','Eladio Carrion','Mora'
     ],
     'Anime': [
-      'artist:LiSA','artist:"Linked Horizon"','artist:"Hiroyuki Sawano"',
-      'artist:"Myth & Roid"','artist:FLOW','artist:"JAM Project"',
-      'artist:"Eir Aoi"','artist:"TK from Ling Tosite Sigure"','artist:YUI',
-      'artist:Younha','artist:SiM','artist:"Man With a Mission"',
-      'artist:Aimer','artist:"Kenshi Yonezu"','artist:"One Ok Rock"',
-      'artist:Ado','artist:Yoasobi','artist:Eve',
-      'artist:Minami','artist:Animenz'
+      'LiSA','Linked Horizon','Hiroyuki Sawano','Myth & Roid','FLOW',
+      'JAM Project','Eir Aoi','YUI','SiM','Man With a Mission',
+      'Aimer','Kenshi Yonezu','One Ok Rock','Ado','Yoasobi','Eve','Minami'
     ],
     'Random': [
-      'artist:"Michael Jackson"','artist:"The Weeknd"','artist:Drake',
-      'artist:Beyonce','artist:"Ed Sheeran"','artist:"Bruno Mars"',
-      'artist:Rihanna','artist:Eminem','artist:"Ariana Grande"',
-      'artist:"Taylor Swift"','artist:"Justin Timberlake"','artist:Adele',
-      'artist:"Maroon 5"','artist:"Dua Lipa"','artist:"Billie Eilish"',
-      'artist:"Post Malone"','artist:"Lady Gaga"','artist:"Katy Perry"',
-      'artist:Coldplay','artist:U2','artist:"AC/DC"',
-      'artist:"Foo Fighters"','artist:"Jay-Z"','artist:"Kendrick Lamar"',
-      'artist:"Bad Bunny"','artist:"Calvin Harris"','artist:"Daddy Yankee"',
-      'artist:"Olivia Rodrigo"','artist:"Harry Styles"','artist:"Doja Cat"',
-      'artist:"Tyler the Creator"','artist:"Frank Ocean"','artist:"Travis Scott"',
-      'artist:"The Killers"','artist:"Arctic Monkeys"','artist:"Tame Impala"',
-      'artist:SZA','artist:Lizzo','artist:Shakira',
-      'artist:"Janet Jackson"','artist:"Stevie Wonder"','artist:"Marvin Gaye"',
-      'artist:Prince','artist:"Fleetwood Mac"','artist:"Led Zeppelin"',
-      'artist:"The Rolling Stones"','artist:Queen','artist:Nirvana',
-      'artist:"David Bowie"'
+      'Michael Jackson','The Weeknd','Drake','Beyonce','Ed Sheeran','Bruno Mars',
+      'Rihanna','Eminem','Ariana Grande','Taylor Swift','Justin Timberlake',
+      'Adele','Dua Lipa','Billie Eilish','Post Malone','Lady Gaga','Katy Perry',
+      'Coldplay','AC/DC','Jay-Z','Kendrick Lamar','Bad Bunny','Calvin Harris',
+      'Daddy Yankee','Olivia Rodrigo','Doja Cat','Frank Ocean','Travis Scott',
+      'The Killers','Arctic Monkeys','SZA','Led Zeppelin','Queen','Nirvana'
     ]
   };
 
-  const pool = qMap[g] || qMap['Random'];
+  var pool     = artistPools[g] || artistPools['Random'];
+  var shuffled = [...pool].sort(() => Math.random() - .5);
+  var toQuery  = shuffled.slice(0, count + 6);
+  var tracks   = [];
+  var seenArtists = new Set();
 
-  // Latin uses all 3 genre filters every session
-  if (g === 'Latin') {
-    let allTracks = [];
-    for (const q of pool) {
-      try {
-        const r = await fetch(
-          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=10&offset=0',
-          {headers:{Authorization:'Bearer '+spToken}}
-        );
-        if (!r.ok) continue;
-        const d = await r.json();
-        const items = (d.tracks?.items||[]).filter(t => t.uri);
-        allTracks = allTracks.concat(items);
-      } catch(e) {}
-    }
-    allTracks.sort((a,b) => (b.popularity||0)-(a.popularity||0));
-    return allTracks.slice(0, count);
-  }
+  for (var i = 0; i < toQuery.length; i++) {
+    if (tracks.length >= count) break;
+    var artistName = toQuery[i];
 
-  // For Hip-Hop and Anime (keyword queries): fetch then dedupe by artist
-  const isKeywordGenre = (g === 'Hip-Hop' || g === 'Anime');
-
-  if (isKeywordGenre) {
-    const shuffled = [...pool].sort(() => Math.random() - .5);
-    const queries  = shuffled.slice(0, 3);
-    let allTracks  = [];
-    for (const q of queries) {
-      const offset = Math.floor(Math.random() * 4) * 10;
-      try {
-        const r = await fetch(
-          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=10&offset=' + offset,
-          {headers:{Authorization:'Bearer '+spToken}}
-        );
-        if (!r.ok) continue;
-        const d = await r.json();
-        allTracks = allTracks.concat(d.tracks?.items||[]);
-      } catch(e) {}
-    }
-    // Dedupe by artist — max 1 track per artist, pick their most popular
-    const byArtist = {};
-    allTracks.forEach(t => {
-      const artist = (t.artists?.[0]?.name||'').toLowerCase();
-      if (!byArtist[artist] || (t.popularity||0) > (byArtist[artist].popularity||0)) {
-        byArtist[artist] = t;
-      }
-    });
-    const deduped = Object.values(byArtist).sort((a,b) => (b.popularity||0)-(a.popularity||0));
-    return deduped.slice(0, count);
-  }
-
-  // Artist-anchored genres: sequential requests, 1 best track per artist
-  // Sample count+6 artists, stop early once we have enough tracks
-  const shuffled = [...pool].sort(() => Math.random() - .5);
-  const queries  = shuffled.slice(0, count + 6);
-
-  const tracks = [];
-  for (const q of queries) {
-    // Stop once we have more than enough
-    if (tracks.length >= count + 2) break;
-    const offset = Math.floor(Math.random() * 3) * 10;
     try {
-      const r = await fetch(
-        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q) + '&type=track&limit=5&offset=' + offset,
-        {headers:{Authorization:'Bearer '+spToken}}
+      // Step 1: Search for artist to get their ID
+      var ar = await fetch(
+        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(artistName) + '&type=artist&limit=3&market=US',
+        { headers: { Authorization: 'Bearer ' + spToken } }
       );
-      if (!r.ok) {
-        const e = await r.json();
-        if (r.status === 429) {
-          // Rate limited — wait and retry once
-          await new Promise(res => setTimeout(res, 1000));
-          continue;
-        }
-        throw new Error('Search ' + r.status + ': ' + (e.error?.message || r.status));
-      }
-      const d = await r.json();
-      const items = (d.tracks?.items||[]).filter(t => t.uri && (t.popularity||0) > 20);
-      if (!items.length) continue;
-      // Take the single most popular track for this artist
-      const best = items.sort((a,b) => (b.popularity||0)-(a.popularity||0))[0];
+      if (!ar.ok) continue;
+      var ad = await ar.json();
+      var artists = ad.artists?.items || [];
+      // Find closest matching artist name
+      var artist = artists.find(function(a) {
+        return a.name.toLowerCase() === artistName.toLowerCase();
+      }) || artists.find(function(a) {
+        return a.name.toLowerCase().includes(artistName.toLowerCase().split(' ')[0]);
+      }) || artists[0];
+      if (!artist) continue;
+
+      // Step 2: Get their most popular album, then pull tracks
+      var albR = await fetch(
+        'https://api.spotify.com/v1/artists/' + artist.id + '/albums?include_groups=album,single&market=US&limit=10',
+        { headers: { Authorization: 'Bearer ' + spToken } }
+      );
+      if (!albR.ok) continue;
+      var albD = await albR.json();
+      var albums = albD.items || [];
+      if (!albums.length) continue;
+
+      // Sort albums by most recent — usually has best streamed tracks
+      albums.sort(function(a,b) {
+        return new Date(b.release_date) - new Date(a.release_date);
+      });
+      var album = albums[0];
+
+      // Step 3: Get tracks from that album
+      var trR = await fetch(
+        'https://api.spotify.com/v1/albums/' + album.id + '/tracks?limit=5&market=US',
+        { headers: { Authorization: 'Bearer ' + spToken } }
+      );
+      if (!trR.ok) continue;
+      var trD = await trR.json();
+      var albumTracks = trD.items || [];
+      if (!albumTracks.length) continue;
+
+      // Take the first track (albums order by track number; lead singles are usually first)
+      var best = albumTracks[0];
+      if (!best || !best.uri) continue;
+
+      var aKey = artist.name.toLowerCase();
+      if (seenArtists.has(aKey)) continue;
+      seenArtists.add(aKey);
+
+      // Album tracks don't have popularity — add artist popularity as proxy
+      best.popularity = artist.popularity || 50;
       tracks.push(best);
-    } catch(e) {
-      if (tracks.length === 0 && q === queries[queries.length-1]) throw e;
-    }
+
+    } catch(e) { /* skip this artist */ }
   }
 
-  // Final dedup by artist name (safety net)
-  const seen    = new Set();
-  const unique  = tracks.filter(t => {
-    const artist = (t.artists?.[0]?.name||'').toLowerCase();
-    if (seen.has(artist)) return false;
-    seen.add(artist);
-    return true;
-  });
+  if (!tracks.length) throw new Error('No tracks found. Please try a different genre.');
 
-  // Sort by popularity, light shuffle on top half for variety
-  unique.sort((a,b) => (b.popularity||0)-(a.popularity||0));
-  const cutoff   = Math.ceil(unique.length * 0.6);
-  const top      = unique.slice(0, cutoff).sort(() => Math.random() - .3);
-  const rest     = unique.slice(cutoff).sort(() => Math.random() - .5);
+  tracks.sort(function(a,b) { return (b.popularity||0) - (a.popularity||0); });
+  var cut  = Math.ceil(tracks.length * 0.6);
+  var top  = tracks.slice(0, cut).sort(function(){ return Math.random() - .3; });
+  var rest = tracks.slice(cut).sort(function(){ return Math.random() - .5; });
   return [...top, ...rest].slice(0, count);
 }
 
+async function searchMixTracks(count) {
+  const activeGenres = ['Hip-Hop','Rock','EDM','80s','Pop','Latin','R&B','Reggae','Reggaeton','Anime'];
+  const genreQueries = {
+    'Hip-Hop':   'Drake',
+    'Rock':      'Foo Fighters',
+    'EDM':       'Calvin Harris',
+    '80s':       'Michael Jackson',
+    'Pop':       'The Weeknd',
+    'Latin':     'Bad Bunny',
+    'R&B':       'Beyonce',
+    'Reggae':    'Bob Marley',
+    'Reggaeton': 'Bad Bunny',
+    'Anime':     'LiSA',
+  };
+
+  const shuffled = [...activeGenres].sort(() => Math.random() - .5);
+  const picked = shuffled.slice(0, Math.min(count, activeGenres.length));
+
+  let allTracks = [];
+  for (const g of picked) {
+    const artistName = genreQueries[g];
+    try {
+      const r = await fetch(
+        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(artistName + ' ' + g) + '&type=track&limit=3&market=US',
+        {headers:{Authorization:'Bearer '+spToken}}
+      );
+      if (!r.ok) continue;
+      const d = await r.json();
+      const items = (d.tracks?.items||[]).filter(t => t.uri);
+      if (items.length) allTracks.push(items[0]);
+    } catch(e) {}
+  }
+
+  allTracks.sort((a,b) => (b.popularity||0)-(a.popularity||0));
+  return allTracks.slice(0, count);
+}
+
+async function searchTracks(g, count) {
+  if (g === 'Mix') return searchMixTracks(count);
+
+  // Try Claude DJ first if key is set and budget available
+  if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
+    const djTracks = await claudeDJSearch(g, count);
+    if (djTracks && djTracks.length) return djTracks.slice(0, count);
+    console.log('Claude DJ unavailable — falling back to Spotify search');
+  }
+
+  return spotifyArtistSearch(g, count);
+}
 
 async function createPlaylist(name, uris){
   const ok=await ensureUserId();
@@ -1214,10 +1437,23 @@ async function generate() {
   ov.classList.add('vis');
   document.getElementById('ovTxt').textContent = 'BUILDING WORKOUT';
 
-  const perMuscle = dur === 30 ? 2 : 3;
+  const perMuscle = dur === 30 ? 2 : dur === 45 ? 2 : 3;
 
-  // Fixed intermediate difficulty — no scaling needed
-  function applyDifficulty(ex) { return ex; }
+  // Difficulty multipliers
+  const diffMap = {
+    beginner:     {setsM:.75, restM:1.3, repsNote:'(lighter weight)'},
+    intermediate: {setsM:1,   restM:1,   repsNote:''},
+    advanced:     {setsM:1.25,restM:.75, repsNote:'(heavier weight)'}
+  };
+  const dm = diffMap[difficulty] || diffMap.intermediate;
+
+  function applyDifficulty(ex) {
+    const s = Math.max(2, Math.round(parseFloat(ex.sets) * dm.setsM));
+    const restSecs = parseRestSecs(ex.rest);
+    const newRest = Math.round(restSecs * dm.restM);
+    const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';
+    return { ...ex, sets: String(s), rest: restStr };
+  }
 
   let exercises = [];
   for (const m of muscles) {
@@ -1237,7 +1473,15 @@ async function generate() {
   }
   exercises = exercises.sort(()=>Math.random()-.5);
 
-
+  // Apply superset pairing
+  if (workoutMode === 'superset') {
+    exercises = exercises.map((ex, i) => ({
+      ...ex,
+      ssGroup: i,
+      ssConnector: i % 2 === 0 && i < exercises.length - 1,
+      rest: i % 2 === 0 ? '15s' : ex.rest  // minimal rest inside superset pair
+    }));
+  }
 
   document.getElementById('timeBadge').textContent = `${dur} MIN`;
   document.getElementById('muscleBadge').textContent = muscles.map(m=>m.toUpperCase()).join(' · ');
@@ -1266,109 +1510,60 @@ async function generate() {
     await new Promise(r => setTimeout(r, 150)); // 150ms between requests
   }
 
-  // Auto-build playlist after workout generates
+  // Build playlist
   buildPlaylist();
 }
 
 // ─── PLAYLIST ─────────────────────────────────────────────────────────
-window._previewTracks = null;
-window._previewPlName = '';
-window._previewEmoji  = '';
-
-function openSpotifyPlaylist() {
-  if (window._lastPlaylistUrl) window.open(window._lastPlaylistUrl, '_blank');
-}
-
 async function buildPlaylist() {
   const container = document.getElementById('plContainer');
-  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Reggae':'🌿','Reggaeton':'🌴','Anime':'🎌','Mix':'🎲','Random':'🎲'};
+  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
   const emoji = emojiMap[genre] || '🎵';
-  const trackCount = dur === 30 ? 8 : 15;
-  const plName = 'IRON AUDIO · ' + genre + ' · ' + dur + 'min';
+  const trackCount = dur === 30 ? 8 : dur === 45 ? 12 : 15;
+  const plName = `IRON AUDIO · ${genre} · ${dur}min`;
   window._activeGenre = genre;
   window._playlistCount = trackCount;
-  window._previewEmoji  = emoji;
-  window._previewPlName = plName;
 
+  // ── SPOTIFY PATH ───────────────────────────────────────────────────
   if (!spToken) { renderOffline(container, emoji, plName, trackCount); return; }
 
-  container.innerHTML = '<div class="msg msg-info">🔍 Finding tracks for your ' + genre + ' playlist...</div>';
+  container.innerHTML = `<div class="msg msg-info">⏳ Creating your ${genre} playlist on Spotify...</div>`;
+
   try {
     const tracks = await searchTracks(genre, trackCount);
     if (!tracks.length) throw new Error('No tracks found. Try a different genre.');
-    window._previewTracks = tracks;
-    renderPreview(container, tracks, emoji, plName);
+    const pl = await createPlaylist(plName, tracks.map(t=>t.uri));
+    const totalMin = Math.round(tracks.reduce((s,t)=>s+t.duration_ms,0) / 60000);
+
+    container.innerHTML = `
+      <div class="msg msg-ok">✅ Playlist created in your Spotify library!</div>
+      <div class="pl-card">
+        <div class="pl-hdr">
+          <div class="pl-art">${emoji}</div>
+          <div class="pl-info">
+            <div class="pl-name">${plName}</div>
+            <div class="pl-meta">${tracks.length} tracks · ~${totalMin} min</div>
+          </div>
+          <button class="pl-open" onclick="window.open('${pl.external_urls?.spotify||'https://open.spotify.com'}','_blank')">OPEN ↗</button>
+        </div>
+        <div class="track-list">
+          ${tracks.map((t,i) => `
+            <div class="track">
+              <div class="track-n">${i+1}</div>
+              <div class="track-info">
+                <div class="track-name">${t.name}</div>
+                <div class="track-artist">${t.artists?.map(a=>a.name).join(', ')}</div>
+              </div>
+              <div class="track-dur">${Math.floor(t.duration_ms/60000)}:${String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0')}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
   } catch(err) {
     console.error('Playlist error:', err);
-    container.innerHTML = '<div class="msg msg-err">❌ ' + err.message + '<br><small style="opacity:.7;display:block;margin-top:4px">Try disconnecting and reconnecting Spotify.</small></div>';
+    container.innerHTML = `<div class="msg msg-err">❌ ${err.message}<br><small style="opacity:.7;display:block;margin-top:4px">Try disconnecting and reconnecting Spotify.</small></div>`;
     renderOffline(container, emoji, plName, trackCount, true);
   }
 }
-
-function renderPreview(container, tracks, emoji, plName) {
-  const totalMin = Math.round(tracks.reduce(function(s,t){ return s+t.duration_ms; },0)/60000);
-  var html = '<div class="pl-preview-bar">' +
-    '<div class="pl-preview-label">👀 PREVIEW — ' + tracks.length + ' tracks · ~' + totalMin + ' min</div>' +
-    '<div class="pl-preview-actions">' +
-      '<button class="pl-preview-btn regen" onclick="regenPlaylist()">🔀 Regenerate</button>' +
-      '<button class="pl-preview-btn create" onclick="confirmCreatePlaylist()">✅ Save to Spotify</button>' +
-      '<button class="pl-preview-btn cancel" onclick="cancelPreview()">✕</button>' +
-    '</div></div><div class="track-list preview-list">';
-  tracks.forEach(function(t, i) {
-    var mins = Math.floor(t.duration_ms/60000);
-    var secs = String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0');
-    html += '<div class="track"><div class="track-n">' + (i+1) + '</div>' +
-      '<div class="track-info"><div class="track-name">' + t.name + '</div>' +
-      '<div class="track-artist">' + (t.artists ? t.artists.map(function(a){return a.name;}).join(', ') : '') + '</div></div>' +
-      '<div class="track-dur">' + mins + ':' + secs + '</div></div>';
-  });
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-async function regenPlaylist() {
-  window._previewTracks = null;
-  buildPlaylist();
-}
-
-function cancelPreview() {
-  var container = document.getElementById('plContainer');
-  container.innerHTML = '';
-}
-
-async function confirmCreatePlaylist() {
-  var tracks = window._previewTracks;
-  var plName = window._previewPlName;
-  var emoji  = window._previewEmoji;
-  if (!tracks || !tracks.length) { buildPlaylist(); return; }
-
-  var container = document.getElementById('plContainer');
-  container.innerHTML = '<div class="msg msg-info">⏳ Creating playlist in your Spotify library...</div>';
-  try {
-    const pl = await createPlaylist(plName, tracks.map(function(t){ return t.uri; }));
-    const totalMin = Math.round(tracks.reduce(function(s,t){ return s+t.duration_ms; },0)/60000);
-    window._lastPlaylistUrl = (pl.external_urls && pl.external_urls.spotify) ? pl.external_urls.spotify : 'https://open.spotify.com';
-    var rows = '';
-    tracks.forEach(function(t,i) {
-      var mins = Math.floor(t.duration_ms/60000);
-      var secs = String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0');
-      rows += '<div class="track"><div class="track-n">'+(i+1)+'</div>' +
-        '<div class="track-info"><div class="track-name">'+t.name+'</div>' +
-        '<div class="track-artist">'+(t.artists?t.artists.map(function(a){return a.name;}).join(', '):'')+'</div></div>' +
-        '<div class="track-dur">'+mins+':'+secs+'</div></div>';
-    });
-    container.innerHTML = '<div class="msg msg-ok">✅ Playlist created in your Spotify library!</div>' +
-      '<div class="pl-card"><div class="pl-hdr">' +
-        '<div class="pl-art">' + emoji + '</div>' +
-        '<div class="pl-info"><div class="pl-name">' + plName + '</div>' +
-        '<div class="pl-meta">' + tracks.length + ' tracks · ~' + totalMin + ' min</div></div>' +
-        '<button class="pl-open" onclick="openSpotifyPlaylist()">OPEN ↗</button>' +
-      '</div><div class="track-list">' + rows + '</div></div>';
-  } catch(err) {
-    container.innerHTML = '<div class="msg msg-err">❌ ' + err.message + '</div>';
-  }
-}
-
 
 function renderOffline(container, emoji, name, count, append=false) {
   const pools = {
@@ -1489,85 +1684,76 @@ function setEquipment(e) {
 
 // ═══════════════════════════════════════════════════════════════════════
 // ── FEATURE 1: REST TIMER ──────────────────────────────────────────────
-// ══════════════════════════════════════════════════════════════════════
-let timerInterval  = null;
+// ═══════════════════════════════════════════════════════════════════════
+let timerInterval = null;
 let timerRemaining = 0;
-let timerTotal     = 0;
-let timerEndTime   = 0; // wall-clock ms when timer expires
+let timerTotal = 0;
 
-function beep(freq, dur, vol) {
-  freq = freq || 880; dur = dur || 0.15; vol = vol || 0.4;
+// Web Audio beep
+function beep(freq = 880, dur = 0.15, vol = 0.4) {
   try {
-    var ctx  = new (window.AudioContext || window.webkitAudioContext)();
-    var osc  = ctx.createOscillator();
-    var gain = ctx.createGain();
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
     osc.frequency.value = freq;
     gain.gain.setValueAtTime(vol, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
     osc.start(); osc.stop(ctx.currentTime + dur);
-    setTimeout(function(){ try { ctx.close(); } catch(e){} }, (dur + 0.3) * 1000);
   } catch(e) {}
-}
-
-function timerFinished() {
-  stopTimer();
-  beep(784, 0.18, 0.6);
-  setTimeout(function(){ beep(1047, 0.18, 0.6); }, 180);
-  setTimeout(function(){ beep(1319, 0.45, 0.8); }, 360);
-  if (navigator.vibrate) navigator.vibrate([100, 70, 100, 70, 300]);
-}
-
-function tickTimer() {
-  var remaining = Math.max(0, Math.round((timerEndTime - Date.now()) / 1000));
-  if (remaining !== timerRemaining) {
-    timerRemaining = remaining;
-    var countEl = document.getElementById('timerCount');
-    var ringEl  = document.getElementById('timerRing');
-    if (countEl) countEl.textContent = remaining;
-    if (ringEl) {
-      var progress = timerTotal > 0 ? (1 - remaining / timerTotal) : 0;
-      ringEl.style.strokeDashoffset = 565.5 * progress;
-    }
-    if (remaining <= 3 && remaining > 0) {
-      beep(remaining === 1 ? 1047 : 880, 0.1, 0.5);
-      if (navigator.vibrate) navigator.vibrate(40);
-    }
-  }
-  if (remaining <= 0) timerFinished();
 }
 
 function startRestTimer(secs, exName) {
   if (timerInterval) clearInterval(timerInterval);
-  timerTotal = secs; timerRemaining = secs;
-  timerEndTime = Date.now() + secs * 1000;
-  var overlay = document.getElementById('timerOverlay');
-  var countEl = document.getElementById('timerCount');
-  var ringEl  = document.getElementById('timerRing');
-  var nameEl  = document.getElementById('timerExName');
-  if (nameEl)  nameEl.textContent = exName || 'REST';
-  if (countEl) countEl.textContent = secs;
-  if (ringEl)  ringEl.style.strokeDashoffset = '0';
-  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  beep(660, 0.1, 0.4);
-  timerInterval = setInterval(tickTimer, 250);
+  timerTotal = secs;
+  timerRemaining = secs;
+
+  const overlay  = document.getElementById('timerOverlay');
+  const countEl  = document.getElementById('timerCount');
+  const ringEl   = document.getElementById('timerRing');
+  const nameEl   = document.getElementById('timerExName');
+  const circumf  = 2 * Math.PI * 90; // 565.5
+
+  nameEl.textContent  = exName || 'REST';
+  countEl.textContent = secs;
+  ringEl.style.strokeDashoffset = 0;
+  overlay.classList.add('open');
+  // Prevent scroll behind
+  document.body.style.overflow = 'hidden';
+
+  beep(660, 0.1);
+
+  timerInterval = setInterval(() => {
+    timerRemaining--;
+    countEl.textContent = timerRemaining;
+    const progress = 1 - (timerRemaining / timerTotal);
+    ringEl.style.strokeDashoffset = circumf * progress;
+
+    if (timerRemaining <= 3 && timerRemaining > 0) {
+      beep(timerRemaining === 1 ? 1047 : 880, 0.1, 0.5);
+      if (navigator.vibrate) navigator.vibrate(40);
+    }
+    if (timerRemaining <= 0) {
+      // Fanfare: ascending 3-note chime
+      beep(784,  0.15, 0.5);
+      setTimeout(() => beep(1047, 0.15, 0.5), 160);
+      setTimeout(() => beep(1319, 0.35, 0.6), 320);
+      // Haptic feedback (iOS/Android vibration API)
+      if (navigator.vibrate) navigator.vibrate([80, 60, 80, 60, 200]);
+      stopTimer();
+    }
+  }, 1000);
 }
 
 function stopTimer() {
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  var overlay = document.getElementById('timerOverlay');
-  if (overlay) overlay.classList.remove('open');
+  document.getElementById('timerOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 function skipTimer() { stopTimer(); }
 
-document.addEventListener('visibilitychange', function() {
-  if (!timerInterval) return;
-  if (document.visibilityState === 'visible') {
-    if (Date.now() >= timerEndTime) { timerFinished(); }
-    else { tickTimer(); }
-  }
-});
+
+// ═══════════════════════════════════════════════════════════════════════
 // ── FEATURE 2: WORKOUT HISTORY ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
 function saveWorkoutToHistory(exercises) {
@@ -2089,8 +2275,78 @@ function handleImgError(imgEl, exName) {
 // ═══════════════════════════════════════════════════════════════════════
 // ── ENERGY MODE (2-mode) ───────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
-// Energy mode removed — query passed through unchanged
-function buildEnergyQuery(q) { return q; }
+let energyMode = 'workout'; // 'workout' | 'chill'
+
+function setEnergyMode(mode) {
+  energyMode = mode;
+  const w = document.getElementById('energy-workout');
+  const c = document.getElementById('energy-chill');
+  if (w) w.classList.toggle('on', mode === 'workout');
+  if (c) c.classList.toggle('on', mode === 'chill');
+}
+
+function buildEnergyQuery(baseQuery) {
+  // Chill mode: add relaxing qualifier; workout mode: leave clean
+  if (energyMode === 'chill') return baseQuery + ' chill';
+  return baseQuery; // workout mode: just the raw genre query
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── MIX GENRE ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+async function searchMixTracks(count) {
+  // Sample 1–2 queries from each active genre, collect popular tracks
+  const activeGenres = ['Hip-Hop','Rock','EDM','House','80s','Pop','Latin','R&B','Drum and Bass','Reggaeton','Anime'];
+  const genreQueries = {
+    'Hip-Hop':      'hip hop hits',
+    'Rock':         'classic rock hits',
+    'EDM':          'electronic dance hits',
+    'House':        'house music hits',
+    '80s':          '80s classics',
+    'Pop':          'top pop hits',
+    'Latin':        'latin hits',
+    'R&B':          'r&b hits',
+    'Drum and Bass':'drum and bass anthems',
+    'Reggaeton':    'reggaeton hits',
+    'Anime':        'anime soundtrack hits',
+  };
+
+  // Pick random subset of genres for variety each session
+  const shuffled = [...activeGenres].sort(() => Math.random() - .5);
+  const picked = shuffled.slice(0, Math.min(6, count)); // 6 genres for up to 60 tracks
+
+  let allTracks = [];
+  for (const g of picked) {
+    const q = genreQueries[g] || g + ' hits';
+    const offset = Math.floor(Math.random() * 3) * 10;
+    try {
+      const r = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=10&offset=${offset}`,
+        {headers:{Authorization:'Bearer '+spToken}}
+      );
+      if (!r.ok) continue;
+      const d = await r.json();
+      const items = (d.tracks?.items||[]).filter(t => {
+        if (!t.uri) return false;
+        const key = (t.name+'|'+(t.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
+        return !allTracks.find(x => {
+          const xk = (x.name+'|'+(x.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
+          return xk === key;
+        });
+      });
+      allTracks = allTracks.concat(items);
+    } catch(e) { /* skip failed genre */ }
+  }
+
+  // Sort by popularity then light shuffle
+  allTracks.sort((a,b) => (b.popularity||0) - (a.popularity||0));
+  const cutoff = Math.ceil(allTracks.length * 0.6);
+  const top = allTracks.slice(0, cutoff).sort(() => Math.random() - .3);
+  const rest = allTracks.slice(cutoff).sort(() => Math.random() - .5);
+  return [...top, ...rest].slice(0, count);
+}
+
 </script>
 
 <!-- ── EXERCISE HOW-TO MODAL ───────────────────────────────────────── -->
@@ -2185,6 +2441,59 @@ function buildEnergyQuery(q) { return q; }
   </div>
 </div>
 
+
+<!-- ── SETTINGS PANEL ──────────────────────────────────────────────── -->
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()"></div>
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-hdr">
+    <div class="settings-title">⚙️ SETTINGS</div>
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="settings-section">
+    <label class="settings-label">🤖 Anthropic API Key</label>
+    <input class="settings-input" id="anthropicKeyInput" type="password"
+      placeholder="sk-ant-api03-..." autocomplete="off">
+    <button class="settings-save-btn" onclick="saveAnthropicKey()">Save Key</button>
+    <div class="settings-info">
+      Your key is stored only on this device and sent directly to Anthropic.
+      Get a key at <strong>console.anthropic.com</strong><br><br>
+      When active, Claude acts as a DJ to pick the best songs for your workout.
+      Falls back to Spotify search automatically if unavailable.
+    </div>
+    <div id="settingsStatus" class="settings-status inactive">
+      ○ Claude DJ: Not configured
+    </div>
+  </div>
+  <div class="settings-section">
+    <hr class="settings-divider">
+    <label class="settings-label">💰 Estimated Usage</label>
+    <div class="settings-cost-box">
+      <div class="settings-cost-row">
+        <span class="settings-cost-label">Playlists generated</span>
+        <span class="settings-cost-val" id="costPlaylists">0</span>
+      </div>
+      <div class="settings-cost-row">
+        <span class="settings-cost-label">Estimated cost</span>
+        <span class="settings-cost-val accent" id="costTotal">$0.0000</span>
+      </div>
+      <div class="settings-cost-row">
+        <span class="settings-cost-label">Remaining budget</span>
+        <span class="settings-cost-val" id="costRemaining">$5.00</span>
+      </div>
+      <div class="settings-cost-row">
+        <span class="settings-cost-label">Auto-fallback at</span>
+        <span class="settings-cost-val">$4.50</span>
+      </div>
+    </div>
+    <div class="settings-info" style="margin-top:8px">
+      Claude Haiku costs ~$0.001 per playlist. Your $5 credit = ~5,000 playlists.
+      Estimates only — check console.anthropic.com for exact billing.
+    </div>
+    <button onclick="resetCostTracker()" style="width:100%;margin-top:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px">
+      Reset Usage Counter
+    </button>
+  </div>
+</div>
 
 </body>
 </html>
