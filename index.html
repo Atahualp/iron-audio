@@ -6,374 +6,340 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>IRON AUDIO</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:#2a2a3a;
-  --accent:#F58426;--accent2:#006BB6;--green:#1DB954;--blue:#006BB6;
-  --orange:#F58426;--knicks-blue:#006BB6;
-  --text:#f0f0f0;--muted:#5a5a7a;
+  --bg:#080810;--surface:#0f0f1a;--card:#141422;--border:#222238;
+  --accent:#FF4D00;--accent2:#00AAFF;--green:#1DB954;--blue:#00AAFF;
+  --orange:#FF4D00;
+  --text:#ffffff;--muted:#6670A0;
   --safe-top:env(safe-area-inset-top,20px);--safe-bottom:env(safe-area-inset-bottom,20px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100%;overflow:hidden;position:fixed;width:100%}
-#app{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--safe-bottom)+28px)}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100%;overflow:hidden;position:fixed;width:100%}
+#app{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--safe-bottom)+40px)}
 
 /* ── HEADER ─────────────────────────────────────────────────────── */
-.hdr{padding:calc(var(--safe-top)+14px) 20px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,.97);backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(245,132,38,.15)}
-.logo{display:flex;align-items:center;gap:8px;line-height:1}.logo-icon{flex-shrink:0;filter:drop-shadow(0 0 6px rgba(245,132,38,.4))}.logo-iron{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);text-shadow:0 0 20px rgba(245,132,38,.4)}.logo-audio{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);opacity:.55}
+.hdr{padding:calc(var(--safe-top)+18px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(8,8,16,.98);backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(255,77,0,.18)}
+.logo{display:flex;align-items:center;gap:8px;line-height:1}
+.logo-icon{flex-shrink:0}
+.logo-iron{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#FF4D00;display:block;line-height:1}
+.logo-audio{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#00AAFF;display:block;line-height:1}
 .logo span{color:var(--text)}
-.sp-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#1DB954;border:none;border-radius:20px;box-shadow:0 0 12px rgba(29,185,84,.25);color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:transform .15s}
+.sp-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#1DB954;border:none;border-radius:10px;color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:transform .15s}
 .sp-btn:active{transform:scale(.94)}
-.sp-btn.conn{background:#0d2e1a;color:#1DB954;border:1px solid #1a5c30}
-.sp-ico{width:16px;height:16px;flex-shrink:0}
+.sp-btn.conn{background:rgba(29,185,84,.12);color:#1DB954;border:1px solid rgba(29,185,84,.3)}
+.sp-ico{width:14px;height:14px;flex-shrink:0}
+.hdr-hist-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;margin-left:2px}
+.hdr-icon-btn{width:34px;height:34px;border-radius:10px;background:#141422;border:1px solid #2a2a3e;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
 
 /* ── SECTIONS ────────────────────────────────────────────────────── */
-.sec{padding:20px;border-bottom:1px solid var(--border)}
-.sec-tag{font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#F58426;opacity:.9;margin-bottom:8px;opacity:.85}
-.sec-title{font-family:'Chakra Petch',sans-serif;font-size:28px;font-weight:800;letter-spacing:1px;margin-bottom:14px;line-height:1}
+.sec{padding:18px 16px;border-bottom:1px solid var(--border)}
+.sec-tag{font-size:9px;font-weight:700;letter-spacing:3px;color:#FF4D00;text-transform:uppercase;margin-bottom:4px;opacity:.9}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;margin-bottom:12px;line-height:1}
 
 /* ── DURATION ────────────────────────────────────────────────────── */
-.dur-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dur-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;text-align:center;transition:all .2s}
-.dur-card.on{border-color:#F58426;background:rgba(245,132,38,.06)}
+.dur-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dur-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
+.dur-card.on{border-color:#FF4D00;background:rgba(255,77,0,.08)}
 .dur-card:active{transform:scale(.97)}
-.dur-num{font-family:'Chakra Petch',sans-serif;font-size:42px;color:var(--muted);line-height:1}
-.dur-card.on .dur-num{color:var(--accent)}
-.dur-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.dur-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--muted);line-height:1}
+.dur-card.on .dur-num{color:#FF4D00}
+.dur-lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 
 /* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
-.mg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mg-chip{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s}
-.mg-chip.on{border-color:var(--accent);background:rgba(232,255,61,.05)}
-.mg-chip:active{transform:scale(.96)}
-.mg-ico{font-size:19px}
-.mg-name{font-weight:600;font-size:13px}
-.mg-chk{margin-left:auto;width:17px;height:17px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s}
-.mg-chip.on .mg-chk{background:var(--accent);border-color:var(--accent);display:flex;align-items:center;justify-content:center}
-.mg-chip.on .mg-chk::after{content:'';width:5px;height:3px;border-left:2px solid #000;border-bottom:2px solid #000;transform:rotate(-45deg) translateY(-1px);display:block}
+.mg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.mg-chip{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:7px;transition:all .2s}
+.mg-chip.on{border-color:#FF4D00;background:rgba(255,77,0,.08);border-left:3px solid #FF4D00}
+.mg-chip:active{transform:scale(.95)}
+.mg-ico{font-size:17px;flex-shrink:0}
+.mg-name{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.2}
+.mg-chip.on .mg-name{color:#FF4D00}
+.mg-chk{display:none}
 
-
-
-
-/* ── WORKOUT ELAPSED TIMER ───────────────────────────────────────── */
-.elapsed-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,107,182,.08);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
-.elapsed-time{font-family:'Chakra Petch',sans-serif;font-size:28px;font-weight:800;letter-spacing:2px;color:#F58426}
-.elapsed-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-.elapsed-controls{display:flex;gap:8px}
-.elapsed-ctrl-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
-.elapsed-ctrl-btn:active{transform:scale(.94)}
-.elapsed-ctrl-btn.running{border-color:var(--accent);color:var(--accent)}
-
-/* ── EXERCISE SWAP ───────────────────────────────────────────────── */
-.swap-btn{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
-.swap-btn:active{border-color:var(--blue);color:var(--blue);transform:scale(.94)}
-
-/* ── SET LOG ─────────────────────────────────────────────────────── */
-.set-log-wrap{padding:10px 17px 14px;border-top:1px solid var(--border);background:rgba(255,107,53,.03)}
-.set-log-title{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
-.set-log-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
-.set-log-num{font-size:11px;font-weight:700;color:var(--accent);width:20px;flex-shrink:0}
-.set-log-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:13px;font-weight:600;text-align:center;-webkit-appearance:none}
-.set-log-input:focus{outline:none;border-color:var(--accent)}
-.set-log-label{font-size:10px;color:var(--muted);width:28px;text-align:center;flex-shrink:0}
-.set-log-add{background:none;border:1px dashed var(--border);border-radius:8px;padding:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
-.set-log-add:active{border-color:var(--accent);color:var(--accent)}
-.set-log-pr{font-size:10px;color:#F58426;font-weight:800;margin-left:4px}
-
-/* ── 1RM MODAL ───────────────────────────────────────────────────── */
-.orm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
-.orm-overlay.open{opacity:1;pointer-events:all}
-.orm-sheet{background:#111827;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:28px 24px 50px;transform:translateY(40px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
-.orm-overlay.open .orm-sheet{transform:translateY(0)}
-.orm-title{font-family:'Chakra Petch',sans-serif;font-size:26px;font-weight:900;letter-spacing:1px;margin-bottom:4px}
-.orm-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
-.orm-inputs{display:flex;gap:10px;margin-bottom:16px}
-.orm-input-wrap{flex:1;display:flex;flex-direction:column;gap:5px}
-.orm-input-wrap label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
-.orm-input{width:100%;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;text-align:center;-webkit-appearance:none}
-.orm-input:focus{outline:none;border-color:var(--accent)}
-.orm-result{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.2);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px}
-.orm-result-val{font-family:'Chakra Petch',sans-serif;font-size:52px;font-weight:900;color:var(--accent);line-height:1}
-.orm-result-lbl{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:4px}
-.orm-formula-row{display:flex;gap:8px;margin-bottom:18px}
-.orm-formula-btn{flex:1;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
-.orm-formula-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(255,107,53,.1)}
-.orm-close{width:100%;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
-
-/* ── BPM / ENERGY SLIDER ─────────────────────────────────────────── */
-.energy-wrap{margin-top:14px}
-.energy-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.energy-label{font-size:12px;color:var(--muted);font-weight:600}
-.energy-val{font-size:13px;font-weight:700;color:var(--accent)}
-.energy-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:var(--border);outline:none;cursor:pointer}
-.energy-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(255,107,53,.4)}
-.energy-ticks{display:flex;justify-content:space-between;margin-top:5px}
-.energy-tick{font-size:10px;color:var(--muted);font-weight:600}
+/* ── GENRE ───────────────────────────────────────────────────────── */
+.genre-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g-pill{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:9px 8px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:6px;transition:all .2s}
+.g-pill.on{border-color:#FF4D00;background:rgba(255,77,0,.08);border-left:3px solid #FF4D00}
+.g-pill:active{transform:scale(.95)}
+.g-pill-ico{font-size:15px;flex-shrink:0}
+.g-pill-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;line-height:1.2}
+.g-pill.on .g-pill-lbl{color:#FF4D00}
 
 /* ── DIFFICULTY / MODE / EQUIPMENT TOGGLES ──────────────────────────── */
 .toggle-row{display:flex;gap:8px}
-.toggle-pill{flex:1;text-align:center;padding:10px 6px;background:var(--card);border:2px solid var(--border);border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);transition:all .2s;line-height:1.3}
+.toggle-pill{flex:1;text-align:center;padding:10px 6px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);transition:all .2s;line-height:1.3}
 .toggle-pill:active{transform:scale(.96)}
-.toggle-pill.on.beginner{border-color:#4ade80;color:#4ade80;background:rgba(74,222,128,.1)}
-.toggle-pill.on.intermediate{border-color:#facc15;color:#facc15;background:rgba(250,204,21,.1)}
-.toggle-pill.on.advanced{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1)}
-.toggle-pill.on.mode-std{border-color:#F58426;color:#000;background:#F58426}
-.toggle-pill.on.mode-ss{border-color:#4fc3f7;color:#4fc3f7;background:rgba(0,107,182,.1)}
-.toggle-pill.on.eq-gym{border-color:var(--blue);color:var(--blue);background:rgba(0,212,255,.1)}
-.toggle-pill.on.eq-bw{border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,.1)}
-
-/* ── SUPERSET CARD ───────────────────────────────────────────────────── */
-.ss-label{display:inline-flex;align-items:center;gap:5px;background:rgba(0,107,182,.15);border:1px solid #006BB6;color:#4fc3f7;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
-.ss-connector{width:2px;background:linear-gradient(#006BB6,#006BB655);margin:0 auto;height:16px}
-
-/* ── REST TIMER ──────────────────────────────────────────────────────── */
-.timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
-.timer-overlay.open{opacity:1;pointer-events:all}
-.timer-ring-wrap{position:relative;width:200px;height:200px;margin-bottom:24px}
-.timer-ring-bg{fill:none;stroke:#1e1e1e;stroke-width:10}
-.timer-ring-fg{fill:none;stroke:#F58426;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.5;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear;transform:rotate(-90deg);transform-origin:center}
-.timer-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Chakra Petch',sans-serif;font-size:72px;color:#fff;letter-spacing:2px}
-.timer-label{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:30px}
-.timer-ex-name{font-family:'Chakra Petch',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;margin-bottom:6px;text-align:center;padding:0 20px}
-.timer-actions{display:flex;gap:12px}
-.timer-btn{padding:14px 28px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
-.timer-btn:active{transform:scale(.95)}
-.timer-btn.skip{background:#1e1e1e;color:var(--muted)}
-.timer-btn.stop{background:var(--accent);color:#000}
-
-/* ── REST TIMER TRIGGER on card ──────────────────────────────────────── */
-.rest-trigger{display:flex;align-items:center;gap:6px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);transition:all .2s;white-space:nowrap}
-.rest-trigger:active{transform:scale(.95);border-color:var(--accent);color:var(--accent)}
-
-/* ── HISTORY PANEL ───────────────────────────────────────────────────── */
-.hist-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
-.hist-overlay.open{opacity:1;pointer-events:all}
-.hist-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#111;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
-.hist-panel.open{transform:translateX(0)}
-.hist-hdr{position:sticky;top:0;background:#0d0d16;padding:20px 18px 14px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;z-index:2}
-.hist-title{font-family:'Chakra Petch',sans-serif;font-size:22px;letter-spacing:1px}
-.hist-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
-.hist-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
-.hist-item{padding:14px 18px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .2s}
-.hist-item:active{background:#1a1a1a}
-.hist-item-date{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
-.hist-item-title{font-family:'Chakra Petch',sans-serif;font-size:18px;color:#fff;margin-bottom:4px}
-.hist-item-meta{font-size:12px;color:var(--muted)}
-.hist-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 6px;line-height:1}
-.hist-clear{width:calc(100% - 36px);margin:16px 18px 0;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px}
-
-/* ── SHARE CARD ──────────────────────────────────────────────────────── */
-.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:#1a1a1a;border:1px solid var(--border);border-radius:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:10px}
-.share-btn:active{transform:scale(.97);border-color:var(--accent);color:var(--accent)}
-.share-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:20px}
-.share-modal-overlay.open{opacity:1;pointer-events:all}
-.share-canvas-wrap{max-width:400px;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px}
-.share-canvas-wrap canvas{display:block;width:100%;height:auto}
-.share-actions{display:flex;gap:10px;width:100%;max-width:400px}
-.share-action-btn{flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
-.share-action-btn:active{transform:scale(.95)}
-.share-action-btn.save{background:var(--accent);color:#000}
-.share-action-btn.close{background:#1e1e1e;color:var(--muted)}
-
-/* ── HISTORY icon in header ──────────────────────────────────────────── */
-.hdr-hist-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px;line-height:1;margin-left:4px}
-
-/* ── PLATFORM TOGGLE ─────────────────────────────────────────────── */
-.platform-row{display:flex;gap:10px;margin-bottom:0px}
-.platform-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--card);border:2px solid var(--border);border-radius:14px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s}
-.platform-btn.on.spotify{border-color:#1DB954;color:#1DB954;background:rgba(29,185,84,.1)}
-.platform-btn.on.youtube{border-color:#FF0000;color:#FF0000;background:rgba(255,0,0,.1)}
-.platform-btn svg{width:18px;height:18px;flex-shrink:0}
-.yt-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;color:#fff;font-size:14px;font-weight:600;transition:all .2s}
-.yt-btn:active{transform:scale(.97)}
-.yt-btn.connected{border-color:#FF0000;background:rgba(255,0,0,.08)}
-.yt-ico{color:#FF0000;flex-shrink:0}
-
-/* ── GENRE ───────────────────────────────────────────────────────── */
-.genre-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;scrollbar-width:none}
-.genre-row::-webkit-scrollbar{display:none}
-.g-pill{flex-shrink:0;background:var(--card);border:2px solid var(--border);border-radius:50px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;white-space:nowrap}
-.g-pill.on{border-color:#F58426;color:#F58426;background:rgba(245,132,38,.12)}
-.g-pill:active{transform:scale(.95)}
-
-/* ── RAPIDAPI KEY INPUT ──────────────────────────────────────────── */
+.toggle-pill.on.mode-std{border-color:#FF4D00;color:#000;background:#FF4D00}
+.toggle-pill.on.eq-gym{border-color:#00AAFF;color:#00AAFF;background:rgba(0,170,255,.1)}
+.toggle-pill.on.eq-bw{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.1)}
 
 /* ── GENERATE BTN ────────────────────────────────────────────────── */
-.gen-wrap{padding:18px 20px}
-.gen-btn{width:100%;padding:18px;background:linear-gradient(135deg,#F58426,#ff9944);border:none;border-radius:15px;font-family:'Chakra Petch',sans-serif;font-weight:900;font-size:22px;letter-spacing:3px;color:#000;cursor:pointer;transition:transform .15s}
+.gen-wrap{padding:16px}
+.gen-btn{width:100%;padding:16px;background:#FF4D00;border:none;border-radius:14px;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#fff;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.gen-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14) 0%,transparent 60%);pointer-events:none}
 .gen-btn:active{transform:scale(.97)}
+
+/* ── WORKOUT ELAPSED TIMER ───────────────────────────────────────── */
+.elapsed-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(0,170,255,.06);border-bottom:1px solid rgba(0,170,255,.15);position:sticky;top:0;z-index:50}
+.elapsed-time{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#FF4D00}
+.elapsed-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.elapsed-controls{display:flex;gap:6px}
+.elapsed-ctrl-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
+.elapsed-ctrl-btn:active{transform:scale(.94)}
+.elapsed-ctrl-btn.running{border-color:#FF4D00;color:#FF4D00}
 
 /* ── RESULTS ─────────────────────────────────────────────────────── */
 #results{display:none}
 #results.vis{display:block}
-.res-hdr{padding:18px 20px;border-bottom:1px solid var(--border)}
-.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:#006BB6;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:10px}
-.res-title{font-family:'Chakra Petch',sans-serif;font-size:30px;font-weight:900;letter-spacing:1px}
-.res-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.badge{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
-.badge-t{background:rgba(232,255,61,.14);color:var(--accent)}
-.badge-m{background:rgba(0,212,255,.1);color:var(--blue)}
+.res-hdr{padding:14px 16px;border-bottom:1px solid var(--border)}
+.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:#00AAFF;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.res-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px}
+.res-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.badge-t{background:rgba(255,77,0,.12);color:#FF4D00}
+.badge-m{background:rgba(0,170,255,.1);color:#00AAFF}
 
 /* ── WORKOUT CARDS ───────────────────────────────────────────────── */
-.wk-list{padding:14px 20px}
-.wk-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #F58426;border-radius:18px;margin-bottom:14px;overflow:hidden;transition:transform .15s}
-.wk-top{padding:15px 17px 11px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.wk-num{font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#F58426;opacity:.9;opacity:.9}
-.wk-name{font-family:'Chakra Petch',sans-serif;font-size:23px;font-weight:800;letter-spacing:.5px;margin-top:2px;line-height:1}
-.wk-desc{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500}
-.wk-muscle-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-top:5px;text-transform:uppercase}
+.wk-list{padding:12px 14px}
+.wk-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #FF4D00;border-radius:14px;margin-bottom:10px;overflow:hidden;transition:transform .15s}
+.wk-top{padding:12px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.wk-num{font-size:9px;font-weight:700;letter-spacing:3px;color:#FF4D00;opacity:.8;font-variant-numeric:tabular-nums}
+.wk-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;margin-top:2px;line-height:1}
+.wk-desc{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
+.wk-muscle-badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-top:5px;text-transform:uppercase}
 .wk-sets-box{text-align:right;flex-shrink:0}
-.wk-sets{font-family:'Chakra Petch',sans-serif;font-size:24px;color:#F58426;line-height:1}
-.wk-sets-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.wk-sets{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#FF4D00;line-height:1}
+.wk-sets-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 
 /* ── EXERCISE ILLUSTRATION ───────────────────────────────────────── */
-.wk-illus{width:100%;height:230px;background:#0d0d0d;border-top:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.wk-illus{width:100%;height:200px;background:#0a0a14;border-top:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .wk-illus img{width:100%;height:100%;object-fit:contain;display:block}
 .wk-illus img.loaded{animation:fadeIn .4s ease}
+.wk-illus::after{content:'TAP FOR HOW-TO';position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#FF4D00;font-size:8px;font-weight:800;letter-spacing:1.5px;padding:3px 7px;border-radius:20px;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* Skeleton loader */
 .skeleton{position:absolute;inset:0;background:var(--card)}
-.skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.04) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.03) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .skeleton-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:1}
-.sk-circle{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.06)}
-.sk-bar{height:10px;border-radius:5px;background:rgba(255,255,255,.06)}
-.sk-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;margin-top:4px}
-
-/* No API key state */
-.illus-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;background:#0d0d0d}
-.illus-placeholder .ph-icon{font-size:36px;opacity:.3}
-.illus-placeholder .ph-text{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;max-width:180px}
-
-/* Muscle tag overlay on image */
-.muscle-tag{position:absolute;bottom:10px;left:10px;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(6px)}
-
-.wk-foot{padding:11px 17px;border-top:1px solid var(--border);display:flex;gap:14px}
-.wk-stat{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);font-weight:500}
+.sk-circle{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.05)}
+.sk-bar{height:9px;border-radius:5px;background:rgba(255,255,255,.05)}
+.sk-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;margin-top:4px}
+.illus-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;background:#0a0a14}
+.illus-placeholder .ph-icon{font-size:32px;opacity:.25}
+.illus-placeholder .ph-text{font-size:10px;color:var(--muted);text-align:center;line-height:1.5;max-width:160px}
+.muscle-tag{position:absolute;bottom:8px;left:8px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(6px)}
+.wk-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.wk-stat{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);font-weight:500;flex:1}
 .wk-stat strong{color:var(--text)}
 
+/* ── EXERCISE SWAP ───────────────────────────────────────────────── */
+.swap-btn{display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.swap-btn:active{border-color:#00AAFF;color:#00AAFF;transform:scale(.94)}
+
+/* ── REST TIMER TRIGGER ──────────────────────────────────────────── */
+.rest-trigger{display:flex;align-items:center;gap:4px;background:#0f0f1a;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:10px;font-weight:700;color:var(--muted);transition:all .2s;white-space:nowrap}
+.rest-trigger:active{transform:scale(.95);border-color:#FF4D00;color:#FF4D00}
+
+/* ── SET LOG ─────────────────────────────────────────────────────── */
+.set-log-wrap{padding:10px 14px 12px;border-top:1px solid var(--border);background:rgba(255,77,0,.02)}
+.set-log-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.set-log-row{display:flex;gap:5px;align-items:center;margin-bottom:6px}
+.set-log-num{font-size:11px;font-weight:700;color:#FF4D00;width:18px;flex-shrink:0}
+.set-log-input{width:68px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 4px;color:var(--text);font-size:13px;font-weight:600;text-align:center;-webkit-appearance:none}
+.set-log-input:focus{outline:none;border-color:#FF4D00}
+.set-log-label{font-size:10px;color:var(--muted);width:16px;text-align:center;flex-shrink:0}
+.set-log-add{background:none;border:1px dashed var(--border);border-radius:8px;padding:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
+.set-log-add:active{border-color:#FF4D00;color:#FF4D00}
+.set-log-pr{font-size:10px;color:#FF4D00;font-weight:800;margin-left:4px}
+.set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
+.set-log-del:active{color:#f87171}
+
+/* ── SUPERSET CARD ───────────────────────────────────────────────── */
+.ss-label{display:inline-flex;align-items:center;gap:5px;background:rgba(0,170,255,.12);border:1px solid #00AAFF;color:#00AAFF;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.ss-connector{width:2px;background:linear-gradient(#00AAFF,rgba(0,170,255,.3));margin:0 auto;height:14px}
+
 /* ── PLAYLIST ────────────────────────────────────────────────────── */
-.pl-sec{padding:14px 20px 20px}
-.pl-label{font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:3px;color:#F58426;margin-bottom:12px}
-.pl-card{background:linear-gradient(135deg,#101a10,#090f09);border:1px solid #162016;border-radius:17px;overflow:hidden}
-.pl-hdr{padding:16px;display:flex;gap:13px;align-items:center;border-bottom:1px solid rgba(29,185,84,.12)}
-.pl-art{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#1DB954,#0a5228);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.pl-sec{padding:12px 14px 18px}
+.pl-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#FF4D00;margin-bottom:10px}
+.pl-card{background:#0d1a0d;border:1px solid #162016;border-radius:14px;overflow:hidden}
+.pl-hdr{padding:14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(29,185,84,.1)}
+.pl-art{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#1DB954,#0a5228);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .pl-info{flex:1;min-width:0}
-.pl-name{font-family:'Chakra Petch',sans-serif;font-size:17px;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-meta{font-size:11px;color:rgba(29,185,84,.75);margin-top:3px;font-weight:500}
-.pl-open{padding:8px 13px;background:#1DB954;border:none;border-radius:9px;color:#000;font-weight:700;font-size:12px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.pl-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-meta{font-size:10px;color:rgba(29,185,84,.7);margin-top:2px;font-weight:500}
+.pl-open{padding:7px 11px;background:#1DB954;border:none;border-radius:8px;color:#000;font-weight:700;font-size:11px;cursor:pointer;flex-shrink:0;transition:transform .15s}
 .pl-open:active{transform:scale(.94)}
-.track-list{padding:8px 0}
-.track{padding:8px 16px;display:flex;align-items:center;gap:11px}
-.track-n{font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(29,185,84,.4);width:17px;text-align:center}
+.track-list{padding:6px 0}
+.track{padding:7px 14px;display:flex;align-items:center;gap:10px}
+.track-n{font-family:'Bebas Neue',sans-serif;font-size:13px;color:rgba(29,185,84,.35);width:16px;text-align:center}
 .track-info{flex:1;min-width:0}
-.track-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.track-artist{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
-.track-dur{font-size:11px;color:rgba(255,255,255,.25);font-weight:500}
+.track-name{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-artist{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.track-dur{font-size:10px;color:rgba(255,255,255,.2);font-weight:500}
 
 /* ── STATUS MESSAGES ─────────────────────────────────────────────── */
-.msg{padding:11px 15px;border-radius:11px;font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.5}
-.msg-ok{background:rgba(29,185,84,.14);color:#1DB954;border:1px solid rgba(29,185,84,.28)}
-.msg-err{background:rgba(255,69,0,.13);color:#FF6030;border:1px solid rgba(255,69,0,.28)}
-.msg-info{background:rgba(0,212,255,.07);color:var(--blue);border:1px solid rgba(0,212,255,.18)}
+.msg{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:10px;line-height:1.5}
+.msg-ok{background:rgba(29,185,84,.12);color:#1DB954;border:1px solid rgba(29,185,84,.25)}
+.msg-err{background:rgba(255,77,0,.1);color:#FF6030;border:1px solid rgba(255,77,0,.25)}
+.msg-info{background:rgba(0,170,255,.07);color:#00AAFF;border:1px solid rgba(0,170,255,.18)}
+
+/* ── PLAYLIST PROMPT ─────────────────────────────────────────────── */
+.pl-prompt{text-align:center;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pl-prompt-icon{font-size:32px}
+.pl-prompt-text{font-size:13px;color:var(--muted);font-weight:600}
+.pl-build-btn{padding:13px 26px;background:var(--green);border:none;border-radius:12px;color:#000;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.pl-build-btn:active{transform:scale(.96)}
+
+/* ── PLAYLIST PREVIEW ────────────────────────────────────────────── */
+.pl-preview-bar{background:rgba(0,170,255,.08);border:1px solid rgba(0,170,255,.25);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.pl-preview-label{font-size:10px;font-weight:700;color:#00AAFF;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.pl-preview-actions{display:flex;gap:6px}
+.pl-preview-btn{flex:1;padding:9px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.pl-preview-btn:active{transform:scale(.95)}
+.pl-preview-btn.regen{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.pl-preview-btn.create{background:#1DB954;color:#000}
+.pl-preview-btn.cancel{background:var(--card);color:var(--muted);border:1px solid var(--border);flex:0;padding:9px 12px}
+.preview-list{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
 
 /* ── LOADING OVERLAY ─────────────────────────────────────────────── */
-.ov{display:none;position:fixed;inset:0;background:rgba(10,10,10,.97);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.ov{display:none;position:fixed;inset:0;background:rgba(8,8,16,.97);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 .ov.vis{display:flex}
-.ov-spin{width:52px;height:52px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-.ov-txt{font-family:'Chakra Petch',sans-serif;font-size:16px;letter-spacing:3px;color:var(--muted)}
+.ov-spin{width:48px;height:48px;border:2px solid var(--border);border-top-color:#FF4D00;border-radius:50%;animation:spin .8s linear infinite}
+.ov-txt{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--muted)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── SPOTIFY MODAL ───────────────────────────────────────────────── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:300;align-items:flex-end}
 .modal-bg.vis{display:flex}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;padding:10px 20px calc(var(--safe-bottom)+20px);max-height:88vh;overflow-y:auto}
-.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
-.modal-title{font-family:'Chakra Petch',sans-serif;font-size:21px;letter-spacing:2px;margin-bottom:14px}
-.modal-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px}
-.modal-inp{width:100%;background:var(--card);border:2px solid var(--border);border-radius:11px;padding:13px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;outline:none;transition:border-color .2s;margin-bottom:12px}
-.modal-inp:focus{border-color:var(--accent)}
-.modal-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:11px;font-family:'Chakra Petch',sans-serif;font-size:16px;letter-spacing:2px;color:#000;cursor:pointer}
-.modal-link{color:var(--accent)}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;padding:10px 18px calc(var(--safe-bottom)+18px);max-height:88vh;overflow-y:auto}
+.modal-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:12px}
+.modal-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.modal-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
+.modal-inp:focus{border-color:#FF4D00}
+.modal-btn{width:100%;padding:14px;background:#FF4D00;border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;cursor:pointer}
+.modal-link{color:#FF4D00}
+
+/* ── REST TIMER ──────────────────────────────────────────────────── */
+.timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.timer-overlay.open{opacity:1;pointer-events:all}
+.timer-ring-wrap{position:relative;width:200px;height:200px;margin-bottom:24px}
+.timer-ring-bg{fill:none;stroke:#1a1a28;stroke-width:10}
+.timer-ring-fg{fill:none;stroke:#FF4D00;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.5;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear;transform:rotate(-90deg);transform-origin:center}
+.timer-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:2px}
+.timer-label{font-size:12px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px}
+.timer-ex-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#FF4D00;letter-spacing:1px;margin-bottom:6px;text-align:center;padding:0 20px}
+.timer-actions{display:flex;gap:12px}
+.timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.timer-btn:active{transform:scale(.95)}
+.timer-btn.skip{background:#1a1a28;color:var(--muted)}
+.timer-btn.stop{background:#FF4D00;color:#fff}
 
 /* ── EXERCISE MODAL ──────────────────────────────────────────────── */
-.ex-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.ex-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ex-modal-overlay.open{opacity:1;pointer-events:all}
-.ex-modal{background:#151515;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;padding:0 0 40px;transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.ex-modal{background:#121220;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;padding:0 0 40px;transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
 .ex-modal-overlay.open .ex-modal{transform:translateY(0)}
-.ex-modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:24px 24px 0 0;display:block}
-.ex-modal-img-placeholder{width:100%;aspect-ratio:4/3;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:24px 24px 0 0}
-.ex-modal-body{padding:20px 22px 0}
-.ex-modal-num{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-bottom:4px}
-.ex-modal-name{font-family:'Chakra Petch',sans-serif;font-size:32px;color:#fff;line-height:1;margin-bottom:6px}
-.ex-modal-muscle{display:inline-block;padding:4px 12px;border-radius:50px;font-size:12px;font-weight:700;margin-bottom:16px}
-.ex-modal-stats{display:flex;gap:10px;margin-bottom:20px}
-.ex-modal-stat{flex:1;background:#1e1e1e;border-radius:12px;padding:12px;text-align:center}
-.ex-modal-stat strong{display:block;font-size:18px;color:#fff;font-family:'Chakra Petch',sans-serif;letter-spacing:.5px}
-.ex-modal-stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.ex-modal-section-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.ex-modal-how{color:#ccc;font-size:14px;line-height:1.7;margin-bottom:20px}
-.ex-modal-steps{list-style:none;padding:0;margin:0 0 20px}
-.ex-modal-steps li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #222;color:#ccc;font-size:14px;line-height:1.5}
-.ex-modal-steps li:last-child{border-bottom:none}
-.ex-modal-step-num{flex-shrink:0;width:24px;height:24px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:1px}
-.ex-modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;border:none;z-index:10}
-.wk-illus{cursor:pointer;position:relative}
-.wk-illus::after{content:'TAP FOR HOW-TO';position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:var(--accent);font-size:9px;font-weight:800;letter-spacing:1.5px;padding:4px 8px;border-radius:20px;pointer-events:none}
-
-
-/* ── YOUTUBE WATCH BUTTON in exercise modal ──────────────────────── */
-.yt-watch-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#ff0000;border-radius:14px;color:#fff;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:.3px;transition:all .2s;margin-top:4px;margin-bottom:8px}
+.ex-modal-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px 20px 0 0;display:block}
+.ex-modal-img-placeholder{width:100%;aspect-ratio:4/3;background:#1a1a28;display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:20px 20px 0 0}
+.ex-modal-body{padding:18px 20px 0}
+.ex-modal-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-bottom:4px}
+.ex-modal-name{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;line-height:1;margin-bottom:6px}
+.ex-modal-muscle{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700;margin-bottom:14px}
+.ex-modal-stats{display:flex;gap:8px;margin-bottom:18px}
+.ex-modal-stat{flex:1;background:#1a1a28;border-radius:10px;padding:10px;text-align:center}
+.ex-modal-stat strong{display:block;font-size:17px;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px}
+.ex-modal-stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.ex-modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;border:none;z-index:10}
+.yt-watch-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#ff0000;border-radius:12px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:.3px;transition:all .2s;margin-top:4px;margin-bottom:8px}
 .yt-watch-btn:active{transform:scale(.97);background:#cc0000}
-.yt-watch-hint{text-align:center;font-size:11px;color:var(--muted);letter-spacing:.5px;margin-bottom:8px}
+.yt-watch-hint{text-align:center;font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:8px}
 
+/* ── 1RM MODAL ───────────────────────────────────────────────────── */
+.orm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:2500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.orm-overlay.open{opacity:1;pointer-events:all}
+.orm-sheet{background:#0f0f1a;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 50px;transform:translateY(40px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.orm-overlay.open .orm-sheet{transform:translateY(0)}
+.orm-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:3px}
+.orm-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.orm-inputs{display:flex;gap:10px;margin-bottom:14px}
+.orm-input-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
+.orm-input-wrap label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.orm-input{width:100%;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;text-align:center;-webkit-appearance:none}
+.orm-input:focus{outline:none;border-color:#FF4D00}
+.orm-result{background:rgba(255,77,0,.07);border:1px solid rgba(255,77,0,.18);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px}
+.orm-result-val{font-family:'Bebas Neue',sans-serif;font-size:52px;color:#FF4D00;line-height:1}
+.orm-result-lbl{font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:3px}
+.orm-formula-row{display:flex;gap:6px;margin-bottom:16px}
+.orm-formula-btn{flex:1;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.orm-formula-btn.on{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.08)}
+.orm-close{width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
 
-/* ── PLAYLIST PROMPT ─────────────────────────────────────────────── */
-.pl-prompt{text-align:center;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.pl-prompt-icon{font-size:36px}
-.pl-prompt-text{font-size:14px;color:var(--muted);font-weight:600}
-.pl-build-btn{padding:14px 28px;background:var(--green);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s}
-.pl-build-btn:active{transform:scale(.96)}
-/* ── PLAYLIST PREVIEW ────────────────────────────────────────────── */
-.pl-preview-bar{background:rgba(0,107,182,.1);border:1px solid rgba(0,107,182,.3);border-radius:14px;padding:14px 16px;margin-bottom:12px}
-.pl-preview-label{font-size:11px;font-weight:700;color:#4fc3f7;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
-.pl-preview-actions{display:flex;gap:8px}
-.pl-preview-btn{flex:1;padding:10px 8px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px}
-.pl-preview-btn:active{transform:scale(.95)}
-.pl-preview-btn.regen{background:var(--card);color:var(--muted);border:1px solid var(--border)}
-.pl-preview-btn.create{background:#1DB954;color:#000}
-.pl-preview-btn.cancel{background:var(--card);color:var(--muted);border:1px solid var(--border);flex:0;padding:10px 14px}
-.preview-list{border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+/* ── HISTORY PANEL ───────────────────────────────────────────────── */
+.hist-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
+.hist-overlay.open{opacity:1;pointer-events:all}
+.hist-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#0d0d18;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
+.hist-panel.open{transform:translateX(0)}
+.hist-hdr{position:sticky;top:0;background:#0d0d18;padding:calc(var(--safe-top)+14px) 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;z-index:2}
+.hist-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
+.hist-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+.hist-empty{padding:40px 18px;text-align:center;color:var(--muted);font-size:13px}
+.hist-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+.hist-item:active{background:var(--card)}
+.hist-item-date{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:3px}
+.hist-item-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;margin-bottom:3px}
+.hist-item-meta{font-size:11px;color:var(--muted)}
+.hist-clear{width:calc(100% - 32px);margin:14px 16px 0;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px}
 
-.set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;transition:color .15s}.set-log-del:active{color:#f87171}
+/* ── SHARE CARD ──────────────────────────────────────────────────── */
+.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
+.share-btn:active{transform:scale(.97);border-color:#FF4D00;color:#FF4D00}
+.share-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:20px}
+.share-modal-overlay.open{opacity:1;pointer-events:all}
+.share-canvas-wrap{max-width:400px;width:100%;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.share-canvas-wrap canvas{display:block;width:100%;height:auto}
+.share-actions{display:flex;gap:10px;width:100%;max-width:400px}
+.share-action-btn{flex:1;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.share-action-btn:active{transform:scale(.95)}
+.share-action-btn.save{background:#FF4D00;color:#fff}
+.share-action-btn.close{background:#1a1a28;color:var(--muted)}
 
 /* ── SETTINGS PANEL ──────────────────────────────────────────────── */
 .settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s}
 .settings-overlay.open{opacity:1;pointer-events:all}
-.settings-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#111;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
+.settings-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#0d0d18;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
 .settings-panel.open{transform:translateX(0)}
-.settings-hdr{position:sticky;top:0;background:#111;padding:20px 18px 14px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;z-index:2}
-.settings-title{font-family:'Chakra Petch',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px}
+.settings-hdr{position:sticky;top:0;background:#0d0d18;padding:calc(var(--safe-top)+14px) 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;z-index:2}
+.settings-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
 .settings-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
-.settings-section{padding:18px 18px 0}
-.settings-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block}
-.settings-input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;box-sizing:border-box;margin-bottom:8px}
-.settings-input:focus{outline:none;border-color:var(--accent)}
-.settings-save-btn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#000;font-size:14px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;letter-spacing:1px;transition:all .2s}
+.settings-section{padding:16px 16px 0}
+.settings-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block}
+.settings-input{width:100%;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;box-sizing:border-box;margin-bottom:8px}
+.settings-input:focus{outline:none;border-color:#FF4D00}
+.settings-save-btn{width:100%;padding:11px;background:#FF4D00;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;transition:all .2s}
 .settings-save-btn:active{transform:scale(.97)}
 .settings-info{font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px}
-.settings-cost-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:14px}
-.settings-cost-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.settings-cost-label{font-size:12px;color:var(--muted)}
-.settings-cost-val{font-size:14px;font-weight:700;color:var(--text)}
+.settings-cost-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:12px}
+.settings-cost-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.settings-cost-label{font-size:11px;color:var(--muted)}
+.settings-cost-val{font-size:13px;font-weight:700;color:var(--text)}
 .settings-cost-val.warn{color:#f87171}
-.settings-cost-val.accent{color:var(--accent)}
-.settings-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
-.settings-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:10px 14px;border-radius:10px;margin-top:10px}
-.settings-status.active{background:rgba(245,132,38,.1);color:var(--accent)}
+.settings-cost-val.accent{color:#FF4D00}
+.settings-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+.settings-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:9px 13px;border-radius:10px;margin-top:10px}
+.settings-status.active{background:rgba(255,77,0,.08);color:#FF4D00}
 .settings-status.inactive{background:var(--card);color:var(--muted)}
+
+/* ── PLATFORM TOGGLE ─────────────────────────────────────────────── */
+.platform-btn.on.spotify{border-color:#1DB954;color:#1DB954;background:rgba(29,185,84,.1)}
+
+/* ── BPM / ENERGY ────────────────────────────────────────────────── */
+.energy-wrap{margin-top:12px}
+
 
 </style>
 </head>
@@ -384,19 +350,19 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
   <div class="hdr">
     <div class="logo">
       <svg class="logo-icon" width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="10" width="4" height="8" rx="2" fill="#F58426"/>
-        <rect x="5" y="8" width="3" height="12" rx="1.5" fill="#F58426"/>
-        <rect x="24" y="8" width="3" height="12" rx="1.5" fill="#F58426"/>
-        <rect x="27" y="10" width="4" height="8" rx="2" fill="#F58426"/>
-        <rect x="8" y="13" width="16" height="2.5" rx="1.25" fill="#006BB6"/>
-        <rect x="10" y="8" width="2" height="4" rx="1" fill="#006BB6" opacity=".9"/>
-        <rect x="14" y="6" width="2" height="6" rx="1" fill="#006BB6"/>
-        <rect x="18" y="8" width="2" height="4" rx="1" fill="#006BB6" opacity=".9"/>
+        <rect x="1" y="10" width="4" height="8" rx="2" fill="#FF4D00"/>
+        <rect x="5" y="8" width="3" height="12" rx="1.5" fill="#FF4D00"/>
+        <rect x="24" y="8" width="3" height="12" rx="1.5" fill="#FF4D00"/>
+        <rect x="27" y="10" width="4" height="8" rx="2" fill="#FF4D00"/>
+        <rect x="8" y="13" width="16" height="2.5" rx="1.25" fill="#00AAFF"/>
+        <rect x="10" y="8" width="2" height="4" rx="1" fill="#00AAFF" opacity=".9"/>
+        <rect x="14" y="6" width="2" height="6" rx="1" fill="#00AAFF"/>
+        <rect x="18" y="8" width="2" height="4" rx="1" fill="#00AAFF" opacity=".9"/>
       </svg>
-      <span class="logo-iron">IRON</span><span class="logo-audio">AUDIO</span>
+      <div style="line-height:1"><div class="logo-iron">IRON</div><div class="logo-audio">AUDIO</div></div>
     </div>
-    <button class="hdr-hist-btn" onclick="openHistory()" title="Workout History">📋</button>
-    <button class="hdr-hist-btn" onclick="openSettings()" title="Settings">⚙️</button>
+    <button class="hdr-icon-btn" onclick="openHistory()" title="Workout History">📋</button>
+    <button class="hdr-icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
     <button class="sp-btn" id="spBtn" onclick="handleSpotifyConnect()">
       <svg class="sp-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
       <span id="spBtnTxt">Connect Spotify</span>
@@ -439,17 +405,17 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
       <div class="sec-tag">03 — VIBE</div>
       <div class="sec-title">PLAYLIST GENRE</div>
       <div class="genre-row">
-        <div class="g-pill" onclick="setGenre('80s',this)">📼 80's</div>
-        <div class="g-pill" onclick="setGenre('Anime',this)">🎌 Anime</div>
-        <div class="g-pill" onclick="setGenre('EDM',this)">🎛️ EDM</div>
-        <div class="g-pill on" onclick="setGenre('Hip-Hop',this)">🎤 Hip-Hop</div>
-        <div class="g-pill" onclick="setGenre('Latin',this)">💃 Latin</div>
-        <div class="g-pill" onclick="setGenre('Pop',this)">🌟 Pop</div>
-        <div class="g-pill" onclick="setGenre('R&amp;B',this)">🎷 R&amp;B</div>
-        <div class="g-pill" onclick="setGenre('Reggae',this)">🌿 Reggae</div>
-        <div class="g-pill" onclick="setGenre('Reggaeton',this)">🌴 Reggaeton</div>
-        <div class="g-pill" onclick="setGenre('Rock',this)">🎸 Rock</div>
-        <div class="g-pill" onclick="setGenre('Mix',this)">🎲 Mix</div>
+        <div class="g-pill" onclick="setGenre('80s',this)"><span class="g-pill-ico">📼</span><span class="g-pill-lbl">80's</span></div>
+        <div class="g-pill" onclick="setGenre('Anime',this)"><span class="g-pill-ico">🎌</span><span class="g-pill-lbl">Anime</span></div>
+        <div class="g-pill" onclick="setGenre('EDM',this)"><span class="g-pill-ico">🎛️</span><span class="g-pill-lbl">EDM</span></div>
+        <div class="g-pill on" onclick="setGenre('Hip-Hop',this)"><span class="g-pill-ico">🎤</span><span class="g-pill-lbl">Hip-Hop</span></div>
+        <div class="g-pill" onclick="setGenre('Latin',this)"><span class="g-pill-ico">💃</span><span class="g-pill-lbl">Latin</span></div>
+        <div class="g-pill" onclick="setGenre('Pop',this)"><span class="g-pill-ico">🌟</span><span class="g-pill-lbl">Pop</span></div>
+        <div class="g-pill" onclick="setGenre('R&amp;B',this)"><span class="g-pill-ico">🎷</span><span class="g-pill-lbl">R&amp;B</span></div>
+        <div class="g-pill" onclick="setGenre('Reggae',this)"><span class="g-pill-ico">🌿</span><span class="g-pill-lbl">Reggae</span></div>
+        <div class="g-pill" onclick="setGenre('Reggaeton',this)"><span class="g-pill-ico">🌴</span><span class="g-pill-lbl">Reggaeton</span></div>
+        <div class="g-pill" onclick="setGenre('Rock',this)"><span class="g-pill-ico">🎸</span><span class="g-pill-lbl">Rock</span></div>
+        <div class="g-pill" onclick="setGenre('Mix',this)"><span class="g-pill-ico">🎲</span><span class="g-pill-lbl">Mix</span></div>
       </div>
     </div>
 
@@ -458,8 +424,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
       <div class="sec-tag">04 — EQUIPMENT</div>
       <div class="sec-title">WORKOUT TYPE</div>
       <div class="toggle-row">
-        <div class="toggle-pill eq-gym on" id="eq-gym" onclick="setEquipment('gym',this)">🏋️<br>Gym</div>
-        <div class="toggle-pill eq-bw" id="eq-bodyweight" onclick="setEquipment('bodyweight',this)">💪<br>Bodyweight</div>
+        <div class="toggle-pill eq-gym on" id="eq-gym" onclick="setEquipment('gym',this)">🏋️ GYM</div>
+        <div class="toggle-pill eq-bw" id="eq-bodyweight" onclick="setEquipment('bodyweight',this)">💪 BODYWEIGHT</div>
       </div>
     </div>
 
@@ -497,7 +463,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Inter',sans-serif;opacity:.6">IRON AUDIO v4.9</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v5.2</div>
 
 </div>
 
@@ -983,7 +949,7 @@ async function claudeDJSearch(g, count) {
 
   // Genre-specific prompt additions
   var genreNotes = {
-    'Hip-Hop': 'Include a healthy mix spanning different decades — legends from the 80s and 90s (Nas, Biggie, Jay-Z, Rakim, LL Cool J, DMX, Big Pun, Big L) alongside current artists (Drake, Kendrick Lamar, Travis Scott, Post Malone). Do NOT include any of the following as a primary artist: Cardi B, Nicki Minaj, Lizzo, Megan Thee Stallion, Sexyy Red, GloRilla, Ice Spice, Latto, Flo Milli, JT, Anycia. They may appear as featured artists only.',
+    'Hip-Hop': 'Include a healthy mix spanning different decades — legends from the 80s and 90s (Nas, Biggie, Jay-Z, Rakim, LL Cool J, DMX, Big Pun, Big L) alongside current artists (Drake, Kendrick Lamar, Travis Scott, Post Malone). Do NOT include any of the following as a primary artist: Cardi B, Nicki Minaj, Lizzo, Megan Thee Stallion, Sexyy Red, GloRilla, Ice Spice, Latto, Flo Milli, JT, Anycia, 2Pac. They may appear as featured artists only.',
     'Rock':    'Include a mix of classic rock legends (Led Zeppelin, AC/DC, Black Sabbath, Pink Floyd, The Rolling Stones) and modern rock (Foo Fighters, Linkin Park, Muse, System of a Down). Prioritize high-energy anthems.',
     'EDM':     'Mix iconic tracks from the golden era of EDM (Avicii, Deadmau5, Daft Punk) with current underground and mainstage artists. Prioritize big drops and relentless energy.',
     '80s':     'Strictly 1980s artists and songs only. Mix pop, rock, new wave and synth-pop. Focus on tracks with driving, upbeat rhythms.',
@@ -1162,9 +1128,9 @@ async function spotifyArtistSearch(g, count) {
       'Drake','Kendrick Lamar','Jay-Z','Eminem','Kanye West','Lil Wayne',
       'Post Malone','Travis Scott','J. Cole','21 Savage','Lil Baby','Future',
       'A$AP Rocky','Tyler the Creator','Childish Gambino','Meek Mill',
-      'Big Sean','Wiz Khalifa','50 Cent','Snoop Dogg','Nas','2Pac',
-      'The Notorious B.I.G.','DMX','LL Cool J','Rakim','Big Pun','Busta Rhymes',
-      'Method Man','Redman','Ice Cube','Common','Talib Kweli','Mos Def'
+      'Big Sean','Wiz Khalifa','50 Cent','Snoop Dogg','Nas','The Notorious B.I.G.','DMX','LL Cool J','Rakim','Big Pun','Busta Rhymes',
+      'Method Man','Redman','Ice Cube','Common','Talib Kweli','Mos Def',
+      'Nas','Jay-Z','Eminem'
     ],
     'Rock': [
       'Foo Fighters','AC/DC','Guns N Roses','Red Hot Chili Peppers','Linkin Park',
@@ -1353,12 +1319,29 @@ async function searchMixTracks(count) {
     } catch(e) {}
   }
 
-  allTracks.sort((a,b) => (b.popularity||0)-(a.popularity||0));
-  return allTracks.slice(0, count);
+  // Dedup by artist — one track per artist for variety
+  const seenArtists = new Set();
+  const deduped = allTracks
+    .sort((a,b) => (b.popularity||0)-(a.popularity||0))
+    .filter(t => {
+      const artist = (t.artists?.[0]?.name || '').toLowerCase();
+      if (seenArtists.has(artist)) return false;
+      seenArtists.add(artist);
+      return true;
+    });
+  return deduped.slice(0, count);
 }
 
 async function searchTracks(g, count) {
-  if (g === 'Mix') return searchMixTracks(count);
+  // Mix: route through Claude DJ if available (handles diversity natively)
+  // Falls back to searchMixTracks with artist dedup
+  if (g === 'Mix') {
+    if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
+      const djMix = await claudeDJSearch('Mix', count);
+      if (djMix && djMix.length) return djMix.slice(0, count);
+    }
+    return searchMixTracks(count);
+  }
 
   // Try Claude DJ first if key is set and budget available
   if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
