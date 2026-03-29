@@ -547,7 +547,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.0</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.1</div>
 
 </div>
 
@@ -953,17 +953,93 @@ const WIKIMEDIA_GIFS = {
   'Wide-Grip Curl':                  'https://commons.wikimedia.org/wiki/Special:FilePath/Wide-grip-standing-biceps-curl-2.gif',
 };
 
+// ── ExerciseDB dataset (fetched once, cached in localStorage) ────────
+var _edbMap = null;
+var _edbLoading = false;
+var _edbCallbacks = [];
+
+function normName(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/ +/g, ' ').trim();
+}
+
+function edbBestMatch(name) {
+  if (!_edbMap) return null;
+  var n = normName(name);
+  if (_edbMap[n]) return _edbMap[n];
+  var short = n.replace(/ [-–].*$/, '').trim();
+  if (_edbMap[short]) return _edbMap[short];
+  var keys = Object.keys(_edbMap);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].indexOf(n) !== -1 || n.indexOf(keys[i]) !== -1) return _edbMap[keys[i]];
+  }
+  return null;
+}
+
+async function loadEdbDataset() {
+  // Check localStorage cache (24h TTL)
+  try {
+    var cached = localStorage.getItem('ia_edb_map');
+    var ts = parseInt(localStorage.getItem('ia_edb_ts') || '0');
+    if (cached && Date.now() - ts < 86400000) {
+      _edbMap = JSON.parse(cached);
+      return;
+    }
+  } catch(e) {}
+  try {
+    var list = [], offset = 0, limit = 100, total = 9999;
+    while (offset < total) {
+      var resp = await fetch(
+        'https://exercisedb-api.vercel.app/api/v1/exercises?limit=' + limit + '&offset=' + offset,
+        { signal: AbortSignal.timeout(10000) });
+      if (!resp.ok) break;
+      var data = await resp.json();
+      var page = data.data || data.exercises || [];
+      total = (data.metadata && data.metadata.totalExercises) || total;
+      list = list.concat(page);
+      offset += limit;
+      if (page.length < limit) break;
+    }
+    if (list.length > 0) {
+      _edbMap = {};
+      list.forEach(function(ex) {
+        if (ex.gifUrl) _edbMap[normName(ex.name)] = ex.gifUrl;
+      });
+      try {
+        localStorage.setItem('ia_edb_map', JSON.stringify(_edbMap));
+        localStorage.setItem('ia_edb_ts', Date.now().toString());
+      } catch(e) {}
+    } else { _edbMap = {}; }
+  } catch(e) { _edbMap = {}; }
+}
+
+async function ensureEdb() {
+  if (_edbMap !== null) return;
+  if (_edbLoading) {
+    return new Promise(function(res) { _edbCallbacks.push(res); });
+  }
+  _edbLoading = true;
+  await loadEdbDataset();
+  _edbLoading = false;
+  _edbCallbacks.forEach(function(cb) { cb(); });
+  _edbCallbacks = [];
+}
+
 async function fetchExerciseGif(exerciseName) {
-  // ── TIER 1: Wikimedia Commons SVG ─────────────────────────────────
+  // ── TIER 1: Wikimedia Commons SVG (confirmed filenames) ────────────
   if (WIKIMEDIA_GIFS[exerciseName]) {
     return { gifUrl: WIKIMEDIA_GIFS[exerciseName], target: '', bodyPart: '', id: '' };
   }
 
-  // ── TIER 2: yuhonas/free-exercise-db ──────────────────────────────
+  // ── TIER 2: ExerciseDB animated GIF (full dataset, cached 24h) ─────
+  await ensureEdb();
+  var edbGif = edbBestMatch(exerciseName);
+  if (edbGif) return { gifUrl: edbGif, target: '', bodyPart: '', id: '' };
+
+  // ── TIER 3: yuhonas/free-exercise-db ──────────────────────────────
   var url = EXERCISE_GIFS[exerciseName] || null;
   if (url) return { gifUrl: url, target: '', bodyPart: '', id: '' };
 
-  // ── TIER 3: placeholder ────────────────────────────────────────────
+  // ── TIER 4: placeholder ────────────────────────────────────────────
   return null;
 }
 
