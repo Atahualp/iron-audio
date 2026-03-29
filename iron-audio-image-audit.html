@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v6 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v7 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -103,6 +103,30 @@ function dbg(msg){
   p.scrollTop=p.scrollHeight;
 }
 
+async function fetchPage(offset, retries){
+  retries = retries || 0;
+  var url='https://exercisedb-api.vercel.app/api/v1/exercises?limit=100&offset='+offset;
+  dbg('GET offset='+offset+(retries?' (retry '+retries+')':''));
+  try{
+    var r=await fetchWithTimeout(url, 12000);
+    dbg('  → '+r.status+(r.ok?'':' FAIL'));
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var page=d.data||d.exercises||[];
+    if(d.metadata && d.metadata.totalExercises) return {page:page, total:d.metadata.totalExercises};
+    return {page:page, total:9999};
+  }catch(e){
+    dbg('  → ERROR: '+e.message);
+    if(retries<2){
+      var wait=retries===0?3000:8000;
+      dbg('  Waiting '+wait+'ms before retry...');
+      await new Promise(function(res){ setTimeout(res, wait); });
+      return fetchPage(offset, retries+1);
+    }
+    throw e;
+  }
+}
+
 var edbOffset = 0; // track how far we got
 
 async function resumeLoad(){
@@ -152,32 +176,8 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch (v6 — resumable fetch, contain layout)...');
+  dbg('Starting EDB fetch (v7 — fetchPage outer scope fix)...');
   dbg('Origin: '+window.location.origin);
-
-  async function fetchPage(offset, retries){
-    retries = retries || 0;
-    var url='https://exercisedb-api.vercel.app/api/v1/exercises?limit=100&offset='+offset;
-    dbg('GET offset='+offset+(retries?' (retry '+retries+')':''));
-    try{
-      var r=await fetchWithTimeout(url, 12000);
-      dbg('  → '+r.status+(r.ok?'':' FAIL'));
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      var d=await r.json();
-      var page=d.data||d.exercises||[];
-      if(d.metadata && d.metadata.totalExercises) return {page:page, total:d.metadata.totalExercises};
-      return {page:page, total:9999};
-    }catch(e){
-      dbg('  → ERROR: '+e.message);
-      if(retries<2){
-        var wait=retries===0?3000:8000;
-        dbg('  Waiting '+wait+'ms before retry...');
-        await new Promise(function(res){ setTimeout(res, wait); });
-        return fetchPage(offset, retries+1);
-      }
-      throw e;
-    }
-  }
 
   try{
     var list=[], offset=0, total=9999;
