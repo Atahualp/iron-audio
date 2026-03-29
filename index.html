@@ -48,6 +48,11 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .dur-card:active{transform:scale(.97)}
 .dur-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--muted);line-height:1}
 .dur-card.on .dur-num{color:#FF4D00}
+.ex-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
+.ex-card.on{border-color:#FF4D00;background:rgba(255,77,0,.08)}
+.ex-card:active{transform:scale(.97)}
+.ex-card .dur-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--muted);line-height:1}
+.ex-card.on .dur-num{color:#FF4D00}
 .dur-lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 
 /* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
@@ -240,6 +245,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .timer-btn:active{transform:scale(.95)}
 .timer-btn.skip{background:#1a1a28;color:var(--muted)}
+.timer-btn.minus{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
 .timer-btn.stop{background:#FF4D00;color:#fff}
 
 /* ── EXERCISE MODAL ──────────────────────────────────────────────── */
@@ -440,13 +446,14 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
   <!-- CONFIG VIEW -->
   <div id="cfgView">
 
-    <!-- Duration -->
+    <!-- Exercise Count -->
     <div class="sec">
-      <div class="sec-tag">01 — DURATION</div>
-      <div class="sec-title">HOW LONG?</div>
+      <div class="sec-tag">01 — WORKOUT SIZE</div>
+      <div class="sec-title">EXERCISES PER MUSCLE</div>
       <div class="dur-row">
-        <div class="dur-card on" onclick="setDur(30,this)"><div class="dur-num">30</div><div class="dur-lbl">Minutes</div></div>
-        <div class="dur-card" onclick="setDur(60,this)"><div class="dur-num">60</div><div class="dur-lbl">Minutes</div></div>
+        <div class="ex-card on" onclick="setExCount(1,this)"><div class="dur-num">1</div><div class="dur-lbl">Quick</div></div>
+        <div class="ex-card" onclick="setExCount(2,this)"><div class="dur-num">2</div><div class="dur-lbl">Standard</div></div>
+        <div class="ex-card" onclick="setExCount(3,this)"><div class="dur-num">3</div><div class="dur-lbl">Full</div></div>
       </div>
     </div>
 
@@ -547,7 +554,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.2</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.3</div>
 
 </div>
 
@@ -640,7 +647,7 @@ function getMuscleColor(muscle) {
 }
 
 // ─── APP STATE ────────────────────────────────────────────────────────
-let dur = 30, muscles = [], genre = '';
+let dur = 30;var perMuscleCount=2, muscles = [], genre = '';
 let spToken = null, spUserId = null;
 
 
@@ -973,7 +980,7 @@ const EDB_GIFS = {
   'Lat Pulldown': 'https://static.exercisedb.dev/media/ecpY0rH.gif',
   'Seated Cable Row': 'https://static.exercisedb.dev/media/fUBheHs.gif',
   'Single-Arm DB Row': 'https://static.exercisedb.dev/media/MUic5zN.gif',
-  'Deadlift': 'https://static.exercisedb.dev/media/KUaoUV8.gif',
+  'Deadlift': 'https://static.exercisedb.dev/media/wQ2c4XD.gif',
   'T-Bar Row': 'https://static.exercisedb.dev/media/aaXr7ld.gif',
   'Cable Straight-Arm Pulldown': 'https://static.exercisedb.dev/media/x69MAlq.gif',
   'Chin-Up': 'https://static.exercisedb.dev/media/T2mxWqc.gif',
@@ -986,7 +993,7 @@ const EDB_GIFS = {
   'Reverse Grip Row': 'https://static.exercisedb.dev/media/FVM1AUZ.gif',
   'Superman': 'https://static.exercisedb.dev/media/4GqRrAk.gif',
   'Wide-Grip Pull-Up': 'https://static.exercisedb.dev/media/Qqi7bko.gif',
-  'Stiff-Leg Deadlift': 'https://static.exercisedb.dev/media/kuMiR2T.gif',
+  'Stiff-Leg Deadlift': 'https://static.exercisedb.dev/media/KgI0tqW.gif',
   'Overhead Press': 'https://static.exercisedb.dev/media/bBi35y3.gif',
   'Lateral Raise': 'https://static.exercisedb.dev/media/AQ0mC4Y.gif',
   'Front Raise': 'https://static.exercisedb.dev/media/33AzZeV.gif',
@@ -1924,7 +1931,7 @@ async function createPlaylist(name, uris){
 }
 
 // ─── UI CONTROLS ──────────────────────────────────────────────────────
-function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}function setExCount(n,el){perMuscleCount=n;document.querySelectorAll('.ex-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
 function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];}
 function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
 function showCfg(){document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
@@ -2029,7 +2036,7 @@ async function generate() {
   ov.classList.add('vis');
   document.getElementById('ovTxt').textContent = 'BUILDING WORKOUT';
 
-  const perMuscle = dur === 30 ? 2 : dur === 45 ? 2 : 3;
+  const perMuscle = perMuscleCount || 2;
 
   // Difficulty multipliers
   const diffMap = {
@@ -2075,7 +2082,7 @@ async function generate() {
     }));
   }
 
-  document.getElementById('timeBadge').textContent = `${dur} MIN`;
+  document.getElementById('timeBadge').textContent = perMuscleCount + 'ex/muscle';
   document.getElementById('muscleBadge').textContent = muscles.map(m=>m.toUpperCase()).join(' · ');
 
   // Store workout globally so modal can access exercise data
@@ -2484,7 +2491,7 @@ function computeNextSession() {
 function endWorkout() {
   var elapsed = getElapsedSecs();
   var minutes = Math.round(elapsed / 60);
-  var exArr = currentWorkout || [];
+  var exArr = window._currentWorkout || currentWorkout || [];
   var exCount = exArr.length;
 
   // Compute set logs stats
@@ -2666,7 +2673,7 @@ function confirmEndWorkout() {
     var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
     if (hist.length > 0) {
       var totalVolume = 0;
-      var exArr = currentWorkout || [];
+      var exArr = window._currentWorkout || currentWorkout || [];
       exArr.forEach(function(ex) {
         var logs = (window._setLogs && window._setLogs[ex.name]) || [];
         logs.forEach(function(r) {
@@ -2772,10 +2779,23 @@ function startRestTimer(secs, exName) {
       beep(784,  0.15, 0.5);
       setTimeout(() => beep(1047, 0.15, 0.5), 160);
       setTimeout(() => beep(1319, 0.35, 0.6), 320);
-      if (navigator.vibrate) navigator.vibrate([80, 60, 80, 60, 200]);
+      // Haptics — stronger pattern, retry on iOS
+      var vPat = [100, 50, 100, 50, 300];
+      if (navigator.vibrate) {
+        navigator.vibrate(vPat);
+        setTimeout(function(){ navigator.vibrate(vPat); }, 400);
+      }
       stopTimer();
     }
   }, 250); // 250ms tick — fast enough to never miss a second even with throttling
+}
+
+function adjustTimer(delta) {
+  // Shift timerEndTime forward/backward
+  if (typeof timerEndTime !== 'undefined') {
+    timerEndTime = timerEndTime - (delta * 1000); // subtract because negative delta = less time
+    if (timerEndTime < Date.now()) timerEndTime = Date.now() + 500;
+  }
 }
 
 function stopTimer() {
@@ -3470,7 +3490,7 @@ async function searchMixTracks(count) {
     <div class="timer-count" id="timerCount">60</div>
   </div>
   <div class="timer-actions">
-    <button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
+    <button class="timer-btn minus" onclick="adjustTimer(-10)">-10s</button><button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
   </div>
 </div>
 
