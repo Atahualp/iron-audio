@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v9 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v10 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -84,8 +84,7 @@ function expandName(s){
     .replace(/Wide-Grip/gi,'wide grip')
     .replace(/Behind-the-Back/gi,'behind back')
     .replace(/Behind-Back/gi,'behind back')
-    .replace(/Snatch-Grip/gi,'snatch grip')
-    .replace(/Rope\b/gi,'rope');
+    .replace(/Snatch-Grip/gi,'snatch grip');
 }
 
 function wordScore(a,b){
@@ -101,14 +100,13 @@ function bestMatch(name){
   var forms=[];
   var a=norm(name);
   var b=norm(expandName(name));
-  var c=norm(expandName(name).replace(/^(incline|decline|seated|standing|lying|cable|barbell|dumbbell|machine|low|high|wide|close) /i,''));
+  var c=norm(expandName(name).replace(/^(incline|decline|seated|standing|lying|cable|barbell|dumbbell|machine|low|high) /i,''));
   [a,b,c].forEach(function(f){if(f&&forms.indexOf(f)===-1)forms.push(f);});
 
   // Exact match
   for(var fi=0;fi<forms.length;fi++){
     if(edbMap[forms[fi]]) return edbMap[forms[fi]];
   }
-
   var keys=Object.keys(edbMap);
 
   // Substring match
@@ -120,8 +118,8 @@ function bestMatch(name){
     }
   }
 
-  // Word overlap
-  var best=null,bestScore=0.55;
+  // Word overlap (only if short enough to be fast)
+  var best=null,bestScore=0.6;
   for(var fi=0;fi<forms.length;fi++){
     var n=forms[fi];
     for(var i=0;i<keys.length;i++){
@@ -130,6 +128,46 @@ function bestMatch(name){
     }
   }
   return best;
+}
+
+function fetchWithTimeout(url, ms){
+  var ctrl=new AbortController();
+  var tid=setTimeout(function(){ ctrl.abort(); }, ms);
+  return fetch(url, {signal: ctrl.signal}).then(function(r){
+    clearTimeout(tid); return r;
+  }).catch(function(e){ clearTimeout(tid); throw e; });
+}
+
+function dbg(msg){
+  var p=document.getElementById('debugPanel');
+  p.style.display='block';
+  var ts=new Date().toISOString().substr(11,8);
+  p.textContent+='['+ts+'] '+msg+'\n';
+  p.scrollTop=p.scrollHeight;
+}
+
+async function fetchPage(offset, retries){
+  retries = retries || 0;
+  var url='https://exercisedb-api.vercel.app/api/v1/exercises?limit=100&offset='+offset;
+  dbg('GET offset='+offset+(retries?' (retry '+retries+')':''));
+  try{
+    var r=await fetchWithTimeout(url, 12000);
+    dbg('  \u2192 '+r.status+(r.ok?'':' FAIL'));
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var page=d.data||d.exercises||[];
+    if(d.metadata&&d.metadata.totalExercises) return {page:page,total:d.metadata.totalExercises};
+    return {page:page,total:9999};
+  }catch(e){
+    dbg('  \u2192 ERROR: '+e.message);
+    if(retries<2){
+      var wait=retries===0?3000:8000;
+      dbg('  Waiting '+wait+'ms before retry...');
+      await new Promise(function(res){ setTimeout(res, wait); });
+      return fetchPage(offset, retries+1);
+    }
+    throw e;
+  }
 }
 
 var edbOffset = 0; // track how far we got
@@ -181,7 +219,7 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch (v9 — fixed abbr expansion)...');
+  dbg('Starting EDB fetch (v10 — all functions restored)...');
   dbg('Origin: '+window.location.origin);
 
   try{
