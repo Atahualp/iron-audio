@@ -14,7 +14,7 @@ h1{font-size:16px;font-weight:700;color:#FF4D00;letter-spacing:2px;margin-bottom
 .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #333;background:transparent;color:#888;cursor:pointer}
 .btn.on{background:#1a1a2e;color:#FF4D00;border-color:#FF4D00;font-weight:600}
-.btn.go{background:#1a3a1a;color:#4ade80;border-color:#22c55e;font-weight:600}
+.btn.go{background:#1a3a1a;color:#4ade80;border-color:#22c55e;font-weight:600}.btn.resume{background:#2a1a0a;color:#fb923c;border-color:#f97316;font-weight:600}
 input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;color:#ddd;font-size:12px;padding:6px 10px;width:220px;outline:none}
 .prog{width:100%;height:3px;background:#1a1a2e;border-radius:2px;margin-bottom:6px;overflow:hidden;display:none}
 .pb{height:100%;background:#FF4D00;border-radius:2px;transition:width .3s;width:0}
@@ -23,15 +23,15 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:6px}
 .card{border-radius:7px;overflow:hidden;background:#111118;border:1px solid #2a2a3e}
 .card.wiki{border-color:#1a3a5e}.card.edb{border-color:#1a3a1a}.card.broken{border-color:#7a1a1a}
-.card img{width:100%;height:80px;object-fit:cover;display:block;background:#1a1a24}
-.ph{width:100%;height:80px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#444;background:#1a1a24;text-align:center;padding:4px}
+.card img{width:100%;height:110px;object-fit:contain;display:block;background:#1a1a24}
+.ph{width:100%;height:110px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#444;background:#1a1a24;text-align:center;padding:4px}
 .ph.br{background:#1a0808;color:#f87171}
 .ci{padding:5px 7px 6px}.cn{font-size:10px;font-weight:600;color:#ddd;line-height:1.3;margin-bottom:2px}
 .cs{font-size:9px;line-height:1.3}.cs.w{color:#4a90d9}.cs.e{color:#3d9a5c}.cs.y{color:#c8860a}.cs.b{color:#f87171}
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v5 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v6 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -54,6 +54,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 <button class="btn" onclick="setF('yuh',this)">yuhonas only</button>
 <button class="btn" onclick="setF('wiki',this)">Wikimedia</button>
 <button class="btn" onclick="setF('broken',this)">Broken</button>
+<button class="btn resume" id="btnResume" style="display:none" onclick="resumeLoad()">&#9654; Resume (offset 1000+)</button>
 </div>
 <div class="prog" id="prog"><div class="pb" id="pb"></div></div>
 <div class="status" id="status">Click &#9654; Load to fetch ExerciseDB GIFs.</div>
@@ -102,6 +103,47 @@ function dbg(msg){
   p.scrollTop=p.scrollHeight;
 }
 
+var edbOffset = 0; // track how far we got
+
+async function resumeLoad(){
+  var btn=document.getElementById('btnResume');
+  btn.textContent='Resuming...';
+  btn.disabled=true;
+  document.getElementById('debugPanel').style.display='block';
+  dbg('Resuming from offset='+edbOffset+'...');
+  try{
+    var total=1500;
+    while(edbOffset<total){
+      var result=await fetchPage(edbOffset);
+      result.page.forEach(function(ex){ if(ex.gifUrl) edbMap[norm(ex.name)]=ex.gifUrl; });
+      edbOffset+=100;
+      total=result.total;
+      dbg('offset='+edbOffset+' → edbMap now '+Object.keys(edbMap).length+' entries');
+      if(result.page.length<100) break;
+      if(edbOffset<total) await new Promise(function(res){ setTimeout(res, 600); });
+    }
+    dbg('Resume complete. edbMap: '+Object.keys(edbMap).length);
+    // Re-match all exercises
+    cE=0; cY=0;
+    var matched=0, noMatch=[];
+    D.forEach(function(ex){
+      if(ex.s==='wiki'){ ex._src='wiki'; return; }
+      var gif=bestMatch(ex.n);
+      if(gif){ ex.edbUrl=gif; ex._src='edb'; cE++; matched++; }
+      else { noMatch.push(ex.n); ex._src=ex.url?'yuh':'none'; if(ex.url) cY++; }
+    });
+    dbg('Re-matched: '+matched+'/209');
+    if(noMatch.length) dbg('Still unmatched: '+noMatch.join(', '));
+    document.getElementById('status').textContent='Full match: '+matched+'/209 ExerciseDB GIFs. edbMap: '+Object.keys(edbMap).length+' entries.';
+    updStat(); render();
+    btn.style.display='none';
+  }catch(e){
+    dbg('Resume failed: '+e.message+' — try again in ~60s');
+    btn.textContent='▶ Resume (offset '+edbOffset+'+)';
+    btn.disabled=false;
+  }
+}
+
 async function startLoad(){
   if(loadStarted) return;
   loadStarted=true;
@@ -110,7 +152,7 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch (v5 — incremental map build, retry logic)...');
+  dbg('Starting EDB fetch (v6 — resumable fetch, contain layout)...');
   dbg('Origin: '+window.location.origin);
 
   async function fetchPage(offset, retries){
@@ -180,7 +222,10 @@ async function startLoad(){
     dbg('Partial match: '+matched+'/209');
     btn.textContent='Partial';
     document.getElementById('prog').style.display='none';
-    document.getElementById('status').textContent='Partial fetch ('+sofar+' EDB entries). Matched '+matched+'/209.';
+    document.getElementById('status').textContent='Partial fetch ('+sofar+' EDB entries). Matched '+matched+'/209. Click Resume after ~60s to get more.';
+    edbOffset=list.length;
+    document.getElementById('btnResume').style.display='inline-block';
+    document.getElementById('btnResume').textContent='\u25b6 Resume (offset '+edbOffset+'+)';
     updStat(); render();
   }
 }
