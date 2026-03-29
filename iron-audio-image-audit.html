@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v10 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v11 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -55,6 +55,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 <button class="btn" onclick="setF('wiki',this)">Wikimedia</button>
 <button class="btn" onclick="setF('broken',this)">Broken</button>
 <button class="btn resume" id="btnResume" style="display:none" onclick="resumeLoad()">&#9654; Resume (offset 1000+)</button>
+<button class="btn" id="btnExport" style="display:none;border-color:#a855f7;color:#a855f7" onclick="exportTable()">&#128190; Copy hardcode table</button>
 </div>
 <div class="prog" id="prog"><div class="pb" id="pb"></div></div>
 <div class="status" id="status">Click &#9654; Load to fetch ExerciseDB GIFs.</div>
@@ -172,6 +173,22 @@ async function fetchPage(offset, retries){
 
 var edbOffset = 0; // track how far we got
 
+function exportTable(){
+  var lines=['const EDB_GIFS = {'];
+  D.forEach(function(ex){
+    if(ex._src==='edb' && ex.edbUrl){
+      var escaped=ex.n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      lines.push("  '"+escaped+"': '"+ex.edbUrl+"',");
+    }
+  });
+  lines.push('};');
+  var text=lines.join('\n');
+  navigator.clipboard.writeText(text).then(function(){
+    document.getElementById('btnExport').textContent='\u2713 Copied!';
+    setTimeout(function(){ document.getElementById('btnExport').textContent='\u{1F4BE} Copy hardcode table'; },2000);
+  });
+}
+
 async function resumeLoad(){
   var btn=document.getElementById('btnResume');
   btn.textContent='Resuming...';
@@ -204,6 +221,7 @@ async function resumeLoad(){
     document.getElementById('status').textContent='Full match: '+matched+'/209 ExerciseDB GIFs. edbMap: '+Object.keys(edbMap).length+' entries.';
     updStat(); render();
     btn.style.display='none';
+    document.getElementById('btnExport').style.display='inline-block';
   }catch(e){
     dbg('Resume failed: '+e.message+' — try again in ~60s');
     btn.textContent='▶ Resume (offset '+edbOffset+'+)';
@@ -219,7 +237,7 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch (v10 — all functions restored)...');
+  dbg('Starting EDB fetch (v11 — export hardcode table)...');
   dbg('Origin: '+window.location.origin);
 
   try{
