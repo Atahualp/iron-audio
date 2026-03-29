@@ -547,7 +547,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.1</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.2</div>
 
 </div>
 
@@ -946,6 +946,149 @@ const EXERCISE_GIFS = {
 
 };
 
+const EDB_GIFS = {
+  'Bench Press': 'https://static.exercisedb.dev/media/WcHl7ru.gif',
+  'Incline DB Press': 'https://static.exercisedb.dev/media/O8o7q4d.gif',
+  'Cable Fly': 'https://static.exercisedb.dev/media/xLYSdtg.gif',
+  'Push-Up': 'https://static.exercisedb.dev/media/I4hDWkc.gif',
+  'Decline Bench Press': 'https://static.exercisedb.dev/media/DotAgEF.gif',
+  'Dumbbell Pullover': 'https://static.exercisedb.dev/media/9XjtHvS.gif',
+  'Incline Cable Fly': 'https://static.exercisedb.dev/media/tBWXbIT.gif',
+  'DB Bench Press': 'https://static.exercisedb.dev/media/SpYC0Kp.gif',
+  'Chest Dip': 'https://static.exercisedb.dev/media/9WTm7dq.gif',
+  'Floor Press': 'https://static.exercisedb.dev/media/vtusOWT.gif',
+  'Low Cable Fly': 'https://static.exercisedb.dev/media/FVmZVhk.gif',
+  'Machine Chest Press': 'https://static.exercisedb.dev/media/T0yTjgW.gif',
+  'Svend Press': 'https://static.exercisedb.dev/media/I1OBLnn.gif',
+  'Wide Push-Up': 'https://static.exercisedb.dev/media/I4hDWkc.gif',
+  'Cable Chest Press': 'https://static.exercisedb.dev/media/T0yTjgW.gif',
+  'Close-Grip Push-Up': 'https://static.exercisedb.dev/media/x6KpKpq.gif',
+  'Plyo Push-Up': 'https://static.exercisedb.dev/media/Snj1wSv.gif',
+  'Stagger Push-Up': 'https://static.exercisedb.dev/media/I4hDWkc.gif',
+  'One-Arm Push-Up': 'https://static.exercisedb.dev/media/I4hDWkc.gif',
+  'Decline Push-Up': 'https://static.exercisedb.dev/media/i5cEhka.gif',
+  'Cobra Push-Up': 'https://static.exercisedb.dev/media/I4hDWkc.gif',
+  'Pull-Up': 'https://static.exercisedb.dev/media/lBDjFxJ.gif',
+  'Barbell Row': 'https://static.exercisedb.dev/media/dmgMp3n.gif',
+  'Lat Pulldown': 'https://static.exercisedb.dev/media/ecpY0rH.gif',
+  'Seated Cable Row': 'https://static.exercisedb.dev/media/fUBheHs.gif',
+  'Single-Arm DB Row': 'https://static.exercisedb.dev/media/MUic5zN.gif',
+  'Deadlift': 'https://static.exercisedb.dev/media/KUaoUV8.gif',
+  'T-Bar Row': 'https://static.exercisedb.dev/media/aaXr7ld.gif',
+  'Cable Straight-Arm Pulldown': 'https://static.exercisedb.dev/media/x69MAlq.gif',
+  'Chin-Up': 'https://static.exercisedb.dev/media/T2mxWqc.gif',
+  'Close-Grip Lat Pulldown': 'https://static.exercisedb.dev/media/DptumMx.gif',
+  'Pendlay Row': 'https://static.exercisedb.dev/media/r0z6xzQ.gif',
+  'Inverted Row': 'https://static.exercisedb.dev/media/bZGHsAZ.gif',
+  'Cable Row to Neck': 'https://static.exercisedb.dev/media/fUBheHs.gif',
+  'Renegade Row': 'https://static.exercisedb.dev/media/b9kqlBy.gif',
+  'Straight-Arm Pulldown': 'https://static.exercisedb.dev/media/x69MAlq.gif',
+  'Reverse Grip Row': 'https://static.exercisedb.dev/media/FVM1AUZ.gif',
+  'Superman': 'https://static.exercisedb.dev/media/4GqRrAk.gif',
+  'Wide-Grip Pull-Up': 'https://static.exercisedb.dev/media/Qqi7bko.gif',
+  'Stiff-Leg Deadlift': 'https://static.exercisedb.dev/media/kuMiR2T.gif',
+  'Overhead Press': 'https://static.exercisedb.dev/media/bBi35y3.gif',
+  'Lateral Raise': 'https://static.exercisedb.dev/media/AQ0mC4Y.gif',
+  'Front Raise': 'https://static.exercisedb.dev/media/33AzZeV.gif',
+  'Arnold Press': 'https://static.exercisedb.dev/media/Xy4jlWA.gif',
+  'Upright Row': 'https://static.exercisedb.dev/media/cALKspW.gif',
+  'Rear Delt Fly': 'https://static.exercisedb.dev/media/8DiFDVA.gif',
+  'Cable Lateral Raise': 'https://static.exercisedb.dev/media/goJ6ezq.gif',
+  'DB Shoulder Press': 'https://static.exercisedb.dev/media/84RyJf8.gif',
+  'Landmine Lateral Raise': 'https://static.exercisedb.dev/media/eXMFHww.gif',
+  'Cable Front Raise': 'https://static.exercisedb.dev/media/u2X71Np.gif',
+  'Plate Front Raise': 'https://static.exercisedb.dev/media/u2X71Np.gif',
+  'Machine Shoulder Press': 'https://static.exercisedb.dev/media/84RyJf8.gif',
+  'Pike Push-Up': 'https://static.exercisedb.dev/media/sVvXT5J.gif',
+  'Band Pull-Apart': 'https://static.exercisedb.dev/media/r1XNRYB.gif',
+  'Seated DB Lateral Raise': 'https://static.exercisedb.dev/media/DsgkuIt.gif',
+  'Cable Y-Raise': 'https://static.exercisedb.dev/media/PbzNu7c.gif',
+  'Cuban Press': 'https://static.exercisedb.dev/media/QfAKy1G.gif',
+  '1,1,2 Military Press': 'https://static.exercisedb.dev/media/CggQhII.gif',
+  'Barbell Curl': 'https://static.exercisedb.dev/media/25GPyDY.gif',
+  'Hammer Curl': 'https://static.exercisedb.dev/media/GNhAeJ0.gif',
+  'Incline DB Curl': 'https://static.exercisedb.dev/media/ae9UoXQ.gif',
+  'Preacher Curl': 'https://static.exercisedb.dev/media/ye84CTU.gif',
+  'Cable Curl': 'https://static.exercisedb.dev/media/G08RZcQ.gif',
+  'Spider Curl': 'https://static.exercisedb.dev/media/VdLZ3nB.gif',
+  'Reverse Curl': 'https://static.exercisedb.dev/media/eOG0r6v.gif',
+  'Cross-Body Hammer Curl': 'https://static.exercisedb.dev/media/Qyk5J3p.gif',
+  'Zottman Curl': 'https://static.exercisedb.dev/media/kXaIn5A.gif',
+  'Machine Curl': 'https://static.exercisedb.dev/media/g2oKspu.gif',
+  'Seated Alternating Curl': 'https://static.exercisedb.dev/media/TiaZTxx.gif',
+  'Drag Curl': 'https://static.exercisedb.dev/media/IENzBdA.gif',
+  'Cable Rope Hammer Curl': 'https://static.exercisedb.dev/media/PcPe0P5.gif',
+  'Curl-Up Hammer-Down': 'https://static.exercisedb.dev/media/g2oKspu.gif',
+  'Tricep Pushdown': 'https://static.exercisedb.dev/media/qRZ5S1N.gif',
+  'Skull Crusher': 'https://static.exercisedb.dev/media/h8LFzo9.gif',
+  'Close-Grip Bench': 'https://static.exercisedb.dev/media/WcHl7ru.gif',
+  'Single-Arm Cable Pushdown': 'https://static.exercisedb.dev/media/3ZflifB.gif',
+  'Diamond Push-Up': 'https://static.exercisedb.dev/media/soIB2rj.gif',
+  'Tate Press': 'https://static.exercisedb.dev/media/s5PdDyY.gif',
+  'Cable Overhead Extension': 'https://static.exercisedb.dev/media/wDUqY2u.gif',
+  'Tricep Kickback': 'https://static.exercisedb.dev/media/wOLmCXc.gif',
+  'Bench Dip': 'https://static.exercisedb.dev/media/gtO1ErP.gif',
+  'Cable Rope Pushdown': 'https://static.exercisedb.dev/media/3ZflifB.gif',
+  'Romanian Deadlift': 'https://static.exercisedb.dev/media/wQ2c4XD.gif',
+  'Leg Press': 'https://static.exercisedb.dev/media/V07qpXy.gif',
+  'Walking Lunge': 'https://static.exercisedb.dev/media/IZVHb27.gif',
+  'Leg Extension': 'https://static.exercisedb.dev/media/Y1MsI1l.gif',
+  'Hip Thrust': 'https://static.exercisedb.dev/media/Pjbc0Kt.gif',
+  'Sumo Deadlift': 'https://static.exercisedb.dev/media/KgI0tqW.gif',
+  'Bulgarian Split Squat': 'https://static.exercisedb.dev/media/QpXqiq8.gif',
+  'Leg Curl': 'https://static.exercisedb.dev/media/17lJ1kr.gif',
+  'Hack Squat': 'https://static.exercisedb.dev/media/Qa55kX1.gif',
+  'Front Squat': 'https://static.exercisedb.dev/media/Y7YcmIJ.gif',
+  'Goblet Squat': 'https://static.exercisedb.dev/media/yn8yg1r.gif',
+  'Step-Up': 'https://static.exercisedb.dev/media/gFyFj9z.gif',
+  'Box Jump': 'https://static.exercisedb.dev/media/iPm26QU.gif',
+  'Single-Leg Press': 'https://static.exercisedb.dev/media/10Z2DXU.gif',
+  'Sissy Squat': 'https://static.exercisedb.dev/media/xdYPUtE.gif',
+  'Glute Bridge': 'https://static.exercisedb.dev/media/aWedzZX.gif',
+  'Sumo Squat': 'https://static.exercisedb.dev/media/dzz6BiV.gif',
+  'Step-Up to Reverse Lunge': 'https://static.exercisedb.dev/media/gFyFj9z.gif',
+  'Jump Squat': 'https://static.exercisedb.dev/media/LIlE5Tn.gif',
+  'Split Squat': 'https://static.exercisedb.dev/media/QpXqiq8.gif',
+  'Calf Raise': 'https://static.exercisedb.dev/media/VW88JNd.gif',
+  'Seated Calf Raise': 'https://static.exercisedb.dev/media/ktsFQAZ.gif',
+  'Power Clean': 'https://static.exercisedb.dev/media/SiWCcTN.gif',
+  'Thruster': 'https://static.exercisedb.dev/media/f7Y9eDZ.gif',
+  'Kettlebell Swing': 'https://static.exercisedb.dev/media/UHJlbu3.gif',
+  'Clean and Press': 'https://static.exercisedb.dev/media/SGY8Zui.gif',
+  'Burpee': 'https://static.exercisedb.dev/media/dK9394r.gif',
+  'Turkish Get-Up': 'https://static.exercisedb.dev/media/Ha7SZ3y.gif',
+  'Hang Clean': 'https://static.exercisedb.dev/media/LHWF7us.gif',
+  'Push Press': 'https://static.exercisedb.dev/media/FS63wTN.gif',
+  'Overhead Squat': 'https://static.exercisedb.dev/media/gfk9kD4.gif',
+  'Squat to Overhead Press': 'https://static.exercisedb.dev/media/gfk9kD4.gif',
+  'Squat to Upright Row': 'https://static.exercisedb.dev/media/w1NOByi.gif',
+  'Mountain Climber to Row': 'https://static.exercisedb.dev/media/RJgzwny.gif',
+  'Weighted Burpee': 'https://static.exercisedb.dev/media/dK9394r.gif',
+  'Barbell Shrug': 'https://static.exercisedb.dev/media/dG7tG5y.gif',
+  'Dumbbell Shrug': 'https://static.exercisedb.dev/media/NJzBsGJ.gif',
+  'Rack Pull': 'https://static.exercisedb.dev/media/za9Ni4z.gif',
+  'Cable Shrug': 'https://static.exercisedb.dev/media/Eg98Ft9.gif',
+  'Behind-the-Back Shrug': 'https://static.exercisedb.dev/media/MzNnwx9.gif',
+  'DB Upright Row': 'https://static.exercisedb.dev/media/ainizkb.gif',
+  'Overhead Carry': 'https://static.exercisedb.dev/media/mWBtgmb.gif',
+  'Incline Shrug': 'https://static.exercisedb.dev/media/JymLInS.gif',
+  'Cable Crunch': 'https://static.exercisedb.dev/media/Kzg30R7.gif',
+  'Hanging Leg Raise': 'https://static.exercisedb.dev/media/I3tsCnC.gif',
+  'Russian Twist': 'https://static.exercisedb.dev/media/XVDdcoj.gif',
+  'Dead Bug': 'https://static.exercisedb.dev/media/iny3m5y.gif',
+  'Bicycle Crunch': 'https://static.exercisedb.dev/media/tZkGYZ9.gif',
+  'Decline Sit-Up': 'https://static.exercisedb.dev/media/QLL2gdc.gif',
+  'Pallof Press': 'https://static.exercisedb.dev/media/9pa4H5m.gif',
+  'L-Sit': 'https://static.exercisedb.dev/media/Bn6TXyO.gif',
+  'Side Plank': 'https://static.exercisedb.dev/media/X6ytgYZ.gif',
+  'Weighted Sit-Up': 'https://static.exercisedb.dev/media/EZeDVzO.gif',
+  'Plank Twist-Twist': 'https://static.exercisedb.dev/media/CosupLu.gif',
+  'Wrist Curl': 'https://static.exercisedb.dev/media/82LxxkW.gif',
+  'Wrist Roller': 'https://static.exercisedb.dev/media/bd5b860.gif',
+  'Reverse Wrist Curl': 'https://static.exercisedb.dev/media/Ezpnw9d.gif',
+  'Towel Pull-Up': 'https://static.exercisedb.dev/media/lBDjFxJ.gif',
+};
+
 const WIKIMEDIA_GIFS = {
   'Cross-Body Hammer Curl':          'https://commons.wikimedia.org/wiki/Special:FilePath/Cross_body_hammer_curl_with_dumbbell_1.svg',
   'Concentration Curl':              'https://commons.wikimedia.org/wiki/Special:FilePath/Concentration_curls_with_dumbbell_1.svg',
@@ -953,91 +1096,20 @@ const WIKIMEDIA_GIFS = {
   'Wide-Grip Curl':                  'https://commons.wikimedia.org/wiki/Special:FilePath/Wide-grip-standing-biceps-curl-2.gif',
 };
 
-// ── ExerciseDB dataset (fetched once, cached in localStorage) ────────
-var _edbMap = null;
-var _edbLoading = false;
-var _edbCallbacks = [];
-
-function normName(s) {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/ +/g, ' ').trim();
-}
-
-function edbBestMatch(name) {
-  if (!_edbMap) return null;
-  var n = normName(name);
-  if (_edbMap[n]) return _edbMap[n];
-  var short = n.replace(/ [-–].*$/, '').trim();
-  if (_edbMap[short]) return _edbMap[short];
-  var keys = Object.keys(_edbMap);
-  for (var i = 0; i < keys.length; i++) {
-    if (keys[i].indexOf(n) !== -1 || n.indexOf(keys[i]) !== -1) return _edbMap[keys[i]];
-  }
-  return null;
-}
-
-async function loadEdbDataset() {
-  // Check localStorage cache (24h TTL)
-  try {
-    var cached = localStorage.getItem('ia_edb_map');
-    var ts = parseInt(localStorage.getItem('ia_edb_ts') || '0');
-    if (cached && Date.now() - ts < 86400000) {
-      _edbMap = JSON.parse(cached);
-      return;
-    }
-  } catch(e) {}
-  try {
-    var list = [], offset = 0, limit = 100, total = 9999;
-    while (offset < total) {
-      var resp = await fetch(
-        'https://exercisedb-api.vercel.app/api/v1/exercises?limit=' + limit + '&offset=' + offset,
-        { signal: AbortSignal.timeout(10000) });
-      if (!resp.ok) break;
-      var data = await resp.json();
-      var page = data.data || data.exercises || [];
-      total = (data.metadata && data.metadata.totalExercises) || total;
-      list = list.concat(page);
-      offset += limit;
-      if (page.length < limit) break;
-    }
-    if (list.length > 0) {
-      _edbMap = {};
-      list.forEach(function(ex) {
-        if (ex.gifUrl) _edbMap[normName(ex.name)] = ex.gifUrl;
-      });
-      try {
-        localStorage.setItem('ia_edb_map', JSON.stringify(_edbMap));
-        localStorage.setItem('ia_edb_ts', Date.now().toString());
-      } catch(e) {}
-    } else { _edbMap = {}; }
-  } catch(e) { _edbMap = {}; }
-}
-
-async function ensureEdb() {
-  if (_edbMap !== null) return;
-  if (_edbLoading) {
-    return new Promise(function(res) { _edbCallbacks.push(res); });
-  }
-  _edbLoading = true;
-  await loadEdbDataset();
-  _edbLoading = false;
-  _edbCallbacks.forEach(function(cb) { cb(); });
-  _edbCallbacks = [];
-}
-
 async function fetchExerciseGif(exerciseName) {
-  // ── TIER 1: Wikimedia Commons SVG (confirmed filenames) ────────────
+  // ── TIER 1: Wikimedia Commons SVG ─────────────────────────────────
   if (WIKIMEDIA_GIFS[exerciseName]) {
-    return { gifUrl: WIKIMEDIA_GIFS[exerciseName], target: '', bodyPart: '', id: '' };
+    return { gifUrl: WIKIMEDIA_GIFS[exerciseName] };
   }
 
-  // ── TIER 2: ExerciseDB animated GIF (full dataset, cached 24h) ─────
-  await ensureEdb();
-  var edbGif = edbBestMatch(exerciseName);
-  if (edbGif) return { gifUrl: edbGif, target: '', bodyPart: '', id: '' };
+  // ── TIER 2: ExerciseDB hardcoded GIF (146 exercises) ──────────────
+  if (EDB_GIFS[exerciseName]) {
+    return { gifUrl: EDB_GIFS[exerciseName] };
+  }
 
   // ── TIER 3: yuhonas/free-exercise-db ──────────────────────────────
   var url = EXERCISE_GIFS[exerciseName] || null;
-  if (url) return { gifUrl: url, target: '', bodyPart: '', id: '' };
+  if (url) return { gifUrl: url };
 
   // ── TIER 4: placeholder ────────────────────────────────────────────
   return null;
