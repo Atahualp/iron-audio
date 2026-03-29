@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v4 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v5 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -110,7 +110,7 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch (v4 — no test step, retry logic)...');
+  dbg('Starting EDB fetch (v5 — incremental map build, retry logic)...');
   dbg('Origin: '+window.location.origin);
 
   async function fetchPage(offset, retries){
@@ -141,18 +141,16 @@ async function startLoad(){
     var list=[], offset=0, total=9999;
     while(offset<total){
       var result=await fetchPage(offset);
+      result.page.forEach(function(ex){ if(ex.gifUrl) edbMap[norm(ex.name)]=ex.gifUrl; });
       list=list.concat(result.page);
       total=result.total;
       offset+=100;
       document.getElementById('pb').style.width=(Math.min(offset,total)/total*100)+'%';
-      document.getElementById('status').textContent='Fetching... '+list.length+'/'+total;
+      document.getElementById('status').textContent='Fetching... '+list.length+'/'+total+' ('+Object.keys(edbMap).length+' GIFs indexed)';
       if(result.page.length<100) break;
       if(offset<total) await new Promise(function(res){ setTimeout(res, 600); });
     }
     dbg('Fetch complete. Got '+list.length+'/'+total+' exercises.');
-    var withGif=list.filter(function(e){return !!e.gifUrl;}).length;
-    dbg('Exercises with gifUrl: '+withGif);
-    list.forEach(function(ex){ if(ex.gifUrl) edbMap[norm(ex.name)]=ex.gifUrl; });
     dbg('edbMap size: '+Object.keys(edbMap).length+' entries');
     dbg('Matching 209 Iron Audio exercises...');
     var matched=0, noMatch=[];
@@ -171,7 +169,7 @@ async function startLoad(){
   }catch(e){
     dbg('FAILED after retries: '+e.message);
     var sofar=Object.keys(edbMap).length;
-    dbg('edbMap has '+sofar+' entries from partial fetch — using those.');
+    dbg('edbMap has '+sofar+' entries from pages fetched before failure — using those.');
     var matched=0;
     D.forEach(function(ex){
       if(ex.s==='wiki'){ ex._src='wiki'; return; }
