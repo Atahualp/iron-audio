@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v3 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v4 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -110,92 +110,79 @@ async function startLoad(){
   btn.className='btn';
   document.getElementById('prog').style.display='block';
   document.getElementById('debugPanel').textContent='';
-  dbg('Starting EDB fetch...');
-  dbg('User agent: '+navigator.userAgent.substr(0,80));
-  dbg('Page origin: '+window.location.origin);
+  dbg('Starting EDB fetch (v4 — no test step, retry logic)...');
+  dbg('Origin: '+window.location.origin);
 
-  // First: quick connectivity test
-  dbg('Step 1: Testing connectivity to exercisedb-api.vercel.app...');
-  try{
-    var testUrl='https://exercisedb-api.vercel.app/api/v1/exercises?limit=1&offset=0';
-    dbg('GET '+testUrl);
-    var tr=await fetchWithTimeout(testUrl, 8000);
-    dbg('Response status: '+tr.status+' '+tr.statusText);
-    dbg('Content-Type: '+(tr.headers.get('content-type')||'n/a'));
-    if(!tr.ok){ throw new Error('HTTP '+tr.status+' '+tr.statusText); }
-    var td=await tr.json();
-    var sample=td.data||td.exercises||[];
-    dbg('Sample returned '+sample.length+' exercise(s)');
-    if(sample.length>0){
-      dbg('First exercise: '+JSON.stringify(sample[0]).substr(0,120)+'...');
-    }
-    dbg('Metadata: '+JSON.stringify(td.metadata||{}).substr(0,120));
-    dbg('Step 1 PASSED. Proceeding to full fetch...');
-  }catch(e){
-    dbg('Step 1 FAILED: '+e.name+': '+e.message);
-    dbg('Aborting — cannot reach ExerciseDB API.');
-    btn.textContent='Failed';
-    document.getElementById('prog').style.display='none';
-    document.getElementById('status').textContent='Connection failed: '+e.message;
-    D.forEach(function(ex){
-      if(ex.s==='wiki'){ ex._src='wiki'; return; }
-      ex._src=ex.url?'yuh':'none'; if(ex.url) cY++;
-    });
-    updStat(); render(); return;
-  }
-
-  // Full paginated fetch
-  dbg('Step 2: Fetching full dataset...');
-  try{
-    var list=[], offset=0, limit=100, total=9999;
-    while(offset<total){
-      var pageUrl='https://exercisedb-api.vercel.app/api/v1/exercises?limit='+limit+'&offset='+offset;
-      dbg('GET '+pageUrl);
-      var r=await fetchWithTimeout(pageUrl, 10000);
-      dbg('  → '+r.status+' '+r.statusText);
-      if(!r.ok) throw new Error('HTTP '+r.status+' at offset '+offset);
+  async function fetchPage(offset, retries){
+    retries = retries || 0;
+    var url='https://exercisedb-api.vercel.app/api/v1/exercises?limit=100&offset='+offset;
+    dbg('GET offset='+offset+(retries?' (retry '+retries+')':''));
+    try{
+      var r=await fetchWithTimeout(url, 12000);
+      dbg('  → '+r.status+(r.ok?'':' FAIL'));
+      if(!r.ok) throw new Error('HTTP '+r.status);
       var d=await r.json();
       var page=d.data||d.exercises||[];
-      if(d.metadata && d.metadata.totalExercises) total=d.metadata.totalExercises;
-      dbg('  → '+page.length+' exercises, total='+total);
-      list=list.concat(page);
-      offset+=limit;
+      if(d.metadata && d.metadata.totalExercises) return {page:page, total:d.metadata.totalExercises};
+      return {page:page, total:9999};
+    }catch(e){
+      dbg('  → ERROR: '+e.message);
+      if(retries<2){
+        var wait=retries===0?3000:8000;
+        dbg('  Waiting '+wait+'ms before retry...');
+        await new Promise(function(res){ setTimeout(res, wait); });
+        return fetchPage(offset, retries+1);
+      }
+      throw e;
+    }
+  }
+
+  try{
+    var list=[], offset=0, total=9999;
+    while(offset<total){
+      var result=await fetchPage(offset);
+      list=list.concat(result.page);
+      total=result.total;
+      offset+=100;
       document.getElementById('pb').style.width=(Math.min(offset,total)/total*100)+'%';
       document.getElementById('status').textContent='Fetching... '+list.length+'/'+total;
-      if(page.length<limit) break;
-      // Rate limit protection: 400ms between requests
-      await new Promise(function(res){ setTimeout(res, 400); });
+      if(result.page.length<100) break;
+      if(offset<total) await new Promise(function(res){ setTimeout(res, 600); });
     }
-    dbg('Step 2 DONE. Total fetched: '+list.length);
-    var withGif=list.filter(function(e){return e.gifUrl;}).length;
+    dbg('Fetch complete. Got '+list.length+'/'+total+' exercises.');
+    var withGif=list.filter(function(e){return !!e.gifUrl;}).length;
     dbg('Exercises with gifUrl: '+withGif);
     list.forEach(function(ex){ if(ex.gifUrl) edbMap[norm(ex.name)]=ex.gifUrl; });
-    dbg('edbMap keys: '+Object.keys(edbMap).length);
-    dbg('Step 3: Matching 209 Iron Audio exercises...');
-    var matched=0;
+    dbg('edbMap size: '+Object.keys(edbMap).length+' entries');
+    dbg('Matching 209 Iron Audio exercises...');
+    var matched=0, noMatch=[];
     D.forEach(function(ex){
       if(ex.s==='wiki'){ ex._src='wiki'; return; }
       var gif=bestMatch(ex.n);
       if(gif){ ex.edbUrl=gif; ex._src='edb'; cE++; matched++; }
-      else {
-        dbg('  NO MATCH: '+ex.n);
-        ex._src=ex.url?'yuh':'none'; if(ex.url) cY++;
-      }
+      else { noMatch.push(ex.n); ex._src=ex.url?'yuh':'none'; if(ex.url) cY++; }
     });
-    dbg('Step 3 DONE. Matched: '+matched+'/209');
+    dbg('Matched: '+matched+'/209');
+    if(noMatch.length){ dbg('No match for: '+noMatch.slice(0,20).join(', ')+(noMatch.length>20?' +more':'')); }
     btn.textContent='Done';
     document.getElementById('prog').style.display='none';
-    document.getElementById('status').textContent='Matched '+matched+'/209 to ExerciseDB GIFs. Dataset: '+list.length+' exercises.';
+    document.getElementById('status').textContent='Matched '+matched+'/209 to ExerciseDB GIFs. Dataset: '+list.length+'/'+total+' fetched.';
     updStat(); render();
   }catch(e){
-    dbg('Step 2 FAILED: '+e.name+': '+e.message);
-    btn.textContent='Failed';
-    document.getElementById('prog').style.display='none';
-    document.getElementById('status').textContent='Error: '+e.message;
+    dbg('FAILED after retries: '+e.message);
+    var sofar=Object.keys(edbMap).length;
+    dbg('edbMap has '+sofar+' entries from partial fetch — using those.');
+    var matched=0;
     D.forEach(function(ex){
       if(ex.s==='wiki'){ ex._src='wiki'; return; }
-      ex._src=ex.url?'yuh':'none'; if(ex.url) cY++;
+      var gif=sofar>0?bestMatch(ex.n):null;
+      if(gif){ ex.edbUrl=gif; ex._src='edb'; cE++; matched++; }
+      else { ex._src=ex.url?'yuh':'none'; if(ex.url) cY++; }
     });
+    dbg('Partial match: '+matched+'/209');
+    btn.textContent='Partial';
+    document.getElementById('prog').style.display='none';
+    document.getElementById('status').textContent='Partial fetch ('+sofar+' EDB entries). Matched '+matched+'/209.';
     updStat(); render();
   }
 }
