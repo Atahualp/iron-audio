@@ -31,7 +31,7 @@ input[type=text]{background:#111118;border:1px solid #2a2a3e;border-radius:5px;c
 .note{font-size:11px;color:#666;background:#111118;border:1px solid #2a2a3e;border-radius:6px;padding:8px 12px;margin-bottom:14px}
 </style></head><body>
 <h1>IRON AUDIO</h1>
-<div class="sub">Image Audit v2 — ExerciseDB animated GIFs + yuhonas fallback</div>
+<div class="sub">Image Audit v3 — ExerciseDB animated GIFs + yuhonas fallback</div>
 <div class="note">&#9888;&#65039; Must be opened from a web server (e.g. GitHub Pages) — ExerciseDB will fail from a local file due to browser CORS restrictions.</div>
 <div class="stats">
 <div class="stat"><div class="stat-n" style="color:#FF4D00">209</div><div class="stat-l">Total</div></div>
@@ -163,6 +163,8 @@ async function startLoad(){
       document.getElementById('pb').style.width=(Math.min(offset,total)/total*100)+'%';
       document.getElementById('status').textContent='Fetching... '+list.length+'/'+total;
       if(page.length<limit) break;
+      // Rate limit protection: 400ms between requests
+      await new Promise(function(res){ setTimeout(res, 400); });
     }
     dbg('Step 2 DONE. Total fetched: '+list.length);
     var withGif=list.filter(function(e){return e.gifUrl;}).length;
