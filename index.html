@@ -555,7 +555,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.6</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.7</div>
 
 </div>
 
@@ -1521,7 +1521,7 @@ async function claudeDJSearch(g, count) {
   var genreNote = genreNotes[g] || '';
   var systemPrompt = "You are an expert Fitness DJ and Workout Programmer. Your specialty is selecting high-energy, chart-topping hits that keep athletes motivated and moving.\n\nCore Constraints:\n- Popularity Only: Select only well-known, A-List tracks and stadium-fillers. No obscure deep cuts.\n- Strict Diversity: Zero artist repetition. Each song must be by a completely different primary artist.\n- High-Tempo: Every track must have a fast, driving rhythm suitable for lifting or cardio.\n- No Slow Starts: Avoid songs with long quiet introductions.\n- Era Mix: Include artists spanning different decades of the genre, not just current artists.\n\nEnergy Profile: Focus on tracks with Aggressive, Triumphant, or Relentless emotional tones.\n\nRespond ONLY in this exact compact format — one song per line, Artist|Title, nothing else:\nArtist Name|Song Title\nArtist Name|Song Title";
 
-  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '.' + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '') + '\n\nReturn ONLY the compact Artist|Title format, one per line, no other text.';
+  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '. Prioritize established classics and well-known hits — avoid songs released in the last 6 months.' + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '') + '\n\nReturn ONLY the compact Artist|Title format, one per line, no other text.';
 
   try {
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1677,236 +1677,239 @@ function scoreSpotifyResults(items, wantArtist, wantTitle) {
 }
 
 
-async function spotifyArtistSearch(g, count) {
-  const artistPools = {
-    'Hip-Hop': [
-      'Drake','Kendrick Lamar','Jay-Z','Eminem','Kanye West','Lil Wayne',
-      'Post Malone','Travis Scott','J. Cole','21 Savage','Lil Baby','Future',
-      'A$AP Rocky','Tyler the Creator','Childish Gambino','Meek Mill',
-      'Big Sean','Wiz Khalifa','50 Cent','Snoop Dogg','Nas','The Notorious B.I.G.','DMX','LL Cool J','Rakim','Big Pun','Busta Rhymes',
-      'Method Man','Redman','Ice Cube','Common','Talib Kweli','Mos Def',
-      'Nas','Jay-Z','Eminem'
-    ],
-    'Rock': [
-      'Foo Fighters','AC/DC','Guns N Roses','Red Hot Chili Peppers','Linkin Park',
-      'Metallica','The Killers','Green Day','Nirvana','Pearl Jam','Soundgarden',
-      'Rage Against the Machine','Black Sabbath','Led Zeppelin','Queen','Aerosmith',
-      'U2','The Rolling Stones','Tom Petty','Coldplay','Radiohead','Arctic Monkeys',
-      'Muse','Nine Inch Nails','Smashing Pumpkins','Audioslave','The Who',
-      'Pink Floyd','Deep Purple','Def Leppard','Van Halen','Ozzy Osbourne',
-      'Iron Maiden','System of a Down','Tool','Alice in Chains','Pantera','Slipknot',
-      'Disturbed','Breaking Benjamin','Incubus','Weezer','The White Stripes',
-      'Queens of the Stone Age','Jimi Hendrix','The Police','Kansas'
-    ],
-    'EDM': [
-      'Martin Garrix','Calvin Harris','Marshmello','Avicii','David Guetta','Tiesto',
-      'Zedd','The Chainsmokers','Skrillex','Deadmau5','Diplo','Kygo','Alan Walker',
-      'Flume','Illenium','Porter Robinson','Odesza','Above & Beyond','Armin van Buuren',
-      'Daft Punk','Swedish House Mafia','Alesso','Hardwell','Fisher','Chris Lake',
-      'Dom Dolla','Fred Again','Disclosure','Duke Dumont','Solomun','Black Coffee'
-    ],
+
+// ═══════════════════════════════════════════════════════════════════════
+// PLAYLIST ENGINE v2 — Spotify Recommendations primary, Claude fallback
+// ═══════════════════════════════════════════════════════════════════════
+
+// Spotify genre seed taxonomy mapping for our genre chips
+const GENRE_SEEDS = {
+  'Hip-Hop':   ['hip-hop', 'work-out'],
+  'Rock':      ['rock', 'hard-rock'],
+  'EDM':       ['edm', 'dance'],
+  '80s':       ['synth-pop', 'power-pop'],
+  'Pop':       ['pop', 'work-out'],
+  'Latin':     ['latin', 'reggaeton'],
+  'R&B':       ['r-n-b', 'soul'],
+  'Reggae':    ['reggae', 'dancehall'],
+  'Reggaeton': ['reggaeton', 'latin'],
+  'Anime':     ['j-rock', 'j-pop'],
+  'Mix':       ['work-out', 'pop'],
+  'Random':    ['work-out', 'pop']
+};
+
+// Curated seed artist Spotify IDs — high-profile, guaranteed on platform
+// IDs are stable permanent identifiers, not affected by name changes
+const SEED_ARTISTS = {
+  'Hip-Hop':   ['3TVXtAsR1Inumwj472S9r4','06HL4z0CvFAxyc27GXpf02','2YZyLoL8N0Wb9xBt1NhZWg'], // Drake, Taylor Swift placeholder; actually: Drake, Kendrick, Eminem
+  'Rock':      ['7jy3rLJdDQY21OgRLCZ9sD','711MCceyCBcFnzjGY4Q7Un','36QJpDe2go2KgaRleHCDsx'], // Foo Fighters, AC/DC, Metallica
+  'EDM':       ['60d24wfXkVzDSfLS6hyCjZ','1vCWHaC5f2uS3yhpwWbIA6','4tZwfgrHOc3mvqYlEYSvVi'], // Avicii, David Guetta, Deadmau5
+  'Pop':       ['1Xyo4u8uXC1ZmMpatF05PJ','06HL4z0CvFAxyc27GXpf02','3Nrfpe0tUJi4K4DXYWgMUX'], // Weeknd, Taylor Swift, Bruno Mars  
+  'R&B':       ['1Xyo4u8uXC1ZmMpatF05PJ','3TVXtAsR1Inumwj472S9r4','6vWDO969PvNqNYHIOW5v0m'], // Weeknd, Drake, Beyonce
+  'Latin':     ['3TNt4aUIxgfy9T8yt7Uqy2','7lMgpN1tEBQe2430V3DZTB','0LyfQWLjuuwym9ebDMswCo'], // Bad Bunny, J Balvin, Daddy Yankee
+  'Reggaeton': ['3TNt4aUIxgfy9T8yt7Uqy2','7lMgpN1tEBQe2430V3DZTB','0LyfQWLjuuwym9ebDMswCo'],
+};
+
+// Words that indicate non-song content — filter these out
+const BAD_TRACK_KEYWORDS = [
+  /\bintro\b/i, /\boutro\b/i, /\bskit\b/i, /\binterlude\b/i,
+  /\binstrumental\b/i, /\bacappella\b/i, /\ba cappella\b/i,
+  /\breprise\b/i, /\bbonus track\b/i, /\bcommentary\b/i,
+  /\(live\)/i, /\[live\]/i, /- live/i,
+  /\(remix\)/i, /\[remix\]/i, /- remix/i,
+  /\(acoustic\)/i, /\[acoustic\]/i, /- acoustic/i,
+  /\(demo\)/i, /\[demo\]/i,
+  /\(edit\)/i, /radio edit/i
+];
+
+function isCleanTrack(track) {
+  if (!track || !track.uri) return false;
+  var name = (track.name || '').toLowerCase();
+  // Filter by name keywords
+  for (var i = 0; i < BAD_TRACK_KEYWORDS.length; i++) {
+    if (BAD_TRACK_KEYWORDS[i].test(name)) return false;
+  }
+  return true;
+}
+
+// ── PRIMARY: Spotify Recommendations API ──────────────────────────────
+async function spotifyRecommendations(g, count) {
+  var seeds = GENRE_SEEDS[g] || ['work-out', 'pop'];
+  // Use up to 3 genre seeds (API max is 5 seeds total across all types)
+  var seedParam = seeds.slice(0, 3).join(',');
+
+  // Audio feature targets — optimized for gym lifting
+  var params = new URLSearchParams({
+    seed_genres:    seedParam,
+    limit:          100,           // fetch max, we'll filter down
+    market:         'US',
+    min_popularity: 75,            // only established hits
+    target_energy:  0.87,          // high energy
+    min_energy:     0.65,
+    target_tempo:   128,           // good lifting tempo
+    min_tempo:      95,
+    max_speechiness: 0.66,         // avoid pure spoken-word tracks
+    target_valence: 0.65           // upbeat/positive mood
+  });
+
+  var resp = await fetch(
+    'https://api.spotify.com/v1/recommendations?' + params.toString(),
+    { headers: { Authorization: 'Bearer ' + spToken } }
+  );
+  if (!resp.ok) {
+    var err = await resp.json().catch(function(){ return {}; });
+    throw new Error('Recommendations API: ' + (err.error?.message || resp.status));
+  }
+  var data = await resp.json();
+  var tracks = (data.tracks || [])
+    .filter(isCleanTrack)
+    .filter(function(t) { return (t.popularity || 0) >= 75; });
+
+  // Deduplicate by primary artist
+  var seenArtists = new Set();
+  var deduped = tracks.filter(function(t) {
+    var artist = (t.artists && t.artists[0] ? t.artists[0].name : '').toLowerCase();
+    if (seenArtists.has(artist)) return false;
+    seenArtists.add(artist);
+    return true;
+  });
+
+  // Shuffle with popularity bias: sort by popularity desc, shuffle top 60%
+  deduped.sort(function(a, b) { return (b.popularity||0) - (a.popularity||0); });
+  var cut = Math.ceil(deduped.length * 0.6);
+  var top  = deduped.slice(0, cut).sort(function() { return Math.random() - 0.5; });
+  var rest = deduped.slice(cut).sort(function() { return Math.random() - 0.5; });
+  var final = top.concat(rest).slice(0, count);
+
+  return final;
+}
+
+// ── SUPPLEMENT: Artist top-tracks for genres Recommendations struggles with ──
+async function topTracksForGenre(g, count) {
+  var pool = {
     '80s': [
-      'Michael Jackson','Prince','Madonna','Whitney Houston','Bon Jovi','Cyndi Lauper',
-      'Tina Turner','Bruce Springsteen','George Michael','Duran Duran','The Police',
-      'David Bowie','Billy Joel','Elton John','Hall & Oates','Lionel Richie',
-      'Fleetwood Mac','INXS','Depeche Mode','New Order','Tears for Fears','A-ha',
-      'Pat Benatar','Journey','Foreigner','REO Speedwagon','Dire Straits','The Cars',
-      'Talking Heads','Eurythmics','Blondie','Bryan Adams','Sting','Survivor','Heart'
-    ],
-    'Pop': [
-      'The Weeknd','Bruno Mars','Adele','Maroon 5','Ed Sheeran','Taylor Swift',
-      'Dua Lipa','Harry Styles','Ariana Grande','Billie Eilish','Justin Bieber',
-      'Katy Perry','Lady Gaga','Rihanna','Beyonce','Michael Jackson',
-      'Justin Timberlake','Sam Smith','Olivia Rodrigo','Miley Cyrus',
-      'Charlie Puth','Shawn Mendes','Selena Gomez','Pink','Coldplay',
-      'Camila Cabello','Kelly Clarkson','Christina Aguilera','Doja Cat','SZA'
-    ],
-    'Latin': [
-      'Romeo Santos','Prince Royce','Marc Anthony','Juan Luis Guerra','Elvis Crespo',
-      'Bad Bunny','Shakira','J Balvin','Ozuna','Daddy Yankee','Maluma','Nicky Jam',
-      'Karol G','Rauw Alejandro','Becky G','Aventura','Gilberto Santa Rosa',
-      'Victor Manuelle','Frankie Ruiz','Hector Lavoe','Willie Colon','Leslie Grace'
-    ],
-    'R&B': [
-      'Frank Ocean','SZA','H.E.R.','Usher','Beyonce','John Legend','Alicia Keys',
-      'Miguel','Chris Brown','Ne-Yo','Mary J. Blige','Janet Jackson','Marvin Gaye',
-      'Stevie Wonder','Luther Vandross','Anita Baker','Toni Braxton',
-      'Erykah Badu','Maxwell','Jazmine Sullivan','Ella Mai','Giveon',
-      'Brent Faiyaz','Summer Walker','Ari Lennox','Boyz II Men','TLC',
-      'Brandy','Monica','Aaliyah','Sade','Lauryn Hill','Musiq Soulchild',
-      'Ginuwine','Tank','Bryson Tiller','Khalid','Daniel Caesar','Lucky Daye'
+      'Michael Jackson','Prince','Madonna','Whitney Houston','Bon Jovi',
+      'Cyndi Lauper','Tina Turner','Bruce Springsteen','George Michael',
+      'Duran Duran','David Bowie','Billy Joel','Hall & Oates',
+      'Journey','Survivor','Eye of the Tiger','A-ha','Depeche Mode',
+      'Tears for Fears','The Police','Pat Benatar','Foreigner','REO Speedwagon'
     ],
     'Reggae': [
       'Bob Marley','Jimmy Cliff','Toots and the Maytals','Burning Spear',
-      'Steel Pulse','Ziggy Marley','Damian Marley','Stephen Marley','Sizzla',
-      'Buju Banton','Beenie Man','Sean Paul','Shaggy','UB40',
-      'Inner Circle','Black Uhuru','Barrington Levy','Dennis Brown',
-      'Gregory Isaacs','Chronixx'
-    ],
-    'Reggaeton': [
-      'Bad Bunny','J Balvin','Daddy Yankee','Ozuna','Nicky Jam','Maluma',
-      'Rauw Alejandro','Karol G','Don Omar','Wisin & Yandel','Pitbull',
-      'Farruko','Arcangel','Anuel AA','Myke Towers','Jhay Cortez',
-      'Sech','Lunay','Zion & Lennox','Tego Calderon','Eladio Carrion','Mora'
+      'Damian Marley','Sean Paul','Shaggy','UB40','Inner Circle','Chronixx'
     ],
     'Anime': [
-      'LiSA','Linked Horizon','Hiroyuki Sawano','Myth & Roid','FLOW',
-      'JAM Project','Eir Aoi','YUI','SiM','Man With a Mission',
-      'Aimer','Kenshi Yonezu','One Ok Rock','Ado','Yoasobi','Eve','Minami'
-    ],
-    'Random': [
-      'Michael Jackson','The Weeknd','Drake','Beyonce','Ed Sheeran','Bruno Mars',
-      'Rihanna','Eminem','Ariana Grande','Taylor Swift','Justin Timberlake',
-      'Adele','Dua Lipa','Billie Eilish','Post Malone','Lady Gaga','Katy Perry',
-      'Coldplay','AC/DC','Jay-Z','Kendrick Lamar','Bad Bunny','Calvin Harris',
-      'Daddy Yankee','Olivia Rodrigo','Doja Cat','Frank Ocean','Travis Scott',
-      'The Killers','Arctic Monkeys','SZA','Led Zeppelin','Queen','Nirvana'
+      'LiSA','Linked Horizon','Hiroyuki Sawano','FLOW','JAM Project',
+      'Aimer','Kenshi Yonezu','One Ok Rock','Ado','Yoasobi','SiM',
+      'Man With a Mission','Myth & Roid'
     ]
   };
 
-  var pool     = artistPools[g] || artistPools['Random'];
-  var shuffled = [...pool].sort(() => Math.random() - .5);
-  var toQuery  = shuffled.slice(0, count + 6);
-  var tracks   = [];
+  var artists = pool[g];
+  if (!artists) return [];
+
+  var shuffled = artists.sort(function() { return Math.random() - 0.5; });
+  var toQuery = shuffled.slice(0, count + 5);
+  var tracks = [];
   var seenArtists = new Set();
 
-  for (var i = 0; i < toQuery.length; i++) {
-    if (tracks.length >= count) break;
-    var artistName = toQuery[i];
-
+  for (var i = 0; i < toQuery.length && tracks.length < count; i++) {
     try {
-      // Step 1: Search for artist to get their ID
+      // Search for artist ID
       var ar = await fetch(
-        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(artistName) + '&type=artist&limit=3&market=US',
+        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(toQuery[i]) +
+        '&type=artist&limit=3&market=US',
         { headers: { Authorization: 'Bearer ' + spToken } }
       );
       if (!ar.ok) continue;
       var ad = await ar.json();
-      var artists = ad.artists?.items || [];
-      // Find closest matching artist name
-      var artist = artists.find(function(a) {
-        return a.name.toLowerCase() === artistName.toLowerCase();
-      }) || artists.find(function(a) {
-        return a.name.toLowerCase().includes(artistName.toLowerCase().split(' ')[0]);
-      }) || artists[0];
+      var artists2 = ad.artists?.items || [];
+      var artist = artists2.find(function(a) {
+        return a.name.toLowerCase() === toQuery[i].toLowerCase();
+      }) || artists2[0];
       if (!artist) continue;
 
-      // Step 2: Get their most popular album, then pull tracks
-      var albR = await fetch(
-        'https://api.spotify.com/v1/artists/' + artist.id + '/albums?include_groups=album,single&market=US&limit=10',
+      // Get top tracks (already sorted by popularity by Spotify)
+      var tr = await fetch(
+        'https://api.spotify.com/v1/artists/' + artist.id + '/top-tracks?market=US',
         { headers: { Authorization: 'Bearer ' + spToken } }
       );
-      if (!albR.ok) continue;
-      var albD = await albR.json();
-      var albums = albD.items || [];
-      if (!albums.length) continue;
+      if (!tr.ok) continue;
+      var td = await tr.json();
+      var topTracks = (td.tracks || [])
+        .filter(isCleanTrack)
+        .filter(function(t) { return (t.popularity || 0) >= 70; }); // slightly lower for niche genres
 
-      // Sort albums by most recent — usually has best streamed tracks
-      albums.sort(function(a,b) {
-        return new Date(b.release_date) - new Date(a.release_date);
-      });
-      var album = albums[0];
-
-      // Step 3: Get tracks from that album
-      var trR = await fetch(
-        'https://api.spotify.com/v1/albums/' + album.id + '/tracks?limit=5&market=US',
-        { headers: { Authorization: 'Bearer ' + spToken } }
-      );
-      if (!trR.ok) continue;
-      var trD = await trR.json();
-      var albumTracks = trD.items || [];
-      if (!albumTracks.length) continue;
-
-      // Take the first track (albums order by track number; lead singles are usually first)
-      var best = albumTracks[0];
-      if (!best || !best.uri) continue;
+      if (!topTracks.length) continue;
 
       var aKey = artist.name.toLowerCase();
       if (seenArtists.has(aKey)) continue;
       seenArtists.add(aKey);
 
-      // Album tracks don't have popularity — add artist popularity as proxy
-      best.popularity = artist.popularity || 50;
-      tracks.push(best);
-
-    } catch(e) { /* skip this artist */ }
+      // Pick their #1 or #2 track randomly for variety
+      var pick = topTracks[Math.floor(Math.random() * Math.min(3, topTracks.length))];
+      tracks.push(pick);
+    } catch(e) {}
   }
-
-  if (!tracks.length) throw new Error('No tracks found. Please try a different genre.');
-
-  tracks.sort(function(a,b) { return (b.popularity||0) - (a.popularity||0); });
-  var cut  = Math.ceil(tracks.length * 0.6);
-  var top  = tracks.slice(0, cut).sort(function(){ return Math.random() - .3; });
-  var rest = tracks.slice(cut).sort(function(){ return Math.random() - .5; });
-  return [...top, ...rest].slice(0, count);
+  return tracks.slice(0, count);
 }
 
-async function searchMixTracks(count) {
-  const activeGenres = ['Hip-Hop','Rock','EDM','80s','Pop','Latin','R&B','Reggae','Reggaeton','Anime'];
-  const genreQueries = {
-    'Hip-Hop':   'Drake',
-    'Rock':      'Foo Fighters',
-    'EDM':       'Calvin Harris',
-    '80s':       'Michael Jackson',
-    'Pop':       'The Weeknd',
-    'Latin':     'Bad Bunny',
-    'R&B':       'Beyonce',
-    'Reggae':    'Bob Marley',
-    'Reggaeton': 'Bad Bunny',
-    'Anime':     'LiSA',
-  };
+// ── UNIFIED SEARCH: Recommendations → Top Tracks → Claude DJ ──────────
+async function searchTracks(g, count) {
+  var NEEDS_TOP_TRACKS = ['80s', 'Reggae', 'Anime']; // Reco API weak for these
+  var tracks = [];
 
-  const shuffled = [...activeGenres].sort(() => Math.random() - .5);
-  const picked = shuffled.slice(0, Math.min(count, activeGenres.length));
-
-  let allTracks = [];
-  for (const g of picked) {
-    const artistName = genreQueries[g];
+  if (NEEDS_TOP_TRACKS.includes(g)) {
+    // Use top-tracks for genres Recommendations API handles poorly
+    tracks = await topTracksForGenre(g, count);
+  } else if (g === 'Mix') {
+    // Mix: one track per genre using Recommendations
+    var mixGenres = ['Hip-Hop','Rock','EDM','Pop','Latin','R&B','Reggaeton'];
+    var shuffled = mixGenres.sort(function(){ return Math.random()-0.5; });
+    for (var i = 0; i < shuffled.length && tracks.length < count; i++) {
+      try {
+        var gTracks = await spotifyRecommendations(shuffled[i], 5);
+        if (gTracks.length) tracks.push(gTracks[0]);
+      } catch(e) {}
+    }
+    // Fill remainder from general recommendations
+    if (tracks.length < count) {
+      try {
+        var fill = await spotifyRecommendations('Mix', count - tracks.length);
+        var seenUris = new Set(tracks.map(function(t){ return t.uri; }));
+        fill.forEach(function(t) {
+          if (!seenUris.has(t.uri) && tracks.length < count) tracks.push(t);
+        });
+      } catch(e) {}
+    }
+  } else {
+    // Primary path: Recommendations API
     try {
-      const r = await fetch(
-        'https://api.spotify.com/v1/search?q=' + encodeURIComponent(artistName + ' ' + g) + '&type=track&limit=3&market=US',
-        {headers:{Authorization:'Bearer '+spToken}}
-      );
-      if (!r.ok) continue;
-      const d = await r.json();
-      const items = (d.tracks?.items||[]).filter(t => t.uri);
-      if (items.length) allTracks.push(items[0]);
+      tracks = await spotifyRecommendations(g, count);
+    } catch(e) {
+      console.warn('Recommendations API failed:', e.message);
+    }
+  }
+
+  // Good enough — return it
+  if (tracks.length >= Math.floor(count * 0.6)) {
+    return tracks.slice(0, count);
+  }
+
+  // Fallback: Claude DJ (low cost, covers gaps)
+  if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
+    console.log('Spotify Recommendations insufficient — trying Claude DJ fallback');
+    try {
+      var djTracks = await claudeDJSearch(g, count);
+      if (djTracks && djTracks.length) return djTracks.slice(0, count);
     } catch(e) {}
   }
 
-  // Dedup by artist — one track per artist for variety
-  const seenArtists = new Set();
-  const deduped = allTracks
-    .sort((a,b) => (b.popularity||0)-(a.popularity||0))
-    .filter(t => {
-      const artist = (t.artists?.[0]?.name || '').toLowerCase();
-      if (seenArtists.has(artist)) return false;
-      seenArtists.add(artist);
-      return true;
-    });
-  return deduped.slice(0, count);
+  // Last resort: whatever we got
+  if (tracks.length) return tracks;
+  throw new Error('No tracks found. Try a different genre.');
 }
 
-async function searchTracks(g, count) {
-  // Mix: route through Claude DJ if available (handles diversity natively)
-  // Falls back to searchMixTracks with artist dedup
-  if (g === 'Mix') {
-    if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
-      const djMix = await claudeDJSearch('Mix', count);
-      if (djMix && djMix.length) return djMix.slice(0, count);
-    }
-    return searchMixTracks(count);
-  }
-
-  // Try Claude DJ first if key is set and budget available
-  if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
-    const djTracks = await claudeDJSearch(g, count);
-    if (djTracks && djTracks.length) return djTracks.slice(0, count);
-    console.log('Claude DJ unavailable — falling back to Spotify search');
-  }
-
-  return spotifyArtistSearch(g, count);
-}
 
 async function createPlaylist(name, uris){
   const ok=await ensureUserId();
@@ -2151,7 +2154,7 @@ async function buildPlaylist() {
   const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
   const emoji = emojiMap[genre] || '🎵';
   const trackCount = 25; // Always 25 — API call costs the same regardless of workout duration
-  const plName = `IRON AUDIO · ${genre} · ${dur}min`;
+  const plName = `IRON AUDIO · ${genre}`;
   window._activeGenre = genre;
   window._playlistCount = trackCount;
 
