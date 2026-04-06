@@ -172,6 +172,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 
 /* ── PLAYLIST ────────────────────────────────────────────────────── */
 .pl-sec{padding:12px 14px 18px}
+.pl-toggle-btn{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);transition:all .2s;min-width:52px;text-align:center}
+.pl-toggle-btn.on{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.08)}
+.pl-create-btn{background:transparent;border:1.5px solid #FF4D00;border-radius:8px;color:#FF4D00;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px;padding:5px 12px;cursor:pointer;transition:all .2s}
+.pl-create-btn:active{transform:scale(.97)}
 .pl-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#FF4D00;margin-bottom:10px}
 .pl-card{background:#0d1a0d;border:1px solid #162016;border-radius:14px;overflow:hidden}
 .pl-hdr{padding:14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(29,185,84,.1)}
@@ -517,6 +521,20 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
       </div>
     </div>
 
+    <!-- Playlist Toggle -->
+    <div class="sec" style="padding-bottom:8px">
+      <div class="sec-tag">05 — PLAYLIST</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <div>
+          <div class="sec-title" style="margin-bottom:2px">SPOTIFY PLAYLIST</div>
+          <div style="font-size:10px;color:var(--muted)">Auto-generate after workout</div>
+        </div>
+        <div class="pl-toggle-btn on" onclick="togglePlaylist(this)">
+          <span class="pl-toggle-txt">ON</span>
+        </div>
+      </div>
+    </div>
+
     <div class="gen-wrap">
       <button class="gen-btn" onclick="generate()">⚡ GENERATE WORKOUT</button>
     </div>
@@ -548,14 +566,24 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     <div style="padding:0 14px 4px">
       <button class="end-workout-btn" onclick="endWorkout()">🏁 END WORKOUT</button>
     </div>
-    <div class="pl-sec">
-      <div class="pl-label">🎵 YOUR PLAYLIST</div>
-      <div id="plContainer"></div>
+    <div class="pl-sec" id="plSection">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="pl-label" style="margin-bottom:0">🎵 YOUR PLAYLIST</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="plSourceBadge" style="font-size:9px;color:var(--muted);letter-spacing:.5px"></span>
+          <button id="plCreateBtn" class="pl-create-btn" onclick="triggerPlaylist()" style="display:none">CREATE PLAYLIST</button>
+        </div>
+      </div>
+      <div id="plContainer">
+        <div id="plDisabledMsg" style="display:none;font-size:11px;color:var(--muted);padding:8px 0">
+          Playlist disabled. Tap CREATE PLAYLIST to generate one.
+        </div>
+      </div>
       <button class="share-btn" onclick="openShareCard()">📸 Share Workout Card</button>
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.9</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v9.0</div>
 
 </div>
 
@@ -648,7 +676,7 @@ function getMuscleColor(muscle) {
 }
 
 // ─── APP STATE ────────────────────────────────────────────────────────
-let dur = 30;var perMuscleCount=2, muscles = [], genre = '';
+let dur = 30;var perMuscleCount=2, muscles = [], genre = '', playlistEnabled = true;
 let spToken = null, spUserId = null;
 
 
@@ -1926,6 +1954,7 @@ async function searchTracks(g, count) {
     try {
       var djTracks = await claudeDJSearch(g, count);
       if (djTracks && djTracks.length >= Math.floor(count * 0.6)) {
+        window._lastPlSource = 'CLAUDE DJ';
         return djTracks.slice(0, count);
       }
     } catch(e) { console.warn('Claude DJ failed:', e.message); }
@@ -1935,7 +1964,10 @@ async function searchTracks(g, count) {
   var pool = SONG_POOLS[g] || SONG_POOLS['Random'];
   try {
     var tracks = await searchFromSongList(pool, count);
-    if (tracks.length > 0) return tracks;
+    if (tracks.length > 0) {
+      window._lastPlSource = 'CURATED LIST';
+      return tracks;
+    }
   } catch(e) { console.warn('Song pool search failed:', e.message); }
 
   throw new Error('Unable to build playlist. Try reconnecting Spotify.');
@@ -1968,6 +2000,17 @@ async function createPlaylist(name, uris){
 }
 
 // ─── UI CONTROLS ──────────────────────────────────────────────────────
+function togglePlaylist(el) {
+  playlistEnabled = !playlistEnabled;
+  el.classList.toggle('on', playlistEnabled);
+  el.querySelector('.pl-toggle-txt').textContent = playlistEnabled ? 'ON' : 'OFF';
+  // Show/hide genre row
+  var genreRow = document.getElementById('genreRow');
+  if (genreRow) genreRow.style.opacity = playlistEnabled ? '1' : '0.35';
+  var genreRow2 = document.getElementById('genreRow');
+  if (genreRow) genreRow.style.pointerEvents = playlistEnabled ? '' : 'none';
+}
+
 function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}function setExCount(n,el){perMuscleCount=n;document.querySelectorAll('.ex-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
 function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];}
 function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
@@ -2165,8 +2208,19 @@ async function generate() {
     await new Promise(r => setTimeout(r, 150)); // 150ms between requests
   }
 
-  // Build playlist
-  buildPlaylist();
+  // Build playlist — auto if enabled, else show button
+  var plCreate = document.getElementById('plCreateBtn');
+  var plDisabled = document.getElementById('plDisabledMsg');
+  var plBadge = document.getElementById('plSourceBadge');
+  if (plBadge) plBadge.textContent = '';
+  if (playlistEnabled && spToken) {
+    if (plCreate) plCreate.style.display = 'none';
+    if (plDisabled) plDisabled.style.display = 'none';
+    buildPlaylist();
+  } else {
+    if (plDisabled) plDisabled.style.display = playlistEnabled ? 'none' : 'block';
+    if (plCreate) plCreate.style.display = 'inline-block';
+  }
 }
 
 // ── Lightweight session refresh — call after any workout state change ──
@@ -2182,6 +2236,14 @@ function updateSession() {
 }
 
 // ─── PLAYLIST ─────────────────────────────────────────────────────────
+function triggerPlaylist() {
+  var btn = document.getElementById('plCreateBtn');
+  var disabled = document.getElementById('plDisabledMsg');
+  if (btn) btn.style.display = 'none';
+  if (disabled) disabled.style.display = 'none';
+  buildPlaylist();
+}
+
 async function buildPlaylist() {
   const container = document.getElementById('plContainer');
   const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
@@ -2202,7 +2264,12 @@ async function buildPlaylist() {
     const pl = await createPlaylist(plName, tracks.map(t=>t.uri));
     const totalMin = Math.round(tracks.reduce((s,t)=>s+t.duration_ms,0) / 60000);
 
-    container.innerHTML = `
+    // Set source badge
+  (function(){
+    var badge = document.getElementById('plSourceBadge');
+    if (badge) badge.textContent = window._lastPlSource || '';
+  })();
+  container.innerHTML = `
       <div class="msg msg-ok">✅ Playlist created in your Spotify library!</div>
       <div class="pl-card">
         <div class="pl-hdr">
@@ -2228,6 +2295,8 @@ async function buildPlaylist() {
   } catch(err) {
     console.error('Playlist error:', err);
     container.innerHTML = `<div class="msg msg-err">❌ ${escHtml(err.message)}<br><small style="opacity:.7;display:block;margin-top:4px">Try a different genre or check your Spotify connection.</small></div>`;
+    var retryBtn = document.getElementById('plCreateBtn');
+    if (retryBtn) { retryBtn.textContent = 'RETRY'; retryBtn.style.display = 'inline-block'; }
   }
 }
 
