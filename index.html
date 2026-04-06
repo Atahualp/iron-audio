@@ -555,7 +555,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.8</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v8.9</div>
 
 </div>
 
@@ -1666,243 +1666,281 @@ function scoreSpotifyResults(items, wantArtist, wantTitle) {
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// PLAYLIST ENGINE v3 — Artist Top Tracks primary, Claude DJ fallback
-// Note: Spotify Recommendations API deprecated for new apps Nov 2024
+// PLAYLIST ENGINE v4 — Search-only (all deprecated endpoints removed Feb 2026)
+// Working endpoints: /v1/search, /me/playlists, /me/top/tracks
+// Gone: /recommendations, /artists/{id}/top-tracks, popularity field
 // ═══════════════════════════════════════════════════════════════════════
 
-// Words that indicate non-song content — filter these out
+// Track name patterns that indicate non-song content
 const BAD_TRACK_KEYWORDS = [
   /\bintro\b/i, /\boutro\b/i, /\bskit\b/i, /\binterlude\b/i,
   /\binstrumental\b/i, /\bacappella\b/i, /\ba cappella\b/i,
   /\breprise\b/i, /\bbonus track\b/i, /\bcommentary\b/i,
-  /\(live\)/i, /\[live\]/i, /- live/i,
-  /\(remix\)/i, /\[remix\]/i, /- remix/i,
-  /\(acoustic\)/i, /\[acoustic\]/i, /- acoustic/i,
+  /\(live\)/i, /\[live\]/i, /- live$/i,
+  /\(remix\)/i, /\[remix\]/i, /- remix$/i,
+  /\(acoustic\)/i, /\[acoustic\]/i, /- acoustic$/i,
   /\(demo\)/i, /\[demo\]/i
 ];
 
-function isCleanTrack(track) {
-  if (!track || !track.uri) return false;
-  var name = track.name || '';
-  for (var i = 0; i < BAD_TRACK_KEYWORDS.length; i++) {
-    if (BAD_TRACK_KEYWORDS[i].test(name)) return false;
-  }
-  return true;
+function isCleanTrack(t) {
+  if (!t || !t.uri) return false;
+  var name = t.name || '';
+  return !BAD_TRACK_KEYWORDS.some(function(rx) { return rx.test(name); });
 }
 
-const ARTIST_POOLS = {
+// Hardcoded song pools — specific Artist|Title pairs confirmed as major hits.
+// Used as fallback when Claude DJ is unavailable. These are searched via
+// Spotify's /search endpoint (the only working discovery endpoint as of 2026).
+const SONG_POOLS = {
   'Hip-Hop': [
-    'Drake','Kendrick Lamar','Eminem','Jay-Z','Kanye West','Lil Wayne',
-    'Post Malone','Travis Scott','J. Cole','21 Savage','A$AP Rocky',
-    'Future','Lil Baby','Big Sean','Wiz Khalifa','50 Cent','Snoop Dogg',
-    'Nas','The Notorious B.I.G.','DMX','Busta Rhymes','Method Man',
-    'Ludacris','T.I.','Meek Mill','Rick Ross','Nicki Minaj','Cardi B',
-    'Tyler the Creator','Childish Gambino','Common','Ice Cube','LL Cool J'
+    'Kendrick Lamar|HUMBLE.','Drake|God\'s Plan','Eminem|Lose Yourself',
+    'Travis Scott|SICKO MODE','Kanye West|POWER','Jay-Z|99 Problems',
+    'Post Malone|Rockstar','50 Cent|In Da Club','Lil Wayne|A Milli',
+    'J. Cole|Middle Child','21 Savage|Rockstar','Nas|NY State of Mind',
+    'Notorious B.I.G.|Hypnotize','DMX|X Gon Give It to Ya',
+    'Snoop Dogg|Drop It Like It\'s Hot','Ice Cube|Check Yo Self',
+    'Ludacris|Move Bitch','Busta Rhymes|Break Ya Neck',
+    'Meek Mill|Dreams and Nightmares','Rick Ross|BMF',
+    'Future|Mask Off','A$AP Rocky|F**kin\' Problems',
+    'Tyler the Creator|EARFQUAKE','Childish Gambino|This Is America',
+    'Method Man|Bring the Pain','LL Cool J|Mama Said Knock You Out'
   ],
   'Rock': [
-    'Foo Fighters','AC/DC','Guns N Roses','Red Hot Chili Peppers','Linkin Park',
-    'Metallica','The Killers','Green Day','Nirvana','Pearl Jam','Soundgarden',
-    'Rage Against the Machine','Black Sabbath','Led Zeppelin','Queen','Aerosmith',
-    'The Rolling Stones','Muse','System of a Down','Disturbed','Breaking Benjamin',
-    'Nine Inch Nails','Slipknot','Pantera','Iron Maiden','Ozzy Osbourne',
-    'Van Halen','Def Leppard','The White Stripes','Queens of the Stone Age',
-    'Audioslave','Alice in Chains','Incubus','Weezer','Arctic Monkeys'
+    'Survivor|Eye of the Tiger','AC/DC|Thunderstruck','Metallica|Enter Sandman',
+    'Guns N Roses|Welcome to the Jungle','Foo Fighters|All My Life',
+    'Linkin Park|In the End','Nirvana|Smells Like Teen Spirit',
+    'Rage Against the Machine|Killing in the Name','Queen|We Will Rock You',
+    'Led Zeppelin|Immigrant Song','Black Sabbath|Iron Man',
+    'System of a Down|Chop Suey!','Audioslave|Cochise',
+    'Red Hot Chili Peppers|Can\'t Stop','Green Day|Boulevard of Broken Dreams',
+    'Disturbed|Down with the Sickness','Muse|Uprising',
+    'Breaking Benjamin|I Will Not Bow','Pearl Jam|Even Flow',
+    'Soundgarden|Black Hole Sun','Alice in Chains|Would?',
+    'Pantera|Cowboys from Hell','Slipknot|Duality',
+    'Nine Inch Nails|Head Like a Hole','Iron Maiden|The Trooper'
   ],
   'EDM': [
-    'Martin Garrix','Calvin Harris','Marshmello','Avicii','David Guetta',
-    'Tiesto','Zedd','The Chainsmokers','Skrillex','Deadmau5','Kygo',
-    'Alan Walker','Illenium','Porter Robinson','Daft Punk','Swedish House Mafia',
-    'Alesso','Armin van Buuren','Flume','Odesza','Above & Beyond',
-    'Fisher','Chris Lake','Dom Dolla','Fred Again','Disclosure','Duke Dumont'
+    'Avicii|Wake Me Up','Calvin Harris|Summer','Martin Garrix|Animals',
+    'David Guetta|Titanium','Skrillex|Bangarang','Daft Punk|One More Time',
+    'The Chainsmokers|Closer','Marshmello|Alone','Tiesto|Red Lights',
+    'Zedd|Clarity','Swedish House Mafia|Don\'t You Worry Child',
+    'Deadmau5|Ghosts N Stuff','Kygo|Firestone','Alan Walker|Faded',
+    'Alesso|Heroes','Armin van Buuren|Blah Blah Blah',
+    'Diplo|Revolution','Flume|Never Be Like You',
+    'Illenium|Losing Patience','Porter Robinson|Language',
+    'Odesza|Say My Name','Above & Beyond|We\'re All We Need',
+    'Disclosure|Latch','Duke Dumont|Need U'
   ],
   '80s': [
-    'Michael Jackson','Prince','Madonna','Whitney Houston','Bon Jovi',
-    'Cyndi Lauper','Tina Turner','Bruce Springsteen','George Michael',
-    'Duran Duran','The Police','David Bowie','Billy Joel','Elton John',
-    'Hall & Oates','Lionel Richie','Fleetwood Mac','INXS','Depeche Mode',
-    'New Order','Tears for Fears','A-ha','Pat Benatar','Journey',
-    'Foreigner','REO Speedwagon','Dire Straits','Eurythmics','Survivor','Heart'
+    'Survivor|Eye of the Tiger','Michael Jackson|Beat It',
+    'AC/DC|Back in Black','Bon Jovi|Livin\' on a Prayer',
+    'Queen|Don\'t Stop Me Now','Journey|Don\'t Stop Believin\'',
+    'Foreigner|Juke Box Hero','REO Speedwagon|Keep On Loving You',
+    'Cyndi Lauper|Girls Just Want to Have Fun','Madonna|Like a Prayer',
+    'Prince|Let\'s Go Crazy','Tina Turner|What\'s Love Got to Do with It',
+    'David Bowie|Let\'s Dance','Billy Joel|It\'s Still Rock and Roll to Me',
+    'Duran Duran|Hungry Like the Wolf','Depeche Mode|Just Can\'t Get Enough',
+    'The Police|Roxanne','Pat Benatar|Hit Me with Your Best Shot',
+    'Hall & Oates|Maneater','A-ha|Take On Me',
+    'Tears for Fears|Everybody Wants to Rule the World',
+    'INXS|Need You Tonight','Eurythmics|Sweet Dreams',
+    'New Order|Blue Monday','Heart|Barracuda'
   ],
   'Pop': [
-    'The Weeknd','Bruno Mars','Adele','Maroon 5','Ed Sheeran','Taylor Swift',
-    'Dua Lipa','Harry Styles','Ariana Grande','Billie Eilish','Justin Bieber',
-    'Katy Perry','Lady Gaga','Rihanna','Beyonce','Justin Timberlake',
-    'Sam Smith','Olivia Rodrigo','Miley Cyrus','Charlie Puth','Shawn Mendes',
-    'Selena Gomez','Pink','Camila Cabello','Kelly Clarkson','Christina Aguilera',
-    'Doja Cat','SZA','Michael Jackson'
+    'The Weeknd|Blinding Lights','Bruno Mars|Uptown Funk',
+    'Ed Sheeran|Shape of You','Taylor Swift|Shake It Off',
+    'Dua Lipa|Levitating','Ariana Grande|7 Rings',
+    'Justin Timberlake|Can\'t Stop the Feeling!','Beyonce|Crazy in Love',
+    'Rihanna|We Found Love','Lady Gaga|Bad Romance',
+    'Katy Perry|Roar','Maroon 5|Moves Like Jagger',
+    'Adele|Rolling in the Deep','Justin Bieber|Sorry',
+    'Billie Eilish|bad guy','Harry Styles|As It Was',
+    'Olivia Rodrigo|good 4 u','Miley Cyrus|Flowers',
+    'Doja Cat|Say So','Sam Smith|Stay with Me',
+    'Charlie Puth|Attention','Selena Gomez|Come & Get It',
+    'Kelly Clarkson|Since U Been Gone','Christina Aguilera|Fighter',
+    'Pink|Raise Your Glass'
   ],
   'Latin': [
-    'Romeo Santos','Prince Royce','Marc Anthony','Juan Luis Guerra','Bad Bunny',
-    'Shakira','J Balvin','Ozuna','Daddy Yankee','Maluma','Nicky Jam',
-    'Karol G','Rauw Alejandro','Becky G','Aventura','Gilberto Santa Rosa',
-    'Victor Manuelle','Frankie Ruiz','Hector Lavoe','Leslie Grace','Myke Towers'
+    'Daddy Yankee|Gasolina','Bad Bunny|Tití Me Preguntó',
+    'J Balvin|Mi Gente','Shakira|Hips Don\'t Lie',
+    'Marc Anthony|Vivir Mi Vida','Romeo Santos|Propuesta Indecente',
+    'Ozuna|Taki Taki','Maluma|Hawái','Karol G|Bichota',
+    'Nicky Jam|El Perdón','Don Omar|Danza Kuduro',
+    'Wisin & Yandel|Zun Tata','Prince Royce|Stand By Me',
+    'Juan Luis Guerra|Burbujas de Amor','Rauw Alejandro|Todo de Ti',
+    'Pitbull|Give Me Everything','Farruko|Pepas',
+    'Becky G|Shower','Aventura|Obsesión',
+    'Myke Towers|La Playa','Hector Lavoe|El Cantante'
   ],
   'R&B': [
-    'The Weeknd','Frank Ocean','SZA','Usher','Beyonce','John Legend',
-    'Alicia Keys','Miguel','Chris Brown','Ne-Yo','Mary J. Blige',
-    'Janet Jackson','Marvin Gaye','Stevie Wonder','Luther Vandross',
-    'Erykah Badu','Maxwell','Jazmine Sullivan','Ella Mai','Giveon',
-    'Brent Faiyaz','Summer Walker','Boyz II Men','TLC','Brandy',
-    'Aaliyah','Sade','Lauryn Hill','Bryson Tiller','Khalid','Daniel Caesar'
+    'The Weeknd|Starboy','Usher|Yeah!','Beyonce|Irreplaceable',
+    'Bruno Mars|That\'s What I Like','Alicia Keys|No One',
+    'SZA|Kill Bill','Frank Ocean|Thinkin Bout You',
+    'Chris Brown|Look at Me Now','Ne-Yo|So Sick',
+    'Mary J. Blige|Family Affair','John Legend|All of Me',
+    'Janet Jackson|Nasty','Stevie Wonder|Superstition',
+    'Marvin Gaye|Let\'s Get It On','Boyz II Men|End of the Road',
+    'Lauryn Hill|Doo Wop','TLC|No Scrubs','Aaliyah|Try Again',
+    'Maxwell|Fortunate','Erykah Badu|On & On',
+    'Bryson Tiller|Exchange','Khalid|Talk',
+    'Summer Walker|Playing Games','Giveon|Heartbreak Anniversary'
   ],
   'Reggae': [
-    'Bob Marley','Jimmy Cliff','Toots and the Maytals','Burning Spear',
-    'Damian Marley','Stephen Marley','Ziggy Marley','Sean Paul','Shaggy',
-    'UB40','Inner Circle','Chronixx','Sizzla','Buju Banton','Beenie Man'
+    'Bob Marley|One Love','Sean Paul|Temperature',
+    'Shaggy|It Wasn\'t Me','Bob Marley|Could You Be Loved',
+    'Jimmy Cliff|The Harder They Come','Bob Marley|Buffalo Soldier',
+    'Damian Marley|Welcome to Jamrock','UB40|Red Red Wine',
+    'Inner Circle|Bad Boys','Toots and the Maytals|Pressure Drop',
+    'Chronixx|Smile Jamaica','Bob Marley|Jamming',
+    'Bob Marley|No Woman No Cry','Stephen Marley|Rock Stone',
+    'Ziggy Marley|Love Is My Religion'
   ],
   'Reggaeton': [
-    'Bad Bunny','J Balvin','Daddy Yankee','Ozuna','Nicky Jam','Maluma',
-    'Rauw Alejandro','Karol G','Don Omar','Wisin & Yandel','Pitbull',
-    'Farruko','Arcangel','Anuel AA','Myke Towers','Jhay Cortez',
-    'Sech','Zion & Lennox','Tego Calderon','Eladio Carrion','Mora'
+    'Daddy Yankee|Gasolina','Bad Bunny|La Corriente',
+    'J Balvin|Mi Gente','Don Omar|Danza Kuduro',
+    'Wisin & Yandel|Zun Tata','Ozuna|Taki Taki',
+    'Nicky Jam|El Perdón','Maluma|Felices los 4',
+    'Karol G|MAMIII','Rauw Alejandro|Todo de Ti',
+    'Pitbull|Give Me Everything','Anuel AA|Secreto',
+    'Farruko|Pepas','Arcangel|Bebe',
+    'Myke Towers|La Playa','Jhay Cortez|No Me Conoce',
+    'Tego Calderon|Pa\' Que Retozen','Sech|Otro Trago',
+    'Eladio Carrion|Tata'
   ],
   'Anime': [
-    'LiSA','Linked Horizon','Hiroyuki Sawano','Myth & Roid','FLOW',
-    'JAM Project','Aimer','Kenshi Yonezu','One Ok Rock','Ado',
-    'Yoasobi','SiM','Man With a Mission','Eve','Minami'
+    'LiSA|Gurenge','Linked Horizon|Guren no Yumiya',
+    'FLOW|GO!','LiSA|Homura',
+    'Hiroyuki Sawano|Vogel im Kafig','Aimer|Ref:rain',
+    'One Ok Rock|The Beginning','Kenshi Yonezu|Kick Back',
+    'Ado|Usseewa','Man With a Mission|Database',
+    'SiM|The Rumbling','Yoasobi|Idol',
+    'Eve|Kaikai Kitan','JAM Project|Skill'
+  ],
+  'Mix': [
+    'Kendrick Lamar|HUMBLE.','AC/DC|Thunderstruck','Avicii|Wake Me Up',
+    'Michael Jackson|Beat It','The Weeknd|Blinding Lights',
+    'Daddy Yankee|Gasolina','Usher|Yeah!','Bob Marley|One Love',
+    'Bad Bunny|Tití Me Preguntó','Foo Fighters|All My Life',
+    'Bruno Mars|Uptown Funk','Eminem|Lose Yourself',
+    'Calvin Harris|Summer','Drake|God\'s Plan',
+    'Beyonce|Crazy in Love','Martin Garrix|Animals',
+    'Rage Against the Machine|Killing in the Name','J Balvin|Mi Gente',
+    'Dua Lipa|Levitating','Travis Scott|SICKO MODE',
+    'Queen|We Will Rock You','SZA|Kill Bill',
+    'Daft Punk|One More Time','Taylor Swift|Shake It Off',
+    'Kanye West|POWER'
   ],
   'Random': [
-    'Michael Jackson','The Weeknd','Drake','Beyonce','Ed Sheeran','Bruno Mars',
-    'Rihanna','Eminem','Ariana Grande','Taylor Swift','Justin Timberlake',
-    'Adele','Dua Lipa','Billie Eilish','Post Malone','Lady Gaga','Katy Perry',
-    'Coldplay','AC/DC','Jay-Z','Kendrick Lamar','Bad Bunny','Calvin Harris',
-    'Daddy Yankee','Olivia Rodrigo','Travis Scott','Frank Ocean','Foo Fighters',
-    'The Killers','Arctic Monkeys','Led Zeppelin','Queen','Nirvana'
+    'Michael Jackson|Beat It','Eminem|Lose Yourself',
+    'The Weeknd|Blinding Lights','Beyonce|Crazy in Love',
+    'AC/DC|Thunderstruck','Drake|God\'s Plan',
+    'Kendrick Lamar|HUMBLE.','Bad Bunny|Tití Me Preguntó',
+    'Bruno Mars|Uptown Funk','Queen|We Will Rock You',
+    'Avicii|Wake Me Up','Taylor Swift|Shake It Off',
+    'Dua Lipa|Levitating','Kanye West|POWER',
+    'Post Malone|Rockstar','Lady Gaga|Bad Romance',
+    'Foo Fighters|All My Life','Daddy Yankee|Gasolina',
+    'Usher|Yeah!','Travis Scott|SICKO MODE',
+    'Calvin Harris|Summer','SZA|Kill Bill',
+    'Led Zeppelin|Immigrant Song','Daft Punk|One More Time',
+    'Rihanna|We Found Love'
   ]
 };
 
-// Fetch top tracks for one artist by name — uses /top-tracks endpoint
-// which Spotify sorts by popularity already
-async function fetchArtistTopTracks(artistName, minPop) {
-  minPop = minPop || 70;
-  // Step 1: resolve artist name → Spotify ID
-  var ar = await fetch(
-    'https://api.spotify.com/v1/search?q=' + encodeURIComponent(artistName) +
-    '&type=artist&limit=3&market=US',
-    { headers: { Authorization: 'Bearer ' + spToken } }
-  );
-  if (!ar.ok) return [];
-  var ad = await ar.json();
-  var candidates = ad.artists && ad.artists.items || [];
-  var artist = candidates.find(function(a) {
-    return a.name.toLowerCase() === artistName.toLowerCase();
-  }) || candidates.find(function(a) {
-    return a.name.toLowerCase().startsWith(artistName.toLowerCase().split(' ')[0]);
-  }) || candidates[0];
-  if (!artist) return [];
+// Search Spotify for one specific "Artist|Title" pair.
+// Uses only /v1/search which is confirmed working.
+async function searchOneSong(artistName, songTitle) {
+  var seenUri = null;
 
-  // Step 2: get their top tracks (popularity-ranked by Spotify)
-  var tr = await fetch(
-    'https://api.spotify.com/v1/artists/' + artist.id + '/top-tracks?market=US',
-    { headers: { Authorization: 'Bearer ' + spToken } }
-  );
-  if (!tr.ok) return [];
-  var td = await tr.json();
-  return (td.tracks || [])
-    .filter(isCleanTrack)
-    .filter(function(t) { return (t.popularity || 0) >= minPop; });
+  // Tier 1: exact phrase search — most reliable
+  try {
+    var q1 = '"' + songTitle + '" "' + artistName.split(' ')[0] + '"';
+    var r1 = await fetch(
+      'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q1) +
+      '&type=track&limit=5&market=US',
+      { headers: { Authorization: 'Bearer ' + spToken } }
+    );
+    if (r1.ok) {
+      var d1 = await r1.json();
+      var found = scoreSpotifyResults(d1.tracks && d1.tracks.items || [], artistName, songTitle);
+      if (found && isCleanTrack(found)) return found;
+    }
+  } catch(e) {}
+
+  // Tier 2: plain combined search
+  try {
+    var q2 = songTitle + ' ' + artistName;
+    var r2 = await fetch(
+      'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q2) +
+      '&type=track&limit=5&market=US',
+      { headers: { Authorization: 'Bearer ' + spToken } }
+    );
+    if (r2.ok) {
+      var d2 = await r2.json();
+      var found2 = scoreSpotifyResults(d2.tracks && d2.tracks.items || [], artistName, songTitle);
+      if (found2 && isCleanTrack(found2)) return found2;
+    }
+  } catch(e) {}
+
+  return null;
 }
 
-// Main top-tracks search for a genre
-async function topTracksSearch(g, count) {
-  var pool = ARTIST_POOLS[g] || ARTIST_POOLS['Random'];
-  // Shuffle pool then take more than needed to account for failures
-  var shuffled = shuffle(pool.slice());
-  var toQuery = shuffled.slice(0, Math.min(count + 10, pool.length));
-
+// Build playlist from a list of "Artist|Title" strings
+async function searchFromSongList(songs, count) {
+  var shuffled = shuffle(songs.slice()).slice(0, count + 8);
   var tracks = [];
   var seenArtists = new Set();
   var seenUris = new Set();
 
-  for (var i = 0; i < toQuery.length; i++) {
-    if (tracks.length >= count) break;
-    try {
-      var artistTracks = await fetchArtistTopTracks(toQuery[i], 75);
-      if (!artistTracks.length) continue;
+  // Process in batches of 5 for speed without hammering rate limits
+  var BATCH = 5;
+  for (var i = 0; i < shuffled.length && tracks.length < count; i += BATCH) {
+    var batch = shuffled.slice(i, i + BATCH);
+    var results = await Promise.allSettled(batch.map(function(entry) {
+      var parts = entry.split('|');
+      var artist = (parts[0] || '').trim();
+      var title = (parts[1] || '').trim();
+      return searchOneSong(artist, title);
+    }));
 
-      var artistKey = (artistTracks[0].artists && artistTracks[0].artists[0]
-        ? artistTracks[0].artists[0].name : toQuery[i]).toLowerCase();
-      if (seenArtists.has(artistKey)) continue;
+    results.forEach(function(r, bi) {
+      if (r.status !== 'fulfilled' || !r.value) return;
+      var track = r.value;
+      var parts = shuffled[i + bi].split('|');
+      var artistKey = (parts[0] || '').toLowerCase().trim();
+      if (seenArtists.has(artistKey)) return;
+      if (seenUris.has(track.uri)) return;
       seenArtists.add(artistKey);
-
-      // Pick randomly among their top 3 hits for variety (not always #1)
-      var topN = artistTracks.slice(0, 3);
-      var pick = topN[Math.floor(Math.random() * topN.length)];
-      if (!seenUris.has(pick.uri)) {
-        seenUris.add(pick.uri);
-        tracks.push(pick);
-      }
-    } catch(e) { /* skip artist on network error */ }
+      seenUris.add(track.uri);
+      tracks.push(track);
+    });
   }
-  return tracks;
+  return tracks.slice(0, count);
 }
 
-// Mix: one track per genre for variety
-async function mixTracksSearch(count) {
-  var mixGenres = ['Hip-Hop','Rock','EDM','Pop','Latin','R&B','Reggaeton'];
-  var shuffled = shuffle(mixGenres.slice());
-  var tracks = [];
-  var seenUris = new Set();
-
-  for (var i = 0; i < shuffled.length && tracks.length < count; i++) {
-    try {
-      var gTracks = await topTracksSearch(shuffled[i], 3);
-      if (gTracks.length) {
-        var pick = gTracks[0];
-        if (!seenUris.has(pick.uri)) {
-          seenUris.add(pick.uri);
-          tracks.push(pick);
-        }
-      }
-    } catch(e) {}
-  }
-  // Fill remaining slots from Random pool
-  if (tracks.length < count) {
-    try {
-      var fill = await topTracksSearch('Random', count - tracks.length + 5);
-      fill.forEach(function(t) {
-        if (!seenUris.has(t.uri) && tracks.length < count) {
-          seenUris.add(t.uri);
-          tracks.push(t);
-        }
-      });
-    } catch(e) {}
-  }
-  return tracks;
-}
-
-// ── Unified search: Top Tracks → Claude DJ fallback ───────────────────
+// ── Unified search ─────────────────────────────────────────────────────
 async function searchTracks(g, count) {
-  var tracks = [];
-
-  try {
-    tracks = g === 'Mix' ? await mixTracksSearch(count) : await topTracksSearch(g, count);
-  } catch(e) {
-    console.warn('Top tracks search failed:', e.message);
-  }
-
-  if (tracks.length >= Math.floor(count * 0.5)) {
-    return tracks.slice(0, count);
-  }
-
-  // Claude DJ fallback
+  // Primary: Claude DJ (uses Anthropic API + Spotify search for resolution)
   if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
-    console.log('Top tracks insufficient (' + tracks.length + ') — trying Claude DJ');
     try {
-      var djTracks = await claudeDJSearch(g, count - tracks.length);
-      if (djTracks && djTracks.length) {
-        // Merge, dedup
-        var seenUris = new Set(tracks.map(function(t) { return t.uri; }));
-        djTracks.forEach(function(t) {
-          if (!seenUris.has(t.uri)) { seenUris.add(t.uri); tracks.push(t); }
-        });
+      var djTracks = await claudeDJSearch(g, count);
+      if (djTracks && djTracks.length >= Math.floor(count * 0.6)) {
+        return djTracks.slice(0, count);
       }
-    } catch(e) { console.warn('Claude DJ fallback failed:', e); }
+    } catch(e) { console.warn('Claude DJ failed:', e.message); }
   }
 
-  if (tracks.length) return tracks.slice(0, count);
-  throw new Error('Unable to build playlist. Check your Spotify connection.');
+  // Fallback: hardcoded song pool searched via /v1/search
+  var pool = SONG_POOLS[g] || SONG_POOLS['Random'];
+  try {
+    var tracks = await searchFromSongList(pool, count);
+    if (tracks.length > 0) return tracks;
+  } catch(e) { console.warn('Song pool search failed:', e.message); }
+
+  throw new Error('Unable to build playlist. Try reconnecting Spotify.');
 }
+
 
 
 
