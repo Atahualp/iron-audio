@@ -6,128 +6,128 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>IRON AUDIO</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg:#080810;--surface:#0f0f1a;--card:#141422;--border:#222238;
-  --accent:#FF4D00;--accent2:#00AAFF;--green:#1DB954;--blue:#00AAFF;
-  --orange:#FF4D00;
-  --text:#ffffff;--muted:#6670A0;
+  --bg:#08080F;--surface:#0f0f1a;--card:#111118;--border:#1e1e2e;
+  --accent:#C8A96E;--accent2:#00AAFF;--green:#1DB954;--blue:#00AAFF;
+  --orange:#C8A96E;
+  --text:#ffffff;--muted:#555570;
   --safe-top:env(safe-area-inset-top,50px);--safe-bottom:env(safe-area-inset-bottom,34px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100%;overflow:hidden;position:fixed;width:100%}
+html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;height:100%;overflow:hidden;position:fixed;width:100%}
 #app{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,34px) + 40px)}
 
 /* ── HEADER ─────────────────────────────────────────────────────── */
-.hdr{padding:max(env(safe-area-inset-top,50px),50px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(8,8,16,.98);backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(255,77,0,.18)}
+.hdr{padding:max(env(safe-area-inset-top,50px),50px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(8,8,16,.98);backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(200,169,110,.15)}
 .logo{display:flex;align-items:center;gap:8px;line-height:1}
 .logo-icon{flex-shrink:0}
-.logo-iron{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#FF4D00;display:block;line-height:1}
-.logo-audio{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#00AAFF;display:block;line-height:1}
+.logo-iron{font-family:'Sora',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:#C8A96E;display:block;line-height:1}
+.logo-audio{font-family:'Sora',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,0.45);display:block;line-height:1}
 .logo span{color:var(--text)}
-.sp-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#1DB954;border:none;border-radius:10px;color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:transform .15s}
+.sp-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#1DB954;border:none;border-radius:10px;color:#000;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:transform .15s}
 .sp-btn:active{transform:scale(.94)}
 .sp-btn.conn{background:rgba(29,185,84,.12);color:#1DB954;border:1px solid rgba(29,185,84,.3)}
 .sp-ico{width:14px;height:14px;flex-shrink:0}
 .hdr-hist-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;margin-left:2px}
-.hdr-icon-btn{width:34px;height:34px;border-radius:10px;background:#141422;border:1px solid #2a2a3e;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
+.hdr-icon-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
 
 /* ── SECTIONS ────────────────────────────────────────────────────── */
-.sec{padding:18px 16px;border-bottom:1px solid var(--border)}
-.sec-tag{font-size:9px;font-weight:700;letter-spacing:3px;color:#FF4D00;text-transform:uppercase;margin-bottom:4px;opacity:.9}
-.sec-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;margin-bottom:12px;line-height:1}
+.sec{padding:20px 16px;border-bottom:1px solid var(--border)}
+.sec-tag{font-size:9px;font-weight:600;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;opacity:1}
+.sec-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px;margin-bottom:14px;line-height:1;color:#fff}
 
 /* ── DURATION ────────────────────────────────────────────────────── */
 .dur-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.dur-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
-.dur-card.on{border-color:#FF4D00;background:rgba(255,77,0,.08)}
+.dur-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
+.dur-card.on{border-color:#C8A96E;background:rgba(200,169,110,.08)}
 .dur-card:active{transform:scale(.97)}
-.dur-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--muted);line-height:1}
-.dur-card.on .dur-num{color:#FF4D00}
-.ex-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
-.ex-card.on{border-color:#FF4D00;background:rgba(255,77,0,.08)}
+.dur-num{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:var(--muted);line-height:1;letter-spacing:-1px}
+.dur-card.on .dur-num{color:#C8A96E}
+.ex-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
+.ex-card.on{border-color:#C8A96E;background:rgba(200,169,110,.08)}
 .ex-card:active{transform:scale(.97)}
-.ex-card .dur-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--muted);line-height:1}
-.ex-card.on .dur-num{color:#FF4D00}
-.dur-lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.ex-card .dur-num{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:var(--muted);line-height:1;letter-spacing:-1px}
+.ex-card.on .dur-num{color:#C8A96E}
+.dur-lbl{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
 
 /* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
 .mg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
-.mg-chip{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:7px;transition:all .2s}
-.mg-chip.on{border-color:#FF4D00;background:rgba(255,77,0,.08);border-left:3px solid #FF4D00}
+.mg-chip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 10px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:7px;transition:all .2s}
+.mg-chip.on{border-color:#C8A96E;background:rgba(200,169,110,.08)}
 .mg-chip:active{transform:scale(.95)}
-.mg-ico{font-size:17px;flex-shrink:0}
-.mg-name{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.2}
-.mg-chip.on .mg-name{color:#FF4D00}
+.mg-ico{font-size:15px;flex-shrink:0}
+.mg-name{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.2px;line-height:1.2}
+.mg-chip.on .mg-name{color:#C8A96E}
 .mg-chk{display:none}
 .mg-split-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:10px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--border)}
 .mg-chip-spacer{background:transparent;border-color:transparent;pointer-events:none;cursor:default}
 .mg-chip-spacer:active{transform:none}
 
 /* ── GENRE ───────────────────────────────────────────────────────── */
-.genre-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
-.g-pill{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:9px 8px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:6px;transition:all .2s}
-.g-pill.on{border-color:#FF4D00;background:rgba(255,77,0,.08);border-left:3px solid #FF4D00}
+.genre-row{display:flex;flex-wrap:wrap;gap:7px}
+.g-pill{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.g-pill.on{border-color:#C8A96E;background:rgba(200,169,110,.1)}
 .g-pill:active{transform:scale(.95)}
-.g-pill-ico{font-size:15px;flex-shrink:0}
-.g-pill-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;line-height:1.2}
-.g-pill.on .g-pill-lbl{color:#FF4D00}
+.g-pill-ico{font-size:13px;flex-shrink:0}
+.g-pill-lbl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px;line-height:1.2}
+.g-pill.on .g-pill-lbl{color:#C8A96E}
 
 /* ── DIFFICULTY / MODE / EQUIPMENT TOGGLES ──────────────────────────── */
 .toggle-row{display:flex;gap:8px}
-.toggle-pill{flex:1;text-align:center;padding:10px 6px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);transition:all .2s;line-height:1.3}
+.toggle-pill{flex:1;text-align:center;padding:11px 6px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .2s;line-height:1.3}
 .toggle-pill:active{transform:scale(.96)}
-.toggle-pill.on.mode-std{border-color:#FF4D00;color:#000;background:#FF4D00}
-.toggle-pill.on.eq-gym{border-color:#00AAFF;color:#00AAFF;background:rgba(0,170,255,.1)}
-.toggle-pill.on.eq-bw{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.1)}
+.toggle-pill.on.mode-std{border-color:#C8A96E;color:#C8A96E;background:rgba(200,169,110,.08)}
+.toggle-pill.on.eq-gym{border-color:#C8A96E;color:#C8A96E;background:rgba(200,169,110,.08)}
+.toggle-pill.on.eq-bw{border-color:#C8A96E;color:#C8A96E;background:rgba(200,169,110,.08)}
 
 /* ── GENERATE BTN ────────────────────────────────────────────────── */
 .gen-wrap{padding:16px}
-.gen-btn{width:100%;padding:16px;background:#FF4D00;border:none;border-radius:14px;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#fff;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
-.gen-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14) 0%,transparent 60%);pointer-events:none}
+.gen-btn{width:100%;padding:16px;background:#C8A96E;border:none;border-radius:14px;font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:1px;color:#08080F;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+
 .gen-btn:active{transform:scale(.97)}
 
 /* ── WORKOUT ELAPSED TIMER ───────────────────────────────────────── */
-.elapsed-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(0,170,255,.06);border-bottom:1px solid rgba(0,170,255,.15);position:sticky;top:0;z-index:50}
-.elapsed-time{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:#FF4D00}
+.elapsed-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(200,169,110,.04);border-bottom:1px solid rgba(200,169,110,.12);position:sticky;top:0;z-index:50}
+.elapsed-time{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;color:#C8A96E}
 .elapsed-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
 .elapsed-controls{display:flex;gap:6px}
 .elapsed-ctrl-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
 .elapsed-ctrl-btn:active{transform:scale(.94)}
-.elapsed-ctrl-btn.running{border-color:#FF4D00;color:#FF4D00}
+.elapsed-ctrl-btn.running{border-color:#C8A96E;color:#C8A96E}
 
 /* ── RESULTS ─────────────────────────────────────────────────────── */
 #results{display:none}
 #results.vis{display:block}
 .res-hdr{padding:14px 16px;border-bottom:1px solid var(--border)}
-.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:#00AAFF;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px}
-.res-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px}
+.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:#C8A96E;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.res-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.3px}
 .res-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
 .badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px}
-.badge-t{background:rgba(255,77,0,.12);color:#FF4D00}
+.badge-t{background:rgba(200,169,110,.12);color:#C8A96E}
 .badge-m{background:rgba(0,170,255,.1);color:#00AAFF}
 
 /* ── WORKOUT CARDS ───────────────────────────────────────────────── */
 .wk-list{padding:12px 14px}
-.wk-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #FF4D00;border-radius:14px;margin-bottom:10px;overflow:hidden;transition:transform .15s}
+.wk-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #C8A96E;border-radius:14px;margin-bottom:10px;overflow:hidden;transition:transform .15s}
 .wk-top{padding:12px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.wk-num{font-size:9px;font-weight:700;letter-spacing:3px;color:#FF4D00;opacity:.8;font-variant-numeric:tabular-nums}
-.wk-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.5px;margin-top:2px;line-height:1}
+.wk-num{font-size:9px;font-weight:700;letter-spacing:3px;color:#C8A96E;opacity:.8;font-variant-numeric:tabular-nums}
+.wk-name{font-family:'Sora',sans-serif;font-size:22px;letter-spacing:.5px;margin-top:2px;line-height:1}
 .wk-desc{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
 .wk-muscle-badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-top:5px;text-transform:uppercase}
 .wk-sets-box{text-align:right;flex-shrink:0}
-.wk-sets{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#FF4D00;line-height:1}
+.wk-sets{font-family:'Sora',sans-serif;font-size:26px;color:#C8A96E;line-height:1}
 .wk-sets-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 
 /* ── EXERCISE ILLUSTRATION ───────────────────────────────────────── */
 .wk-illus{width:100%;height:200px;background:#0a0a14;border-top:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .wk-illus img{width:100%;height:100%;object-fit:contain;display:block}
 .wk-illus img.loaded{animation:fadeIn .4s ease}
-.wk-illus::after{content:'TAP FOR HOW-TO';position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#FF4D00;font-size:8px;font-weight:800;letter-spacing:1.5px;padding:3px 7px;border-radius:20px;pointer-events:none}
+.wk-illus::after{content:'TAP FOR HOW-TO';position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#C8A96E;font-size:8px;font-weight:800;letter-spacing:1.5px;padding:3px 7px;border-radius:20px;pointer-events:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .skeleton{position:absolute;inset:0;background:var(--card)}
 .skeleton::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.03) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
@@ -146,23 +146,23 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 
 /* ── EXERCISE SWAP ───────────────────────────────────────────────── */
 .swap-btn{display:flex;align-items:center;gap:4px;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
-.swap-btn:active{border-color:#00AAFF;color:#00AAFF;transform:scale(.94)}
+.swap-btn:active{border-color:#C8A96E;color:#C8A96E;transform:scale(.94)}
 
 /* ── REST TIMER TRIGGER ──────────────────────────────────────────── */
 .rest-trigger{display:flex;align-items:center;gap:4px;background:#0f0f1a;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:10px;font-weight:700;color:var(--muted);transition:all .2s;white-space:nowrap}
-.rest-trigger:active{transform:scale(.95);border-color:#FF4D00;color:#FF4D00}
+.rest-trigger:active{transform:scale(.95);border-color:#C8A96E;color:#C8A96E}
 
 /* ── SET LOG ─────────────────────────────────────────────────────── */
-.set-log-wrap{padding:10px 14px 12px;border-top:1px solid var(--border);background:rgba(255,77,0,.02)}
+.set-log-wrap{padding:10px 14px 12px;border-top:1px solid var(--border);background:rgba(200,169,110,.02)}
 .set-log-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
 .set-log-row{display:flex;gap:5px;align-items:center;margin-bottom:6px}
-.set-log-num{font-size:11px;font-weight:700;color:#FF4D00;width:18px;flex-shrink:0}
+.set-log-num{font-size:11px;font-weight:700;color:#C8A96E;width:18px;flex-shrink:0}
 .set-log-input{width:68px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 4px;color:var(--text);font-size:13px;font-weight:600;text-align:center;-webkit-appearance:none}
-.set-log-input:focus{outline:none;border-color:#FF4D00}
+.set-log-input:focus{outline:none;border-color:#C8A96E}
 .set-log-label{font-size:10px;color:var(--muted);width:16px;text-align:center;flex-shrink:0}
 .set-log-add{background:none;border:1px dashed var(--border);border-radius:8px;padding:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
-.set-log-add:active{border-color:#FF4D00;color:#FF4D00}
-.set-log-pr{font-size:10px;color:#FF4D00;font-weight:800;margin-left:4px}
+.set-log-add:active{border-color:#C8A96E;color:#C8A96E}
+.set-log-pr{font-size:10px;color:#C8A96E;font-weight:800;margin-left:4px}
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
 .set-log-del:active{color:#f87171}
 
@@ -172,22 +172,22 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 
 /* ── PLAYLIST ────────────────────────────────────────────────────── */
 .pl-sec{padding:12px 14px 18px}
-.pl-toggle-btn{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);transition:all .2s;min-width:52px;text-align:center}
-.pl-toggle-btn.on{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.08)}
-.pl-create-btn{background:transparent;border:1.5px solid #FF4D00;border-radius:8px;color:#FF4D00;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px;padding:5px 12px;cursor:pointer;transition:all .2s}
+.pl-toggle-btn{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);transition:all .2s;min-width:52px;text-align:center}
+.pl-toggle-btn.on{border-color:#C8A96E;color:#C8A96E;background:rgba(200,169,110,.08)}
+.pl-create-btn{background:transparent;border:1.5px solid #C8A96E;border-radius:8px;color:#C8A96E;font-family:'Sora',sans-serif;font-size:11px;letter-spacing:1.5px;padding:5px 12px;cursor:pointer;transition:all .2s}
 .pl-create-btn:active{transform:scale(.97)}
-.pl-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#FF4D00;margin-bottom:10px}
+.pl-label{font-family:'Sora',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:#C8A96E;margin-bottom:10px}
 .pl-card{background:#0d1a0d;border:1px solid #162016;border-radius:14px;overflow:hidden}
 .pl-hdr{padding:14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(29,185,84,.1)}
 .pl-art{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#1DB954,#0a5228);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .pl-info{flex:1;min-width:0}
-.pl-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-name{font-family:'Sora',sans-serif;font-size:16px;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pl-meta{font-size:10px;color:rgba(29,185,84,.7);margin-top:2px;font-weight:500}
 .pl-open{padding:7px 11px;background:#1DB954;border:none;border-radius:8px;color:#000;font-weight:700;font-size:11px;cursor:pointer;flex-shrink:0;transition:transform .15s}
 .pl-open:active{transform:scale(.94)}
 .track-list{padding:6px 0}
 .track{padding:7px 14px;display:flex;align-items:center;gap:10px}
-.track-n{font-family:'Bebas Neue',sans-serif;font-size:13px;color:rgba(29,185,84,.35);width:16px;text-align:center}
+.track-n{font-family:'Sora',sans-serif;font-size:13px;color:rgba(29,185,84,.35);width:16px;text-align:center}
 .track-info{flex:1;min-width:0}
 .track-name{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .track-artist{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
@@ -196,7 +196,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 /* ── STATUS MESSAGES ─────────────────────────────────────────────── */
 .msg{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:10px;line-height:1.5}
 .msg-ok{background:rgba(29,185,84,.12);color:#1DB954;border:1px solid rgba(29,185,84,.25)}
-.msg-err{background:rgba(255,77,0,.1);color:#FF6030;border:1px solid rgba(255,77,0,.25)}
+.msg-err{background:rgba(200,169,110,.1);color:#FF6030;border:1px solid rgba(200,169,110,.25)}
 .msg-info{background:rgba(0,170,255,.07);color:#00AAFF;border:1px solid rgba(0,170,255,.18)}
 
 /* ── PLAYLIST PROMPT ─────────────────────────────────────────────── */
@@ -220,8 +220,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 /* ── LOADING OVERLAY ─────────────────────────────────────────────── */
 .ov{display:none;position:fixed;inset:0;background:rgba(8,8,16,.97);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 .ov.vis{display:flex}
-.ov-spin{width:48px;height:48px;border:2px solid var(--border);border-top-color:#FF4D00;border-radius:50%;animation:spin .8s linear infinite}
-.ov-txt{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--muted)}
+.ov-spin{width:48px;height:48px;border:2px solid var(--border);border-top-color:#C8A96E;border-radius:50%;animation:spin .8s linear infinite}
+.ov-txt{font-family:'Sora',sans-serif;font-size:16px;letter-spacing:3px;color:var(--muted)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── SPOTIFY MODAL ───────────────────────────────────────────────── */
@@ -229,28 +229,28 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .modal-bg.vis{display:flex}
 .modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;padding:10px 18px calc(var(--safe-bottom)+18px);max-height:88vh;overflow-y:auto}
 .modal-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 18px}
-.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:12px}
+.modal-title{font-family:'Sora',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:12px}
 .modal-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
-.modal-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
-.modal-inp:focus{border-color:#FF4D00}
-.modal-btn{width:100%;padding:14px;background:#FF4D00;border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;cursor:pointer}
-.modal-link{color:#FF4D00}
+.modal-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Sora',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
+.modal-inp:focus{border-color:#C8A96E}
+.modal-btn{width:100%;padding:14px;background:#C8A96E;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;cursor:pointer}
+.modal-link{color:#C8A96E}
 
 /* ── REST TIMER ──────────────────────────────────────────────────── */
 .timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .timer-overlay.open{opacity:1;pointer-events:all}
 .timer-ring-wrap{position:relative;width:200px;height:200px;margin-bottom:24px}
 .timer-ring-bg{fill:none;stroke:#1a1a28;stroke-width:10}
-.timer-ring-fg{fill:none;stroke:#FF4D00;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.5;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear;transform:rotate(-90deg);transform-origin:center}
-.timer-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:2px}
+.timer-ring-fg{fill:none;stroke:#C8A96E;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.5;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear;transform:rotate(-90deg);transform-origin:center}
+.timer-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:72px;color:#fff;letter-spacing:2px}
 .timer-label{font-size:12px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px}
-.timer-ex-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#FF4D00;letter-spacing:1px;margin-bottom:6px;text-align:center;padding:0 20px}
+.timer-ex-name{font-family:'Sora',sans-serif;font-size:22px;color:#C8A96E;letter-spacing:1px;margin-bottom:6px;text-align:center;padding:0 20px}
 .timer-actions{display:flex;gap:12px}
 .timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .timer-btn:active{transform:scale(.95)}
 .timer-btn.skip{background:#1a1a28;color:var(--muted)}
 .timer-btn.minus{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
-.timer-btn.stop{background:#FF4D00;color:#fff}
+.timer-btn.stop{background:#C8A96E;color:#fff}
 
 /* ── EXERCISE MODAL ──────────────────────────────────────────────── */
 .ex-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -261,11 +261,11 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .ex-modal-img-placeholder{width:100%;aspect-ratio:4/3;background:#1a1a28;display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:20px 20px 0 0}
 .ex-modal-body{padding:18px 20px 0}
 .ex-modal-num{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-bottom:4px}
-.ex-modal-name{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;line-height:1;margin-bottom:6px}
+.ex-modal-name{font-family:'Sora',sans-serif;font-size:30px;color:#fff;line-height:1;margin-bottom:6px}
 .ex-modal-muscle{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700;margin-bottom:14px}
 .ex-modal-stats{display:flex;gap:8px;margin-bottom:18px}
 .ex-modal-stat{flex:1;background:#1a1a28;border-radius:10px;padding:10px;text-align:center}
-.ex-modal-stat strong{display:block;font-size:17px;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px}
+.ex-modal-stat strong{display:block;font-size:17px;color:#fff;font-family:'Sora',sans-serif;letter-spacing:.5px}
 .ex-modal-stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 .ex-modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;border:none;z-index:10}
 .yt-watch-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#ff0000;border-radius:12px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:.3px;transition:all .2s;margin-top:4px;margin-bottom:8px}
@@ -277,19 +277,19 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .orm-overlay.open{opacity:1;pointer-events:all}
 .orm-sheet{background:#0f0f1a;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 50px;transform:translateY(40px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
 .orm-overlay.open .orm-sheet{transform:translateY(0)}
-.orm-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:3px}
+.orm-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px;margin-bottom:3px}
 .orm-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
 .orm-inputs{display:flex;gap:10px;margin-bottom:14px}
 .orm-input-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
 .orm-input-wrap label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
 .orm-input{width:100%;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;text-align:center;-webkit-appearance:none}
-.orm-input:focus{outline:none;border-color:#FF4D00}
-.orm-result{background:rgba(255,77,0,.07);border:1px solid rgba(255,77,0,.18);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px}
-.orm-result-val{font-family:'Bebas Neue',sans-serif;font-size:52px;color:#FF4D00;line-height:1}
+.orm-input:focus{outline:none;border-color:#C8A96E}
+.orm-result{background:rgba(200,169,110,.07);border:1px solid rgba(200,169,110,.18);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px}
+.orm-result-val{font-family:'Sora',sans-serif;font-size:52px;color:#C8A96E;line-height:1}
 .orm-result-lbl{font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:3px}
 .orm-formula-row{display:flex;gap:6px;margin-bottom:16px}
 .orm-formula-btn{flex:1;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
-.orm-formula-btn.on{border-color:#FF4D00;color:#FF4D00;background:rgba(255,77,0,.08)}
+.orm-formula-btn.on{border-color:#C8A96E;color:#C8A96E;background:rgba(200,169,110,.08)}
 .orm-close{width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
 
 /* ── HISTORY PANEL ───────────────────────────────────────────────── */
@@ -298,19 +298,19 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .hist-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#0d0d18;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
 .hist-panel.open{transform:translateX(0)}
 .hist-hdr{position:sticky;top:0;background:#0d0d18;padding:max(env(safe-area-inset-top,50px),50px) 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;z-index:2}
-.hist-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
+.hist-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.3px}
 .hist-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
 .hist-empty{padding:40px 18px;text-align:center;color:var(--muted);font-size:13px}
 .hist-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
 .hist-item:active{background:var(--card)}
 .hist-item-date{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:3px}
-.hist-item-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;margin-bottom:3px}
+.hist-item-title{font-family:'Sora',sans-serif;font-size:18px;color:#fff;margin-bottom:3px}
 .hist-item-meta{font-size:11px;color:var(--muted)}
 .hist-clear{width:calc(100% - 32px);margin:14px 16px 0;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px}
 
 /* ── SHARE CARD ──────────────────────────────────────────────────── */
 .share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
-.share-btn:active{transform:scale(.97);border-color:#FF4D00;color:#FF4D00}
+.share-btn:active{transform:scale(.97);border-color:#C8A96E;color:#C8A96E}
 .share-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:20px}
 .share-modal-overlay.open{opacity:1;pointer-events:all}
 .share-canvas-wrap{max-width:400px;width:100%;border-radius:14px;overflow:hidden;margin-bottom:14px}
@@ -318,7 +318,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .share-actions{display:flex;gap:10px;width:100%;max-width:400px}
 .share-action-btn{flex:1;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .share-action-btn:active{transform:scale(.95)}
-.share-action-btn.save{background:#FF4D00;color:#fff}
+.share-action-btn.save{background:#C8A96E;color:#fff}
 .share-action-btn.close{background:#1a1a28;color:var(--muted)}
 
 /* ── SETTINGS PANEL ──────────────────────────────────────────────── */
@@ -327,13 +327,13 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .settings-panel{position:fixed;right:0;top:0;bottom:0;width:min(340px,95vw);background:#0d0d18;z-index:901;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,1,.42,1);overflow-y:auto;padding:0 0 40px}
 .settings-panel.open{transform:translateX(0)}
 .settings-hdr{position:sticky;top:0;background:#0d0d18;padding:max(env(safe-area-inset-top,50px),50px) 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;z-index:2}
-.settings-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
+.settings-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.3px}
 .settings-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
 .settings-section{padding:16px 16px 0}
 .settings-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block}
-.settings-input{width:100%;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;box-sizing:border-box;margin-bottom:8px}
-.settings-input:focus{outline:none;border-color:#FF4D00}
-.settings-save-btn{width:100%;padding:11px;background:#FF4D00;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;transition:all .2s}
+.settings-input{width:100%;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'Sora',sans-serif;box-sizing:border-box;margin-bottom:8px}
+.settings-input:focus{outline:none;border-color:#C8A96E}
+.settings-save-btn{width:100%;padding:11px;background:#C8A96E;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;letter-spacing:2px;transition:all .2s}
 .settings-save-btn:active{transform:scale(.97)}
 .settings-info{font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px}
 .settings-cost-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:12px}
@@ -341,10 +341,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .settings-cost-label{font-size:11px;color:var(--muted)}
 .settings-cost-val{font-size:13px;font-weight:700;color:var(--text)}
 .settings-cost-val.warn{color:#f87171}
-.settings-cost-val.accent{color:#FF4D00}
+.settings-cost-val.accent{color:#C8A96E}
 .settings-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
 .settings-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:9px 13px;border-radius:10px;margin-top:10px}
-.settings-status.active{background:rgba(255,77,0,.08);color:#FF4D00}
+.settings-status.active{background:rgba(200,169,110,.08);color:#C8A96E}
 .settings-status.inactive{background:var(--card);color:var(--muted)}
 
 /* ── PLATFORM TOGGLE ─────────────────────────────────────────────── */
@@ -356,43 +356,43 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 
 
 /* ── END WORKOUT ─────────────────────────────────────────────────────── */
-.end-workout-btn{width:100%;padding:14px;background:transparent;border:1.5px solid #FF4D00;border-radius:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#FF4D00;cursor:pointer;transition:all .2s;margin-bottom:4px}
-.end-workout-btn:active{background:rgba(255,77,0,.1);transform:scale(.97)}
+.end-workout-btn{width:100%;padding:14px;background:transparent;border:1.5px solid #C8A96E;border-radius:14px;font-family:'Sora',sans-serif;font-size:20px;letter-spacing:2px;color:#C8A96E;cursor:pointer;transition:all .2s;margin-bottom:4px}
+.end-workout-btn:active{background:rgba(200,169,110,.1);transform:scale(.97)}
 .ew-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ew-overlay.open{opacity:1;pointer-events:all}
 .ew-sheet{background:#0f0f1a;border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:20px 20px calc(env(safe-area-inset-bottom,34px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
 .ew-overlay.open .ew-sheet{transform:translateY(0)}
-.ew-handle{width:32px;height:3px;background:#2a2a3e;border-radius:2px;margin:0 auto 16px}
-.ew-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:#fff;margin-bottom:4px}
+.ew-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.ew-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px;color:#fff;margin-bottom:4px}
 .ew-sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
 .ew-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
-.ew-stat{background:#141422;border-radius:11px;padding:12px 8px;text-align:center}
-.ew-stat-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#FF4D00;line-height:1}
+.ew-stat{background:var(--card);border-radius:11px;padding:12px 8px;text-align:center}
+.ew-stat-val{font-family:'Sora',sans-serif;font-size:32px;color:#C8A96E;line-height:1}
 .ew-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
-.ew-confirm{width:100%;padding:14px;background:#FF4D00;border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;cursor:pointer;margin-bottom:8px;transition:all .2s}
+.ew-confirm{width:100%;padding:14px;background:#C8A96E;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:18px;letter-spacing:2px;color:#fff;cursor:pointer;margin-bottom:8px;transition:all .2s}
 .ew-confirm:active{transform:scale(.97);background:#e04400}
-.ew-cancel{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer}
+.ew-cancel{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer}
 .ew-cancel:active{border-color:var(--muted)}
 
 
 .settings-storage-btn{width:100%;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s;text-align:left;padding-left:14px}
-.settings-storage-btn:active{border-color:#FF4D00;color:#FF4D00;transform:scale(.98)}
+.settings-storage-btn:active{border-color:#C8A96E;color:#C8A96E;transform:scale(.98)}
 .settings-storage-btn-danger{border-color:rgba(248,113,113,.3);color:#f87171}
 .settings-storage-btn-danger:active{border-color:#f87171}
 
 
 /* ── SESSION SUMMARY ENHANCEMENTS ───────────────────────────────────── */
-.ew-tag{font-size:8px;font-weight:700;letter-spacing:3px;color:#FF4D00;text-transform:uppercase;margin-bottom:3px}
+.ew-tag{font-size:8px;font-weight:700;letter-spacing:3px;color:#C8A96E;text-transform:uppercase;margin-bottom:3px}
 .ew-date{font-size:10px;color:var(--muted);margin-bottom:12px}
 .ew-stats-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px}
 .ew-stats-bot{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
-.ew-stat-val-sm{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#FF4D00;line-height:1}
+.ew-stat-val-sm{font-family:'Sora',sans-serif;font-size:20px;color:#C8A96E;line-height:1}
 .ew-stat-sub{font-size:8px;color:var(--muted);margin-top:1px}
 .ew-vol-compare{display:flex;align-items:center;gap:4px;margin-top:2px;font-size:8px}
 .ew-vol-up{color:#1DB954;font-weight:700}
 .ew-vol-down{color:#f87171;font-weight:700}
 .ew-vol-neutral{color:var(--muted)}
-.ew-consist{display:flex;align-items:center;gap:9px;background:#141422;border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.ew-consist{display:flex;align-items:center;gap:9px;background:var(--card);border-radius:10px;padding:10px 12px;margin-bottom:12px}
 .ew-consist-icon{font-size:18px;flex-shrink:0}
 .ew-consist-text{font-size:11px;font-weight:600;color:#fff;line-height:1.4}
 .ew-consist-sub{font-size:9px;color:var(--muted);margin-top:1px}
@@ -402,21 +402,21 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 .ew-ex-muscle{font-size:8px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
 .ew-sets-list{display:flex;flex-direction:column;gap:3px}
 .ew-set-row{display:flex;align-items:center;gap:8px;font-size:10px}
-.ew-set-num{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--muted);width:14px;flex-shrink:0}
+.ew-set-num{font-family:'Sora',sans-serif;font-size:12px;color:var(--muted);width:14px;flex-shrink:0}
 .ew-set-val{color:#ddd;font-weight:500}
 .ew-set-empty{color:var(--muted);font-style:italic}
-.ew-ex-pr{font-size:7px;font-weight:700;padding:2px 5px;background:rgba(255,77,0,.15);color:#FF4D00;border-radius:4px;margin-left:4px}
-.ew-next{display:flex;align-items:center;justify-content:space-between;background:rgba(0,170,255,.07);border:1px solid rgba(0,170,255,.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;cursor:pointer;transition:all .2s}
-.ew-next:active{background:rgba(0,170,255,.15)}
-.ew-next-tag{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#00AAFF;text-transform:uppercase;margin-bottom:2px}
-.ew-next-val{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;letter-spacing:.5px}
-.ew-next-arrow{font-size:16px;color:#00AAFF;font-weight:700}
+.ew-ex-pr{font-size:7px;font-weight:700;padding:2px 5px;background:rgba(200,169,110,.15);color:#C8A96E;border-radius:4px;margin-left:4px}
+.ew-next{display:flex;align-items:center;justify-content:space-between;background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.18);border-radius:10px;padding:10px 12px;margin-bottom:12px;cursor:pointer;transition:all .2s}
+.ew-next:active{background:rgba(200,169,110,.12)}
+.ew-next-tag{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#C8A96E;text-transform:uppercase;margin-bottom:2px}
+.ew-next-val{font-family:'Sora',sans-serif;font-size:16px;color:#fff;letter-spacing:.5px}
+.ew-next-arrow{font-size:16px;color:#C8A96E;font-weight:700}
 .ew-share-row{display:flex;gap:7px;margin-bottom:12px}
-.ew-share-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;background:#141422;border:1px solid var(--border);border-radius:10px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s}
-.ew-share-pill:active{border-color:#FF4D00;color:#FF4D00}
+.ew-share-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s}
+.ew-share-pill:active{border-color:#C8A96E;color:#C8A96E}
 /* ── MOTIVATIONAL QUOTE CARD ─────────────────────────────────────────── */
-.quote-card{background:#141422;border:1px solid var(--border);border-left:3px solid #FF4D00;border-radius:12px;padding:14px;margin-bottom:12px}
-.quote-label{font-size:8px;font-weight:700;letter-spacing:2px;color:#FF4D00;text-transform:uppercase;margin-bottom:6px}
+.quote-card{background:var(--card);border:1px solid var(--border);border-left:3px solid #C8A96E;border-radius:12px;padding:14px;margin-bottom:12px}
+.quote-label{font-size:8px;font-weight:700;letter-spacing:2px;color:#C8A96E;text-transform:uppercase;margin-bottom:6px}
 .quote-text{font-size:14px;font-weight:600;color:#fff;line-height:1.5;font-style:italic}
 .quote-attr{font-size:9px;color:var(--muted);margin-top:6px}
 
@@ -429,14 +429,14 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
   <div class="hdr">
     <div class="logo">
       <svg class="logo-icon" width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="10" width="4" height="8" rx="2" fill="#FF4D00"/>
-        <rect x="5" y="8" width="3" height="12" rx="1.5" fill="#FF4D00"/>
-        <rect x="24" y="8" width="3" height="12" rx="1.5" fill="#FF4D00"/>
-        <rect x="27" y="10" width="4" height="8" rx="2" fill="#FF4D00"/>
-        <rect x="8" y="13" width="16" height="2.5" rx="1.25" fill="#00AAFF"/>
-        <rect x="10" y="8" width="2" height="4" rx="1" fill="#00AAFF" opacity=".9"/>
-        <rect x="14" y="6" width="2" height="6" rx="1" fill="#00AAFF"/>
-        <rect x="18" y="8" width="2" height="4" rx="1" fill="#00AAFF" opacity=".9"/>
+        <rect x="1" y="10" width="4" height="8" rx="2" fill="#C8A96E"/>
+        <rect x="5" y="8" width="3" height="12" rx="1.5" fill="#C8A96E"/>
+        <rect x="24" y="8" width="3" height="12" rx="1.5" fill="#C8A96E"/>
+        <rect x="27" y="10" width="4" height="8" rx="2" fill="#C8A96E"/>
+        <rect x="8" y="13" width="16" height="2.5" rx="1.25" fill="rgba(255,255,255,0.35)"/>
+        <rect x="10" y="8" width="2" height="4" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <rect x="14" y="6" width="2" height="6" rx="1" fill="rgba(255,255,255,0.35)"/>
+        <rect x="18" y="8" width="2" height="4" rx="1" fill="rgba(255,255,255,0.2)"/>
       </svg>
       <div style="line-height:1"><div class="logo-iron">IRON</div><div class="logo-audio">AUDIO</div></div>
     </div>
@@ -501,7 +501,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
         <div class="g-pill" onclick="setGenre('Anime',this)"><span class="g-pill-ico">🎌</span><span class="g-pill-lbl">Anime</span></div>
         <div class="g-pill" onclick="setGenre('EDM',this)"><span class="g-pill-ico">🎛️</span><span class="g-pill-lbl">EDM</span></div>
         <div class="g-pill" onclick="setGenre('Hip-Hop',this)"><span class="g-pill-ico">🎤</span><span class="g-pill-lbl">Hip-Hop</span></div>
-        <div class="g-pill" onclick="setGenre('Latin',this)"><span class="g-pill-ico">💃</span><span class="g-pill-lbl">Latin</span></div>
+        <div class="g-pill" onclick="setGenre('Latin',this)"><span class="g-pill-ico">🎺</span><span class="g-pill-lbl">Salsa/Bachata</span></div>
         <div class="g-pill" onclick="setGenre('Pop',this)"><span class="g-pill-ico">🌟</span><span class="g-pill-lbl">Pop</span></div>
         <div class="g-pill" onclick="setGenre('R&amp;B',this)"><span class="g-pill-ico">🎷</span><span class="g-pill-lbl">R&amp;B</span></div>
         <div class="g-pill" onclick="setGenre('Reggae',this)"><span class="g-pill-ico">🌿</span><span class="g-pill-lbl">Reggae</span></div>
@@ -583,7 +583,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Sans',sans-serif;opacity:.6">IRON AUDIO v9.0</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Sora',sans-serif;opacity:.6">IRON AUDIO v9.0</div>
 
 </div>
 
@@ -1510,6 +1510,54 @@ function isOverBudget() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// ── ARTIST BLOCKLIST & PER-GENRE SONG HISTORY ──────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+const BLOCKED_ARTISTS = ['pitbull']; // lowercase; add more anytime
+const HISTORY_SESSIONS_TO_KEEP = 3; // songs won't repeat until 4th session
+const IA_HISTORY_KEY = 'ia_song_history_v2'; // per-genre, keyed by genre
+
+function getPlayHistory(genre) {
+  try {
+    var all = JSON.parse(localStorage.getItem(IA_HISTORY_KEY) || '{}');
+    return Array.isArray(all[genre]) ? all[genre] : [];
+  } catch(e) { return []; }
+}
+function savePlayHistory(genre, sessions) {
+  try {
+    var all = JSON.parse(localStorage.getItem(IA_HISTORY_KEY) || '{}');
+    all[genre] = sessions.slice(0, HISTORY_SESSIONS_TO_KEEP);
+    localStorage.setItem(IA_HISTORY_KEY, JSON.stringify(all));
+  } catch(e) {}
+}
+function recordSessionHistory(genre, tracks) {
+  if (!tracks || !tracks.length) return;
+  var sessions = getPlayHistory(genre);
+  sessions.unshift({
+    ts: Date.now(),
+    songs: tracks.map(function(t) {
+      return (t.artists?.[0]?.name || '').toLowerCase().trim() + '|' + (t.name || '').toLowerCase().trim();
+    })
+  });
+  savePlayHistory(genre, sessions);
+}
+function getRecentSongSet(genre) {
+  var set = new Set();
+  getPlayHistory(genre).forEach(function(s) { s.songs.forEach(function(k) { set.add(k); }); });
+  return set;
+}
+function getRecentArtistSet(genre) {
+  var set = new Set();
+  getPlayHistory(genre).forEach(function(s) {
+    s.songs.forEach(function(k) { set.add(k.split('|')[0]); });
+  });
+  return set;
+}
+function isBlockedArtist(name) {
+  var lower = (name || '').toLowerCase();
+  return BLOCKED_ARTISTS.some(function(b) { return lower.includes(b); });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // ── CLAUDE DJ PLAYLIST GENERATOR ───────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
 async function claudeDJSearch(g, count) {
@@ -1523,7 +1571,7 @@ async function claudeDJSearch(g, count) {
     'EDM':     'Mix iconic tracks from the golden era of EDM (Avicii, Deadmau5, Daft Punk) with current underground and mainstage artists. Prioritize big drops and relentless energy.',
     '80s':     'Strictly 1980s artists and songs only. Mix pop, rock, new wave and synth-pop. Focus on tracks with driving, upbeat rhythms.',
     'Pop':     'Mix chart-topping current pop with iconic pop hits from the 2000s and 2010s. High energy, anthemic tracks only.',
-    'Latin':   'Mix across sub-genres: include reggaeton, bachata, salsa, and Latin pop. Mix classic Latin artists with current ones.',
+    'Latin':   'STRICT GENRE RESTRICTION: Select ONLY Merengue, Salsa, and Bachata songs. No reggaeton, Latin pop, or other sub-genres. Mix across all three: include classic salsa legends (Celia Cruz, Héctor Lavoe, Willie Colón, Rubén Blades, Marc Anthony), bachata artists (Romeo Santos, Aventura, Prince Royce, Juan Luis Guerra), and merengue artists (Elvis Crespo, Olga Tañón, Juan Luis Guerra, Fernando Villalona). Span different decades from the 1970s through today.',
     'R&B':     'Mix classic soul/R&B legends (Marvin Gaye, Stevie Wonder, Luther Vandross) with modern R&B (The Weeknd, Frank Ocean, SZA, Usher). Focus on tracks with strong groove and energy.',
     'Reggae':  'Mix classic roots reggae (Bob Marley, Jimmy Cliff, Burning Spear) with modern dancehall and reggae fusion. Keep the energy upbeat and positive.',
     'Reggaeton': 'Mix classic reggaeton (Daddy Yankee, Don Omar, Wisin & Yandel) with current artists (Bad Bunny, J Balvin, Rauw Alejandro). Maximum energy and rhythm.',
@@ -1533,9 +1581,20 @@ async function claudeDJSearch(g, count) {
   };
 
   var genreNote = genreNotes[g] || '';
+
+  // Build exclusion context from per-genre history and global blocklist
+  var recentArtists = Array.from(getRecentArtistSet(g)).slice(0, 30);
+  var blockedNames  = BLOCKED_ARTISTS.map(function(a) { return a.charAt(0).toUpperCase() + a.slice(1); });
+  var blockedLine   = blockedNames.length ? '\n\nNEVER include these artists under any circumstances, not even as featured: ' + blockedNames.join(', ') + '.' : '';
+  var historyLine   = recentArtists.length ? '\n\nDo NOT include these artists (recently played — need variety): ' + recentArtists.map(function(a) { return a.replace(/\b\w/g, function(c) { return c.toUpperCase(); }); }).join(', ') + '.' : '';
+
   var systemPrompt = "You are an expert Fitness DJ and Workout Programmer. Your specialty is selecting high-energy, chart-topping hits that keep athletes motivated and moving.\n\nCore Constraints:\n- Popularity Only: Select only well-known, A-List tracks and stadium-fillers. No obscure deep cuts.\n- Strict Diversity: Zero artist repetition. Each song must be by a completely different primary artist.\n- High-Tempo: Every track must have a fast, driving rhythm suitable for lifting or cardio.\n- No Slow Starts: Avoid songs with long quiet introductions.\n- Era Mix: Include artists spanning different decades of the genre, not just current artists.\n\nEnergy Profile: Focus on tracks with Aggressive, Triumphant, or Relentless emotional tones.\n\nRespond ONLY in this exact compact format — one song per line, Artist|Title, nothing else:\nArtist Name|Song Title\nArtist Name|Song Title";
 
-  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '. Prioritize established classics and well-known hits — avoid songs released in the last 6 months.' + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '') + '\n\nReturn ONLY the compact Artist|Title format, one per line, no other text.';
+  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '. Prioritize established classics and well-known hits — avoid songs released in the last 6 months.'
+    + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '')
+    + blockedLine
+    + historyLine
+    + '\n\nReturn ONLY the compact Artist|Title format, one per line, no other text.';
 
   try {
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1650,6 +1709,7 @@ async function claudeDJSearch(g, count) {
 
       if (found && found.uri) {
         var aKey = (found.artists?.[0]?.name || '').toLowerCase();
+        if (isBlockedArtist(aKey)) continue; // global blocklist
         if (!seenArtists.has(aKey)) {
           seenArtists.add(aKey);
           tracks.push(found);
@@ -1790,16 +1850,24 @@ const SONG_POOLS = {
     'Pink|Raise Your Glass'
   ],
   'Latin': [
-    'Daddy Yankee|Gasolina','Bad Bunny|Tití Me Preguntó',
-    'J Balvin|Mi Gente','Shakira|Hips Don\'t Lie',
-    'Marc Anthony|Vivir Mi Vida','Romeo Santos|Propuesta Indecente',
-    'Ozuna|Taki Taki','Maluma|Hawái','Karol G|Bichota',
-    'Nicky Jam|El Perdón','Don Omar|Danza Kuduro',
-    'Wisin & Yandel|Zun Tata','Prince Royce|Stand By Me',
-    'Juan Luis Guerra|Burbujas de Amor','Rauw Alejandro|Todo de Ti',
-    'Pitbull|Give Me Everything','Farruko|Pepas',
-    'Becky G|Shower','Aventura|Obsesión',
-    'Myke Towers|La Playa','Hector Lavoe|El Cantante'
+    // Salsa
+    'Marc Anthony|Vivir Mi Vida','Marc Anthony|Valió la Pena',
+    'Celia Cruz|La Vida Es Un Carnaval','Héctor Lavoe|El Cantante',
+    'Willie Colón|El Gran Varón','Rubén Blades|Pedro Navaja',
+    'Eddie Santiago|Tú Me Quemas','Jerry Rivera|Cara de Niño',
+    'Gilberto Santa Rosa|Que Manera de Quererte',
+    'La India|Ese Hombre','Victor Manuelle|Un Siglo Sin Ti',
+    // Bachata
+    'Romeo Santos|Propuesta Indecente','Aventura|Obsesión',
+    'Prince Royce|Stand By Me','Prince Royce|Corazón Sin Cara',
+    'Juan Luis Guerra|Bachata Rosa','Xtreme|Te Extraño',
+    'Frank Reyes|Princesa','Toby Love|Lento',
+    'Romeo Santos|Yo También','Grupo Extra|Amor Real',
+    // Merengue
+    'Juan Luis Guerra|Ojalá Que Llueva Café','Juan Luis Guerra|La Bilirrubina',
+    'Elvis Crespo|Suavemente','Olga Tañón|Que El Ritmo No Pare',
+    'Fulanito|El Hombre Más Famoso De La Tierra',
+    'Fernando Villalona|Qué Pasa','Los Hermanos Rosario|La Dueña Del Swing'
   ],
   'R&B': [
     'The Weeknd|Starboy','Usher|Yeah!','Beyonce|Irreplaceable',
@@ -1830,8 +1898,7 @@ const SONG_POOLS = {
     'Wisin & Yandel|Zun Tata','Ozuna|Taki Taki',
     'Nicky Jam|El Perdón','Maluma|Felices los 4',
     'Karol G|MAMIII','Rauw Alejandro|Todo de Ti',
-    'Pitbull|Give Me Everything','Anuel AA|Secreto',
-    'Farruko|Pepas','Arcangel|Bebe',
+    'Anuel AA|Secreto','Farruko|Pepas','Arcangel|Bebe',
     'Myke Towers|La Playa','Jhay Cortez|No Me Conoce',
     'Tego Calderon|Pa\' Que Retozen','Sech|Otro Trago',
     'Eladio Carrion|Tata'
@@ -1915,8 +1982,27 @@ async function searchOneSong(artistName, songTitle) {
 }
 
 // Build playlist from a list of "Artist|Title" strings
-async function searchFromSongList(songs, count) {
-  var shuffled = shuffle(songs.slice()).slice(0, count + 8);
+async function searchFromSongList(songs, count, genre) {
+  var recentSongs = getRecentSongSet(genre || '');
+
+  function notRecentOrBlocked(entry) {
+    var parts = entry.split('|');
+    var artist = (parts[0] || '').toLowerCase().trim();
+    var title  = (parts[1] || '').toLowerCase().trim();
+    if (isBlockedArtist(artist)) return false;
+    if (recentSongs.has(artist + '|' + title)) return false;
+    return true;
+  }
+
+  var filtered = songs.filter(notRecentOrBlocked);
+  // Safety: if history filtering leaves too few candidates, fall back to blocklist-only
+  if (filtered.length < count + 4) {
+    filtered = songs.filter(function(e) {
+      return !isBlockedArtist((e.split('|')[0] || '').toLowerCase());
+    });
+  }
+
+  var shuffled = shuffle(filtered.slice()).slice(0, count + 8);
   var tracks = [];
   var seenArtists = new Set();
   var seenUris = new Set();
@@ -1935,6 +2021,8 @@ async function searchFromSongList(songs, count) {
     results.forEach(function(r, bi) {
       if (r.status !== 'fulfilled' || !r.value) return;
       var track = r.value;
+      var artistName = (track.artists?.[0]?.name || '').toLowerCase();
+      if (isBlockedArtist(artistName)) return; // double-check Spotify result
       var parts = shuffled[i + bi].split('|');
       var artistKey = (parts[0] || '').toLowerCase().trim();
       if (seenArtists.has(artistKey)) return;
@@ -1955,6 +2043,7 @@ async function searchTracks(g, count) {
       var djTracks = await claudeDJSearch(g, count);
       if (djTracks && djTracks.length >= Math.floor(count * 0.6)) {
         window._lastPlSource = 'CLAUDE DJ';
+        recordSessionHistory(g, djTracks);
         return djTracks.slice(0, count);
       }
     } catch(e) { console.warn('Claude DJ failed:', e.message); }
@@ -1963,9 +2052,10 @@ async function searchTracks(g, count) {
   // Fallback: hardcoded song pool searched via /v1/search
   var pool = SONG_POOLS[g] || SONG_POOLS['Random'];
   try {
-    var tracks = await searchFromSongList(pool, count);
+    var tracks = await searchFromSongList(pool, count, g);
     if (tracks.length > 0) {
       window._lastPlSource = 'CURATED LIST';
+      recordSessionHistory(g, tracks);
       return tracks;
     }
   } catch(e) { console.warn('Song pool search failed:', e.message); }
@@ -2246,7 +2336,7 @@ function triggerPlaylist() {
 
 async function buildPlaylist() {
   const container = document.getElementById('plContainer');
-  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'💃','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
+  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'🎺','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
   const emoji = emojiMap[genre] || '🎵';
   const trackCount = 25; // Always 25 — API call costs the same regardless of workout duration
   const plName = `IRON AUDIO · ${genre}`;
@@ -2308,7 +2398,7 @@ function renderOffline(container, emoji, name, count, append=false) {
     '80s':[['Eye of the Tiger','Survivor','4:02'],['Physical','Olivia Newton-John','3:38'],['Push It','Salt-N-Pepa','3:19'],['Jump','Van Halen','4:03'],["Don't Stop Me Now",'Queen','3:29'],['Living on a Prayer','Bon Jovi','4:10'],['Take On Me','a-ha','3:46'],['Final Countdown','Europe','5:09'],['Here I Go Again','Whitesnake','4:39'],['We Will Rock You','Queen','2:02'],['Girls Just Wanna Have Fun','Cyndi Lauper','3:58'],["Sweet Child O' Mine","Guns N' Roses",'5:55'],['Pour Some Sugar on Me','Def Leppard','4:26'],['I Love Rock and Roll','Joan Jett','2:55'],['Like a Prayer','Madonna','5:41']],
     'Metal':[['Enter Sandman','Metallica','5:31'],['Master of Puppets','Metallica','8:35'],['Raining Blood','Slayer','4:17'],['Chop Suey!','System of a Down','3:30'],['B.Y.O.B.','System of a Down','4:14'],['Down with the Sickness','Disturbed','4:39'],['Bat Country','Avenged Sevenfold','5:12'],['Paranoid','Black Sabbath','2:48'],['The Beautiful People','Marilyn Manson','3:37'],['Killing in the Name','RATM','5:13'],['Walk','Pantera','5:00'],['Cowboys from Hell','Pantera','4:08'],['Toxicity','System of a Down','3:38'],['Before I Forget','Slipknot','4:14'],['The Trooper','Iron Maiden','4:09']],
     'Pop':[['Blinding Lights','The Weeknd','3:20'],['Levitating','Dua Lipa','3:23'],['Save Your Tears','The Weeknd','3:35'],['Watermelon Sugar','Harry Styles','2:54'],["Don't Start Now",'Dua Lipa','3:03'],['Uptown Funk','Bruno Mars','4:30'],['24K Magic','Bruno Mars','3:46'],['Shake It Off','Taylor Swift','3:39'],['Roar','Katy Perry','3:43'],['Firework','Katy Perry','3:47'],["Can't Stop the Feeling",'Justin Timberlake','3:56'],['Happy','Pharrell','3:53'],['As It Was','Harry Styles','2:37'],['Anti-Hero','Taylor Swift','3:20'],['Flowers','Miley Cyrus','3:21']],
-    'Latin':[['Con Calma','Daddy Yankee','3:48'],['Mi Gente','J Balvin','3:42'],['Taki Taki','DJ Snake','3:29'],['Chantaje','Shakira','3:37'],['Despacito','Luis Fonsi','3:49'],['MIA','Bad Bunny','3:56'],['Krippy Kush','Bad Bunny','3:02'],['Reggaetón Lento','CNCO','3:53'],['X','Nicky Jam','3:38'],['Lean On','Major Lazer','2:57'],['Baila Baila Baila','Ozuna','3:22'],['Dakiti','Bad Bunny','3:35'],['Tusa','Karol G','3:18'],['Hawái','Maluma','3:18'],['La Canción','J Balvin','3:27']],
+    'Latin':[['Vivir Mi Vida','Marc Anthony','4:02'],['La Vida Es Un Carnaval','Celia Cruz','3:45'],['El Cantante','Héctor Lavoe','4:10'],['Suavemente','Elvis Crespo','3:28'],['La Bilirrubina','Juan Luis Guerra','3:51'],['Ojalá Que Llueva Café','Juan Luis Guerra','4:15'],['Propuesta Indecente','Romeo Santos','3:58'],['Obsesión','Aventura','4:14'],['Stand By Me','Prince Royce','3:37'],['Bachata Rosa','Juan Luis Guerra','4:02'],['Te Extraño','Xtreme','3:52'],['Lento','Toby Love','4:12'],['Que El Ritmo No Pare','Olga Tañón','3:47'],['El Hombre Más Famoso De La Tierra','Fulanito','3:50'],['Tú Me Quemas','Eddie Santiago','3:55']],
     'Random':[['Eye of the Tiger','Survivor','4:02'],["Lose Yourself",'Eminem','5:26'],['Titanium','David Guetta','4:05'],['Enter Sandman','Metallica','5:31'],['Blinding Lights','The Weeknd','3:20'],["God's Plan",'Drake','3:18'],['Animals','Martin Garrix','3:26'],['Despacito','Luis Fonsi','3:49'],['Roar','Katy Perry','3:43'],['Seven Nation Army','White Stripes','3:51'],['B.Y.O.B.','System of a Down','4:14'],['Happy','Pharrell','3:53'],['Uptown Funk','Bruno Mars','4:30'],['Wake Me Up','Avicii','4:07'],['Stronger','Kanye West','5:11']]
   };
   const pool = shuffle([...(pools[genre]||pools['Random'])]).slice(0, count); // count=25
