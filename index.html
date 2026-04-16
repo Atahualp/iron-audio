@@ -1473,8 +1473,8 @@ function updateSettingsStatus() {
 }
 
 // Cost tracker — ~$0.001 per playlist (Haiku input+output estimate)
-var COST_PER_CALL = 0.001;
-var BUDGET_LIMIT  = 4.50;
+var COST_PER_CALL    = 0.001;
+var STARTING_BALANCE = 3.94; // actual balance as of last check
 
 function getCostData() {
   try { return JSON.parse(localStorage.getItem('ia_cost') || '{"calls":0,"cost":0}'); }
@@ -1492,21 +1492,18 @@ function recordCostCall() {
 }
 function updateCostDisplay() {
   var d = getCostData();
-  var remaining = Math.max(0, 5 - d.cost);
+  var callsLeft = Math.max(0, Math.floor((STARTING_BALANCE - d.cost) / COST_PER_CALL));
   var el = document.getElementById('costPlaylists');
   var el2 = document.getElementById('costTotal');
-  var el3 = document.getElementById('costRemaining');
-  if (el)  el.textContent  = d.calls;
-  if (el2) { el2.textContent = '$' + d.cost.toFixed(4); el2.className = 'settings-cost-val accent' + (d.cost >= BUDGET_LIMIT ? ' warn' : ''); }
-  if (el3) { el3.textContent = '$' + remaining.toFixed(2); el3.className = 'settings-cost-val' + (remaining < 0.5 ? ' warn' : ''); }
+  var el4 = document.getElementById('costCallsLeft');
+  if (el)  el.textContent = d.calls;
+  if (el2) { el2.textContent = '$' + d.cost.toFixed(4); el2.className = 'settings-cost-val accent'; }
+  if (el4) { el4.textContent = callsLeft.toLocaleString(); el4.className = 'settings-cost-val' + (callsLeft < 100 ? ' warn' : ''); }
 }
 function resetCostTracker() {
   if (!confirm('Reset usage counter?')) return;
   saveCostData({calls:0, cost:0});
   updateCostDisplay();
-}
-function isOverBudget() {
-  return getCostData().cost >= BUDGET_LIMIT;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -1562,7 +1559,7 @@ function isBlockedArtist(name) {
 // ═══════════════════════════════════════════════════════════════════════
 async function claudeDJSearch(g, count) {
   var apiKey = localStorage.getItem('anthropic_key');
-  if (!apiKey || isOverBudget()) return null;
+  if (!apiKey) return null;
 
   // Genre-specific prompt additions
   var genreNotes = {
@@ -2038,7 +2035,7 @@ async function searchFromSongList(songs, count, genre) {
 // ── Unified search ─────────────────────────────────────────────────────
 async function searchTracks(g, count) {
   // Primary: Claude DJ (uses Anthropic API + Spotify search for resolution)
-  if (localStorage.getItem('anthropic_key') && !isOverBudget()) {
+  if (localStorage.getItem('anthropic_key')) {
     try {
       var djTracks = await claudeDJSearch(g, count);
       if (djTracks && djTracks.length >= Math.floor(count * 0.6)) {
@@ -3820,17 +3817,12 @@ async function searchMixTracks(count) {
         <span class="settings-cost-val accent" id="costTotal">$0.0000</span>
       </div>
       <div class="settings-cost-row">
-        <span class="settings-cost-label">Remaining budget</span>
-        <span class="settings-cost-val" id="costRemaining">$5.00</span>
-      </div>
-      <div class="settings-cost-row">
-        <span class="settings-cost-label">Auto-fallback at</span>
-        <span class="settings-cost-val">$4.50</span>
+        <span class="settings-cost-label">Playlists remaining</span>
+        <span class="settings-cost-val" id="costCallsLeft">3,940</span>
       </div>
     </div>
     <div class="settings-info" style="margin-top:8px">
-      Claude Haiku costs ~$0.001 per playlist. Your $5 credit = ~5,000 playlists.
-      Estimates only — check console.anthropic.com for exact billing.
+      Claude Haiku costs ~$0.001 per playlist. Estimates only — check console.anthropic.com for exact billing.
     </div>
     <button onclick="resetCostTracker()" style="width:100%;margin-top:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px">
       Reset Usage Counter
