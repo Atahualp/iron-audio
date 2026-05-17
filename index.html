@@ -583,7 +583,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Sora',sans-serif;opacity:.6">IRON AUDIO v10.0</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Sora',sans-serif;opacity:.6">IRON AUDIO v10.0.1</div>
 
 </div>
 
@@ -2914,19 +2914,38 @@ function closeEwModal() {
 }
 
 function confirmEndWorkout() {
-  // Save total volume to history entry for future comparison
+  // Patch the just-created history entry with the data that only exists at end-of-workout:
+  // set logs, totals, and timing. Generation-time entry had empty setLogs.
   try {
     var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
     if (hist.length > 0) {
-      var totalVolume = 0;
+      var totalVolume = 0, totalSets = 0;
       var exArr = window._currentWorkout || currentWorkout || [];
+      var setLogsByName = {};
       exArr.forEach(function(ex, exIndex) {
-        var logs = (window._setLogs && window._setLogs[exIndex]) || [];
-        logs.forEach(function(r) {
-          if (r) totalVolume += (parseFloat(r.weight)||0) * (parseFloat(r.reps)||0);
-        });
+        var logs = ((window._setLogs && window._setLogs[exIndex]) || [])
+          .filter(function(l){ return l && (l.weight || l.reps); });
+        if (logs.length) {
+          setLogsByName[ex.name] = logs;
+          totalSets += logs.length;
+          logs.forEach(function(r){
+            totalVolume += (parseFloat(r.weight)||0) * (parseFloat(r.reps)||0);
+          });
+        }
       });
+      hist[0].setLogs     = setLogsByName;
       hist[0].totalVolume = totalVolume;
+      hist[0].totalSets   = totalSets;
+      // Also refresh exercises list to reflect any mid-workout swaps
+      hist[0].exercises   = exArr.map(function(e){
+        return {name:e.name, sets:e.sets, reps:e.reps, muscle:e.muscle};
+      });
+      // Timing for accurate elapsed display in history (replaces hardcoded "30MIN ·")
+      var startMs = parseFloat(localStorage.getItem(ELAPSED_KEY) || '0');
+      var paused  = parseFloat(localStorage.getItem(ELAPSED_PAUSED_KEY) || '0');
+      var elapsedSecs = paused + (startMs ? Math.floor((Date.now() - startMs) / 1000) : 0);
+      hist[0].elapsedSecs = elapsedSecs;
+      hist[0].completedAt = Date.now();
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
@@ -3107,6 +3126,18 @@ function toggleHistDetail(index) {
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
+function formatElapsed(entry) {
+  // Prefer actual elapsed (v10+); fall back to planned duration (legacy entries)
+  if (entry.elapsedSecs && entry.elapsedSecs > 0) {
+    var m = Math.floor(entry.elapsedSecs / 60);
+    var s = entry.elapsedSecs % 60;
+    if (m >= 60) return Math.floor(m/60) + 'H ' + (m%60) + 'M';
+    if (m === 0) return s + 'S';
+    return m + 'M' + (s ? ' ' + s + 'S' : '');
+  }
+  return (entry.duration || '?') + 'MIN';
+}
+
 function renderHistoryList() {
   const list = document.getElementById('histList');
   if (!list) return;
@@ -3122,7 +3153,7 @@ function renderHistoryList() {
     <div class="hist-item">
       <div onclick="toggleHistDetail(${i})" style="cursor:pointer">
         <div class="hist-item-date">${entry.date} · ${entry.time}</div>
-        <div class="hist-item-title">${entry.duration}MIN · ${(entry.muscles||[]).map(m=>m.toUpperCase()).join(', ')}</div>
+        <div class="hist-item-title">${formatElapsed(entry)} · ${(entry.muscles||[]).map(m=>m.toUpperCase()).join(', ')}</div>
         <div class="hist-item-meta">${entry.exercises?.length || 0} exercises · ${entry.difficulty || 'intermediate'} · ${entry.mode || 'standard'} · ${entry.genre || ''}</div>
         ${Object.keys(entry.setLogs||{}).length ? `<div class="hist-item-meta" style="color:var(--accent);margin-top:2px">📊 ${Object.keys(entry.setLogs).length} exercises logged</div>` : ''}
       </div>
