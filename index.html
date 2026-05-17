@@ -360,7 +360,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .end-workout-btn:active{background:rgba(200,169,110,.1);transform:scale(.97)}
 .ew-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ew-overlay.open{opacity:1;pointer-events:all}
-.ew-sheet{background:#0f0f1a;border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:20px 20px calc(env(safe-area-inset-bottom,34px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.ew-sheet{background:#0f0f1a;border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:calc(100vh - env(safe-area-inset-top,50px) - 12px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px calc(env(safe-area-inset-bottom,34px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
 .ew-overlay.open .ew-sheet{transform:translateY(0)}
 .ew-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 16px}
 .ew-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px;color:#fff;margin-bottom:4px}
@@ -583,7 +583,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Sora',sans-serif;opacity:.6">IRON AUDIO v9.0</div>
+  <div style="text-align:center;padding:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Sora',sans-serif;opacity:.6">IRON AUDIO v10.0</div>
 
 </div>
 
@@ -647,8 +647,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 <script>
 // ─── CONSTANTS ────────────────────────────────────────────────────────
 const SPOTIFY_CLIENT_ID = '4ff1ebb0f69547138ab4d51f666dfd20';
-const EXERCISEDB_HOST   = 'exercisedb.p.rapidapi.com';
-const RAPIDAPI_KEY      = 'badc60844bmsh60fbf7a7686aac9p13a1f6jsn3936a41b11d3';
 
 // Muscle → { color, bg } palette
 const MUSCLE_COLORS = {
@@ -2311,15 +2309,30 @@ async function generate() {
 }
 
 // ── Lightweight session refresh — call after any workout state change ──
-function updateSession() {
+// Debounced to avoid localStorage thrash on every keystroke.
+var _updateSessionPending = null;
+function _writeSession() {
   try {
     var raw = localStorage.getItem('ia_session');
     if (!raw) return; // only update if session already exists
     var session = JSON.parse(raw);
-    session.setLogs = window._setLogs || {};
-    session.ts = Date.now(); // refresh TTL so 20min break doesn't expire it
+    session.setLogs   = window._setLogs || {};
+    session.exercises = window._currentWorkout || session.exercises; // persist swaps
+    session.ts        = Date.now(); // refresh TTL
     localStorage.setItem('ia_session', JSON.stringify(session));
   } catch(e) {}
+}
+function updateSession() {
+  if (_updateSessionPending) clearTimeout(_updateSessionPending);
+  _updateSessionPending = setTimeout(function(){
+    _updateSessionPending = null;
+    _writeSession();
+  }, 500);
+}
+function flushSession() {
+  // Immediate write — call from pagehide/visibilitychange before iOS suspends.
+  if (_updateSessionPending) { clearTimeout(_updateSessionPending); _updateSessionPending = null; }
+  _writeSession();
 }
 
 // ─── PLAYLIST ─────────────────────────────────────────────────────────
@@ -2533,8 +2546,8 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
     var raw = localStorage.getItem('ia_session');
     if (!raw) return;
     var session = JSON.parse(raw);
-    // Only restore sessions from the last 12 hours
-    if (!session || !session.exercises || (Date.now() - session.ts) > 86400000) {
+    // Only restore sessions from the last 48 hours
+    if (!session || !session.exercises || (Date.now() - session.ts) > 172800000) {
       localStorage.removeItem('ia_session');
       return;
     }
@@ -2544,11 +2557,11 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
     if (session.genre)     genre     = session.genre;
     if (session.equipment) equipment = session.equipment;
 
-    // Rebuild the workout view from saved exercises
-    window.addEventListener('DOMContentLoaded', function() {
+    function rebuild() {
       try {
         var exercises = session.exercises;
         currentWorkout = exercises;
+        window._currentWorkout = exercises;
         window._exerciseGifs = {};
         window._setLogs = session.setLogs || {};
 
@@ -2574,15 +2587,18 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
         // Load images
         exercises.forEach(function(ex, i) { loadExerciseGif(ex, i); });
 
-        // Restore elapsed timer display (don't auto-start — user can resume)
-        updateElapsedDisplay();
-        var btn = document.getElementById('elapsedToggleBtn');
-        if (btn) { btn.textContent = '▶ Resume'; btn.classList.remove('running'); }
+        // Resume elapsed timer — auto-continue if it was running pre-reload
+        resumeElapsedFromStorage();
 
       } catch(e) { console.error('Session restore error:', e); }
+    }
 
-      // nextSaved pre-select handled in separate DOMContentLoaded below
-    });
+    // Handle both pre- and post-DOMContentLoaded (iOS bfcache restores fire too late)
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', rebuild);
+    } else {
+      rebuild();
+    }
   } catch(e) {}
 })()
 
@@ -2602,7 +2618,7 @@ window.addEventListener('DOMContentLoaded', function() {
       });
     });
   } catch(e) {}
-});;
+});
 
 
 // ── END WORKOUT & SESSION SUMMARY ──────────────────────────────────────
@@ -2914,10 +2930,14 @@ function confirmEndWorkout() {
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
-  // Stop timers and clear session
+  // Stop timers and clear all session-related localStorage
   if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
   elapsedRunning = false;
-  try { localStorage.removeItem('ia_session'); } catch(e){}
+  try {
+    localStorage.removeItem('ia_session');
+    localStorage.removeItem(ELAPSED_KEY);
+    localStorage.removeItem(ELAPSED_PAUSED_KEY);
+  } catch(e){}
   closeEwModal();
   showCfg();
 }
@@ -3302,12 +3322,36 @@ function resetElapsedTimer() {
   if (el) el.textContent = '00:00';
 }
 
-// Restore display when app comes back into focus
+// Restore display when app comes back into focus (no reload — just visibility)
 document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'visible' && elapsedRunning) {
-    updateElapsedDisplay();
+  if (document.visibilityState === 'visible') {
+    if (elapsedRunning) updateElapsedDisplay();
+  } else if (document.visibilityState === 'hidden') {
+    // iOS may suspend or kill the tab — flush state to disk now
+    flushSession();
   }
 });
+
+// Last-chance persistence before page unload (iOS PWA close, swipe-away)
+window.addEventListener('pagehide', flushSession);
+
+// Resume elapsed timer from localStorage without resetting start time
+function resumeElapsedFromStorage() {
+  var start = parseFloat(localStorage.getItem(ELAPSED_KEY) || '0');
+  var btn = document.getElementById('elapsedToggleBtn');
+  if (start) {
+    // Timer was running when tab unloaded — wall clock kept counting, resume display
+    elapsedRunning = true;
+    if (elapsedInterval) clearInterval(elapsedInterval);
+    elapsedInterval = setInterval(updateElapsedDisplay, 500);
+    updateElapsedDisplay();
+    if (btn) { btn.textContent = '⏸ Pause'; btn.classList.add('running'); }
+  } else {
+    // Timer was paused — show accumulated value, await tap
+    updateElapsedDisplay();
+    if (btn) { btn.textContent = '▶ Resume'; btn.classList.remove('running'); }
+  }
+}
 
 // Auto-start timer when workout generates
 function startElapsedOnGenerate() {
@@ -3346,6 +3390,7 @@ function swapExercise(index) {
   const newEx = { ...picked, sets: String(s), rest: restStr, muscleGroup, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
 
   workout[index] = newEx;
+  updateSession(); // persist swap
 
   // Re-render just this card
   const card = document.getElementById('card-' + index);
@@ -3420,6 +3465,7 @@ function addSetLogRow(exIndex) {
   const s = (window._setLogs[exIndex] || []).length;
   window._setLogs[exIndex] = window._setLogs[exIndex] || [];
   window._setLogs[exIndex].push({weight:'', reps:''});
+  updateSession(); // persist new row
   const addBtn = wrap.querySelector('.set-log-add');
   const row = document.createElement('div');
   row.className = 'set-log-row';
@@ -3436,6 +3482,7 @@ function addSetLogRow(exIndex) {
 
 function deleteSetRow(exIndex, setIndex) {
   if (window._setLogs[exIndex]) window._setLogs[exIndex].splice(setIndex, 1);
+  updateSession(); // persist removal
   var wrap = document.getElementById('setlog-' + exIndex);
   if (!wrap) return;
   var addBtn = wrap.querySelector('.set-log-add');
