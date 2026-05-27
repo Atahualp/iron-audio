@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Iron Audio · Google Health OAuth Test</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0b0b0c;color:#e8e6e3;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;font-size:15px;line-height:1.45}
+  main{max-width:560px;margin:0 auto;padding:max(env(safe-area-inset-top),20px) 20px 40px}
+  h1{font-size:18px;font-weight:600;color:#C8A96E;margin:0 0 16px;letter-spacing:.02em}
+  .env{font-size:12px;color:#8a8780;background:#161617;border:1px solid #232325;border-radius:8px;padding:10px 12px;margin-bottom:16px;word-break:break-all}
+  button{appearance:none;width:100%;padding:14px 16px;border-radius:10px;border:0;font:inherit;font-weight:600;background:#C8A96E;color:#0b0b0c;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  button.secondary{background:transparent;border:1px solid #2e2e30;color:#e8e6e3;margin-top:10px}
+  button:active{opacity:.85}
+  pre{background:#101012;border:1px solid #232325;border-radius:8px;padding:12px;margin-top:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#cfcdc7;white-space:pre-wrap;word-break:break-word;max-height:60vh;overflow:auto}
+  .ok{color:#7bd88f}.err{color:#ff7a7a}.warn{color:#e6c97a}
+</style>
+</head>
+<body>
+<main>
+  <h1>Google Health · OAuth Test</h1>
+  <div class="env" id="env"></div>
+  <button id="connect">Connect Google Health</button>
+  <button id="reset" class="secondary" hidden>Reset & Try Again</button>
+  <pre id="log" aria-live="polite"></pre>
+</main>
+<script>
+(function(){
+  'use strict';
+
+  // ⚠️ Paste your Client ID from GCP step 11
+  const CLIENT_ID   = 'PASTE_CLIENT_ID_HERE.apps.googleusercontent.com';
+  const REDIRECT    = 'https://atahualp.github.io/iron-audio/ghealth-test.html';
+  const SCOPE       = 'https://www.googleapis.com/auth/googlehealth.heart_rate.readonly';
+  const AUTH_URL    = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+  const $ = id => document.getElementById(id);
+  const log = (msg, cls) => {
+    const line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg; // textContent: XSS-safe
+    $('log').appendChild(line);
+  };
+
+  // --- Environment detection ---
+  const standalone = window.matchMedia('(display-mode: standalone)').matches
+                  || window.navigator.standalone === true;
+  $('env').textContent =
+    'Mode: ' + (standalone ? '✅ PWA Standalone' : '⚠️ Safari Tab (add to Home Screen first)') +
+    ' · iOS: ' + /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+  // --- Reset handler ---
+  $('reset').addEventListener('click', () => {
+    sessionStorage.removeItem('ght_state');
+    history.replaceState({}, '', REDIRECT);
+    location.reload();
+  });
+
+  // --- Handle OAuth callback (implicit flow returns token in URL fragment) ---
+  const frag = window.location.hash.startsWith('#')
+    ? new URLSearchParams(window.location.hash.slice(1))
+    : null;
+
+  if (frag && (frag.get('access_token') || frag.get('error'))) {
+    handleCallback(frag);
+    return;
+  }
+
+  // --- Default state: ready to connect ---
+  $('connect').addEventListener('click', startAuth);
+
+  function startAuth() {
+    if (CLIENT_ID.startsWith('PASTE_')) {
+      log('❌ CLIENT_ID not set. Edit the file and paste your GCP client ID.', 'err');
+      return;
+    }
+    const state = randomString(16);
+    sessionStorage.setItem('ght_state', state);
+
+    const url = new URL(AUTH_URL);
+    url.searchParams.set('client_id', CLIENT_ID);
+    url.searchParams.set('redirect_uri', REDIRECT);
+    url.searchParams.set('response_type', 'token');
+    url.searchParams.set('scope', SCOPE);
+    url.searchParams.set('state', state);
+    url.searchParams.set('include_granted_scopes', 'true');
+
+    log('Redirecting to Google…');
+    window.location.assign(url.toString());
+  }
+
+  async function handleCallback(params) {
+    $('connect').hidden = true;
+    $('reset').hidden = false;
+
+    const err = params.get('error');
+    if (err) {
+      log('OAuth error: ' + err, 'err');
+      log('Description: ' + (params.get('error_description') || '(none)'));
+      return;
+    }
+
+    const returnedState = params.get('state');
+    const expectedState = sessionStorage.getItem('ght_state');
+    sessionStorage.removeItem('ght_state');
+
+    if (!expectedState || returnedState !== expectedState) {
+      log('❌ State mismatch — possible CSRF. Aborting.', 'err');
+      return;
+    }
+
+    const token = params.get('access_token');
+    const expiresIn = parseInt(params.get('expires_in') || '0', 10);
+
+    log('✅ Got access token (length ' + token.length + ')', 'ok');
+    log('Expires in: ' + expiresIn + 's (~' + Math.round(expiresIn/60) + ' min)');
+    log('Scope granted: ' + (params.get('scope') || '(unspecified)'));
+
+    // Strip token from URL bar — don't leave it in history
+    history.replaceState({}, '', REDIRECT);
+
+    // Test a real API call
+    log('Testing API call → GET dataPoints (page_size=1)…');
+    try {
+      const res = await fetch(
+        'https://health.googleapis.com/v4/users/me/dataTypes/heart-rate/dataPoints?page_size=1',
+        { headers: { Authorization: 'Bearer ' + token } }
+      );
+      log('HTTP status: ' + res.status + (res.ok ? ' ✅' : ' ❌'));
+      const text = await res.text();
+      // Truncate to avoid dumping large payloads on screen
+      log('Body (first 400 chars): ' + text.slice(0, 400));
+      if (res.status === 401) log('→ Token rejected. Check scope / consent screen config.', 'warn');
+      if (res.status === 403) log('→ Forbidden. API likely not enabled in GCP project.', 'warn');
+      if (res.status === 200) log('🎉 End-to-end success. PWA OAuth works.', 'ok');
+    } catch (e) {
+      log('Fetch threw: ' + e.message, 'err');
+    }
+  }
+
+  function randomString(byteLen) {
+    const buf = new Uint8Array(byteLen);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+  }
+})();
+</script>
+</body>
+</html>
