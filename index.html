@@ -660,7 +660,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.3.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v12.3.1 · KNICKS EDITION</div>
 
 </div>
 
@@ -1533,13 +1533,65 @@ let ghToken       = null;
 let ghTokenExpiry = 0;
 let _ghSyncTimer  = null;
 
-// Persistent OAuth diagnostic — survives navigation so we can see where the flow breaks
+// Persistent OAuth diagnostic — survives navigation so we can see where the flow breaks.
+// Self-healing: if localStorage is full, trims itself and retries so it never fails silently.
 function _ghLog(msg) {
+  for (var keep = 5; keep >= 1; keep--) {
+    try {
+      var arr = JSON.parse(localStorage.getItem('gh_diag') || '[]');
+      arr.unshift({ msg: msg, t: Date.now() });
+      localStorage.setItem('gh_diag', JSON.stringify(arr.slice(0, keep)));
+      return;
+    } catch(e) { try { localStorage.removeItem('gh_diag'); } catch(_) {} }
+  }
+}
+
+// Bytes used by localStorage, with a per-key breakdown (for the storage readout)
+function _lsReport() {
+  var total = 0, rows = [];
   try {
-    var arr = JSON.parse(localStorage.getItem('gh_diag') || '[]');
-    arr.unshift({ msg: msg, t: Date.now() });
-    localStorage.setItem('gh_diag', JSON.stringify(arr.slice(0, 5)));
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      var v = localStorage.getItem(k) || '';
+      var bytes = (k.length + v.length) * 2; // UTF-16 ≈ 2 bytes/char
+      total += bytes;
+      rows.push({ key: k, bytes: bytes });
+    }
   } catch(e) {}
+  rows.sort(function(a,b){ return b.bytes - a.bytes; });
+  return { total: total, rows: rows };
+}
+
+// Critical keys that must never be evicted to make room
+var GH_PROTECTED_KEYS = ['gh_token','gh_token_expiry','anthropic_key','sp_token','sp_refresh','sp_expiry','iron_prs'];
+
+// Store the GH token resiliently — on quota error, evict non-critical data and retry.
+function storeGhTokenResilient(token, expiry) {
+  function attempt() {
+    localStorage.setItem('gh_token', token);
+    localStorage.setItem('gh_token_expiry', String(expiry));
+  }
+  try { attempt(); _ghLog('token stored OK'); return true; }
+  catch(e) {
+    _ghLog('quota hit — freeing space');
+    // Evict in order of least importance until the write succeeds
+    var evictOrder = ['gh_diag','ia_next_session','ia_session','pkce_v','sp_redirect'];
+    for (var i = 0; i < evictOrder.length; i++) {
+      try { localStorage.removeItem(evictOrder[i]); } catch(_) {}
+      try { attempt(); _ghLog('token stored after evicting ' + evictOrder[i]); return true; } catch(_) {}
+    }
+    // Last resort: trim oldest history entries
+    try {
+      var h = JSON.parse(localStorage.getItem('iron_history') || '[]');
+      while (h.length > 5) {
+        h.pop();
+        try { localStorage.setItem('iron_history', JSON.stringify(h)); attempt();
+              _ghLog('token stored after trimming history to ' + h.length); return true; } catch(_) {}
+      }
+    } catch(_) {}
+    _ghLog('token store FAILED — storage full');
+    return false;
+  }
 }
 
 function initGoogleHealth() {
@@ -1563,11 +1615,7 @@ function initGoogleHealth() {
       // Accept token regardless (state mismatch just gets logged, not thrown away silently)
       ghToken       = token;
       ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
-      try {
-        localStorage.setItem('gh_token',        ghToken);
-        localStorage.setItem('gh_token_expiry', String(ghTokenExpiry));
-        _ghLog('token stored OK');
-      } catch(e) { _ghLog('token store FAILED: ' + e.message); }
+      storeGhTokenResilient(ghToken, ghTokenExpiry); // quota-safe write
       history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar
     }
   }
@@ -1630,11 +1678,17 @@ function updateGhBtn() {
       diagEl.style.display = 'none';
     } else {
       diagEl.style.display = 'block';
+      const rep = _lsReport();
+      const totalKB = (rep.total / 1024).toFixed(0);
+      const top = rep.rows.slice(0, 3).map(function(r){
+        return r.key + ' (' + (r.bytes/1024).toFixed(1) + 'k)';
+      }).join(', ');
       diagEl.innerHTML = '<div class="gh-diag-title">OAuth log (newest first)</div>' +
         arr.map(function(e) {
           const t = new Date(e.t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
           return '<div class="gh-diag-row">' + t + ' — ' + escHtml(e.msg) + '</div>';
-        }).join('');
+        }).join('') +
+        '<div class="gh-diag-row" style="margin-top:6px;color:var(--muted)">Storage: ' + totalKB + ' KB · top: ' + escHtml(top) + '</div>';
     }
   }
 }
