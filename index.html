@@ -167,6 +167,9 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .set-log-pr{font-size:10px;color:#F58426;font-weight:800;margin-left:4px}
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
 .set-log-del:active{color:#f87171}
+.set-log-prev{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:.5px;color:#006BB6;margin-bottom:8px}
+.set-log-prev strong{color:#F58426;font-weight:700}
+.set-log-prev-none{color:var(--muted)}
 
 /* ── SUPERSET CARD ───────────────────────────────────────────────── */
 .ss-label{display:inline-flex;align-items:center;gap:5px;background:rgba(0,170,255,.12);border:1px solid #006BB6;color:#006BB6;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
@@ -360,7 +363,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .end-workout-btn:active{background:rgba(245,132,38,.1);transform:scale(.97)}
 .ew-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ew-overlay.open{opacity:1;pointer-events:all}
-.ew-sheet{background:#0C1929;border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:20px 20px calc(env(safe-area-inset-bottom,34px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
+.ew-sheet{background:#0C1929;border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:calc(100dvh - env(safe-area-inset-top,50px) - 12px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 20px calc(env(safe-area-inset-bottom,34px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
 .ew-overlay.open .ew-sheet{transform:translateY(0)}
 .ew-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 16px}
 .ew-sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
@@ -654,7 +657,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.1.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v12.2.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -700,8 +703,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     <div class="ew-share-row">
       <button class="ew-share-pill" onclick="closeEwModal();setTimeout(()=>document.querySelector('.share-btn')&&document.querySelector('.share-btn').click(),200)">📸 Share Card</button>
     </div>
-    <button class="ew-confirm" onclick="confirmEndWorkout()">✓ LOCK IT IN</button>
-    <button class="ew-cancel" onclick="closeEwModal()">KEEP PLAYING</button>
+    <button class="ew-confirm" onclick="confirmEndWorkout()">✓ DONE</button>
   </div>
 </div>
 
@@ -1516,7 +1518,7 @@ async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return
 // ── GOOGLE HEALTH API ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
 const GH_CLIENT_ID = '466327546643-1firoc0bcgr7naitsc1v53efame3ghe6.apps.googleusercontent.com';
-const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/workout-app.html';
+const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/';
 const GH_SCOPE     = [
   'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
   'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
@@ -2525,6 +2527,7 @@ function renderExerciseCard(ex, index) {
       '</div>' +
       '<div class="set-log-wrap" id="setlog-' + index + '">' +
         '<div class="set-log-title">LOG SETS</div>' +
+        prevBestLine(ex.name) +
         buildSetLogRows(ex, index) +
         '<button class="set-log-add" data-idx="' + index + '" onclick="addSetLogRow(+this.dataset.idx)">+ Add Set</button>' +
       '</div>' +
@@ -2915,7 +2918,7 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
     var raw = localStorage.getItem('ia_session');
     if (!raw) return;
     var session = JSON.parse(raw);
-    // Only restore sessions from the last 12 hours
+    // Only restore sessions from the last 24 hours (TTL refreshed on every set log)
     if (!session || !session.exercises || (Date.now() - session.ts) > 86400000) {
       localStorage.removeItem('ia_session');
       return;
@@ -2931,18 +2934,19 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
       try {
         var exercises = session.exercises;
         currentWorkout = exercises;
+        window._currentWorkout = exercises; // C3: PR checks read window._currentWorkout
         window._exerciseGifs = {};
         window._setLogs = session.setLogs || {};
 
         var list = document.getElementById('wkList');
         list.innerHTML = exercises.map(function(ex, i) { return renderExerciseCard(ex, i); }).join('');
 
-        // Restore results header
-        var resTitle = document.getElementById('resTitle');
+        // Restore results header (M1: query by class — there are no resTitle/resMeta IDs)
+        var resTitle = document.querySelector('#results .res-title');
         if (resTitle) {
           resTitle.textContent = muscles.map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(' + ');
         }
-        var resMeta = document.getElementById('resMeta');
+        var resMeta = document.querySelector('#results .res-meta');
         if (resMeta) {
           resMeta.innerHTML =
             '<span class="badge badge-t">' + (session.perMuscleCount||2) + 'ex/muscle</span>' +
@@ -3104,8 +3108,6 @@ function endWorkout() {
 
   // Compute set logs stats
   var totalSets = 0, totalVolume = 0, prCount = 0;
-  var prs = {};
-  try { prs = JSON.parse(localStorage.getItem('iron_prs') || '{}'); } catch(e){}
   var exRows = [];
   exArr.forEach(function(ex, exIndex) {
     var logs = (window._setLogs && window._setLogs[exIndex]) || [];
@@ -3122,11 +3124,13 @@ function endWorkout() {
 
     });
 
+    var prevPR = getPRs()[prKey(ex.name)];
     var isPR = exTopWeight > 0 && (
-      !prs[ex.name] ||  // first time logging this exercise
-      exTopWeight > (prs[ex.name].weight || 0)
+      !prevPR ||  // first time logging this exercise
+      exTopWeight > (prevPR.weight || 0) ||
+      (exTopWeight === prevPR.weight && exTopReps > (prevPR.reps || 0))
     );
-    if (isPR) prCount++;
+    if (isPR) { prCount++; savePR(ex.name, exTopWeight, exTopReps); } // C1: commit PR here, at finish
     exRows.push({name: ex.name, muscle: ex.muscle, sets: validSets.length,
       validSets: validSets,
       topWeight: exTopWeight, topReps: exTopReps, isPR: isPR});
@@ -3261,6 +3265,21 @@ function endWorkout() {
     nextEl.style.display = 'none';
   }
 
+  // ── Final Buzzer AUTO-SAVES here (no confirmation gate) ──────────────
+  // Workout is already in history (saved at generation); finalize the totals now.
+  try {
+    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    if (hist.length > 0) {
+      hist[0].totalVolume = totalVolume;
+      hist[0].durationMin = minutes;
+      localStorage.setItem('iron_history', JSON.stringify(hist));
+    }
+  } catch(e){}
+  // Stop the game clock and end the session — can't resume anyway.
+  if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
+  elapsedRunning = false;
+  try { localStorage.removeItem('ia_session'); } catch(e){}
+
   document.getElementById('ewOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
@@ -3292,26 +3311,8 @@ function closeEwModal() {
 }
 
 function confirmEndWorkout() {
-  // Save total volume to history entry for future comparison
-  try {
-    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
-    if (hist.length > 0) {
-      var totalVolume = 0;
-      var exArr = window._currentWorkout || currentWorkout || [];
-      exArr.forEach(function(ex, exIndex) {
-        var logs = (window._setLogs && window._setLogs[exIndex]) || [];
-        logs.forEach(function(r) {
-          if (r) totalVolume += (parseFloat(r.weight)||0) * (parseFloat(r.reps)||0);
-        });
-      });
-      hist[0].totalVolume = totalVolume;
-      localStorage.setItem('iron_history', JSON.stringify(hist));
-    }
-  } catch(e){}
-  // Stop timers and clear session
-  if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
-  elapsedRunning = false;
-  try { localStorage.removeItem('ia_session'); } catch(e){}
+  // Save already happened when Final Buzzer was pressed (see endWorkout).
+  // This is now just the recap dismiss → back to home.
   closeEwModal();
   showCfg();
 }
@@ -3434,7 +3435,6 @@ function stopTimer() {
   document.getElementById('timerOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
-function skipTimer() { stopTimer(); }
 
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -3831,111 +3831,125 @@ function buildSetLogRows(ex, index) {
   const logs = window._setLogs[index] || [];
   let html = '';
   for (let s = 0; s < setCount; s++) {
-    const log = logs[s] || {weight:'', reps:''};
-    const pr = checkPR(ex.name, log.weight, log.reps);
-    html += `
-      <div class="set-log-row" id="setrow-${index}-${s}">
-        <div class="set-log-num">${s+1}</div>
-        <input class="set-log-input" type="number" placeholder="lbs" value="${log.weight}"
-          oninput="logSet(${index},${s},'weight',this.value)" inputmode="decimal">
-        <div class="set-log-label">×</div>
-        <input class="set-log-input" type="number" placeholder="reps" value="${log.reps}"
-          oninput="logSet(${index},${s},'reps',this.value)" inputmode="numeric">
-        ${pr ? '<span class="set-log-pr">🏆 PR!</span>' : ''}
-      </div>`;
+    html += renderSetRow(index, logs[s] || { weight:'', reps:'' });  // H2: one renderer
   }
   return html;
+}
+
+// H3: "previous best" line shown above an exercise's set log
+function prevBestLine(exName) {
+  const pr = getPR(exName);
+  if (!pr || !pr.weight) return '<div class="set-log-prev set-log-prev-none">No previous record — set the first!</div>';
+  return '<div class="set-log-prev">📈 Previous best: <strong>' + pr.weight + ' × ' + pr.reps + '</strong></div>';
 }
 
 function logSet(exIndex, setIndex, field, value) {
   if (!window._setLogs[exIndex]) window._setLogs[exIndex] = [];
   if (!window._setLogs[exIndex][setIndex]) window._setLogs[exIndex][setIndex] = {weight:'', reps:''};
   window._setLogs[exIndex][setIndex][field] = value;
-  // Check PR live
+
+  // C1: recompute the PR badge live — ADD when it qualifies, REMOVE when a correction drops it below.
+  // Note: we do NOT persist here. PRs commit at endWorkout() so a typo (1000→100) can't poison the record.
+  const ex  = window._currentWorkout && window._currentWorkout[exIndex];
   const log = window._setLogs[exIndex][setIndex];
-  if (log.weight && log.reps) {
-    const ex = window._currentWorkout?.[exIndex];
-    if (ex && checkPR(ex.name, log.weight, log.reps)) {
-      const row = document.getElementById(`setrow-${exIndex}-${setIndex}`);
-      if (row && !row.querySelector('.set-log-pr')) {
-        const badge = document.createElement('span');
-        badge.className = 'set-log-pr'; badge.textContent = '🏆 PR!';
-        row.appendChild(badge);
-        if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-      }
-      savePR(ex.name, log.weight, log.reps);
+  const row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
+  if (ex && row) {
+    const qualifies = checkPR(ex.name, log.weight, log.reps);
+    const badge = row.querySelector('.set-log-pr');
+    if (qualifies && !badge) {
+      const b = document.createElement('span');
+      b.className = 'set-log-pr'; b.textContent = '🏀 PR';
+      row.appendChild(b);
+      if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+    } else if (!qualifies && badge) {
+      badge.remove();
     }
   }
-  updateSession(); // persist set logs so page reload doesn't lose them
+  updateSession(); // persist set logs so reload doesn't lose them
+}
+
+// H2: ONE canonical row renderer. Used by buildSetLogRows, addSetLogRow, and deleteSetRow.
+function renderSetRow(exIndex, setIndex, log) {
+  log = log || { weight:'', reps:'' };
+  const ex = window._currentWorkout && window._currentWorkout[exIndex];
+  const isPR = ex ? checkPR(ex.name, log.weight, log.reps) : false;
+  return '' +
+    '<div class="set-log-row" id="setrow-' + exIndex + '-' + setIndex + '">' +
+      '<div class="set-log-num">' + (setIndex + 1) + '</div>' +
+      '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight || '') + '"' +
+        ' inputmode="decimal" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="weight"' +
+        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
+      '<div class="set-log-label">×</div>' +
+      '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps || '') + '"' +
+        ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
+        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
+      (isPR ? '<span class="set-log-pr">🏀 PR</span>' : '') +
+      '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
+        ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove set" aria-label="Remove set">✕</button>' +
+    '</div>';
+}
+
+// Re-render every row for one exercise from the data model (keeps DOM ids contiguous after a delete)
+function rerenderSetRows(exIndex) {
+  const wrap = document.getElementById('setlog-' + exIndex);
+  if (!wrap) return;
+  const addBtn = wrap.querySelector('.set-log-add');
+  wrap.querySelectorAll('.set-log-row').forEach(function(r){ r.remove(); });
+  const logs = window._setLogs[exIndex] || [];
+  logs.forEach(function(log, s) {
+    addBtn.insertAdjacentHTML('beforebegin', renderSetRow(exIndex, s, log));
+  });
 }
 
 function addSetLogRow(exIndex) {
   const wrap = document.getElementById('setlog-' + exIndex);
   if (!wrap) return;
-  const ex = window._currentWorkout?.[exIndex];
-  if (!ex) return;
-  const s = (window._setLogs[exIndex] || []).length;
-  window._setLogs[exIndex] = window._setLogs[exIndex] || [];
-  window._setLogs[exIndex].push({weight:'', reps:''});
+  if (!window._setLogs[exIndex]) window._setLogs[exIndex] = [];
+  const s = window._setLogs[exIndex].length;
+  window._setLogs[exIndex].push({ weight:'', reps:'' });
   const addBtn = wrap.querySelector('.set-log-add');
-  const row = document.createElement('div');
-  row.className = 'set-log-row';
-  row.id = `setrow-${exIndex}-${s}`;
-  row.innerHTML = `
-    <div class="set-log-num">${s+1}</div>
-    <input class="set-log-input" type="number" placeholder="lbs" inputmode="decimal"
-      oninput="logSet(${exIndex},${s},'weight',this.value)">
-    <div class="set-log-label">×</div>
-    <input class="set-log-input" type="number" placeholder="reps" inputmode="numeric"
-      oninput="logSet(${exIndex},${s},'reps',this.value)">`;
-  wrap.insertBefore(row, addBtn);
+  addBtn.insertAdjacentHTML('beforebegin', renderSetRow(exIndex, s, null));
+  updateSession();
 }
 
 function deleteSetRow(exIndex, setIndex) {
   if (window._setLogs[exIndex]) window._setLogs[exIndex].splice(setIndex, 1);
-  var wrap = document.getElementById('setlog-' + exIndex);
-  if (!wrap) return;
-  var addBtn = wrap.querySelector('.set-log-add');
-  wrap.querySelectorAll('.set-log-row').forEach(function(r){ r.remove(); });
-  var logs = window._setLogs[exIndex] || [];
-  logs.forEach(function(log, s) {
-    var row = document.createElement('div');
-    row.className = 'set-log-row';
-    row.id = 'setrow-' + exIndex + '-' + s;
-    row.innerHTML =
-      '<div class="set-log-num">' + (s+1) + '</div>' +
-      '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight||'') + '"' +
-        ' inputmode="decimal" data-ex="' + exIndex + '" data-s="' + s + '" data-field="weight"' +
-        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
-      '<div class="set-log-label">×</div>' +
-      '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps||'') + '"' +
-        ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + s + '" data-field="reps"' +
-        ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
-      '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + s + '"' +
-        ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove">✕</button>';
-    wrap.insertBefore(row, addBtn);
-  });
+  rerenderSetRows(exIndex); // re-index remaining rows so ids/handlers stay correct
+  updateSession();
 }
 
 // PR tracking
 function getPRs() {
   try { return JSON.parse(localStorage.getItem('iron_prs') || '{}'); } catch(e) { return {}; }
 }
-function checkPR(name, weight, reps) {
-  if (!weight || !reps) return false;
+// C2: single source of truth for PR keys — used by checkPR, savePR, getPR, and endWorkout
+function prKey(name) {
+  return String(name || '').toLowerCase().trim().replace(/\s+/g, '_');
+}
+// H3: read a stored PR for display ("previous best")
+function getPR(name) {
   const prs = getPRs();
+  return prs[prKey(name)] || null;
+}
+function checkPR(name, weight, reps) {
   const w = parseFloat(weight), r = parseInt(reps);
-  if (!w || !r) return false;
-  const key = name.toLowerCase().replace(/\s+/g,'_');
-  const prev = prs[key];
-  if (!prev) return true; // first time = always a PR
+  if (!w || !r || w <= 0 || r <= 0) return false;
+  const prev = getPRs()[prKey(name)];
+  if (!prev) return true; // first valid entry = PR
   return w > prev.weight || (w === prev.weight && r > prev.reps);
 }
+// C1: only persists when the new entry genuinely beats the stored one.
+// Idempotent + monotonic — a later correction downward can never overwrite a higher mark.
 function savePR(name, weight, reps) {
+  const w = parseFloat(weight), r = parseInt(reps);
+  if (!w || !r || w <= 0 || r <= 0) return false;
   const prs = getPRs();
-  const key = name.toLowerCase().replace(/\s+/g,'_');
-  prs[key] = { weight: parseFloat(weight), reps: parseInt(reps), date: new Date().toISOString() };
-  localStorage.setItem('iron_prs', JSON.stringify(prs));
+  const key = prKey(name);
+  const prev = prs[key];
+  if (prev && !(w > prev.weight || (w === prev.weight && r > prev.reps))) return false;
+  prs[key] = { weight: w, reps: r, date: new Date().toISOString() };
+  try { localStorage.setItem('iron_prs', JSON.stringify(prs)); } catch(e) {}
+  return true;
 }
 
 // Save set logs to history entry
