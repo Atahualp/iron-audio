@@ -481,6 +481,9 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .gh-connect-btn.connected{background:rgba(245,132,38,.12);color:#F58426;border:1px solid rgba(245,132,38,.3)}
 .hist-hr-badge{font-family:'Oswald',sans-serif;font-size:10px;color:#f87171;margin-top:2px;letter-spacing:.5px}
 .hist-hr-badge.pending{color:var(--muted);cursor:pointer;text-decoration:underline dotted}
+.gh-diag{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.gh-diag-title{font-family:'Oswald',sans-serif;font-size:8px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+.gh-diag-row{font-family:'Roboto Condensed',monospace;font-size:10px;color:var(--text);line-height:1.5;word-break:break-word}
 
 </style>
 </head>
@@ -657,7 +660,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.2.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v12.3.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -1530,12 +1533,25 @@ let ghToken       = null;
 let ghTokenExpiry = 0;
 let _ghSyncTimer  = null;
 
+// Persistent OAuth diagnostic — survives navigation so we can see where the flow breaks
+function _ghLog(msg) {
+  try {
+    var arr = JSON.parse(localStorage.getItem('gh_diag') || '[]');
+    arr.unshift({ msg: msg, t: Date.now() });
+    localStorage.setItem('gh_diag', JSON.stringify(arr.slice(0, 5)));
+  } catch(e) {}
+}
+
 function initGoogleHealth() {
   // Handle OAuth callback — implicit flow returns token in URL fragment (#)
-  if (window.location.hash.startsWith('#')) {
+  if (window.location.hash.startsWith('#') && window.location.hash.length > 1) {
     const frag  = new URLSearchParams(window.location.hash.slice(1));
     const token = frag.get('access_token');
+    const oauthErr = frag.get('error');
+    if (oauthErr) _ghLog('callback ERROR: ' + oauthErr);
+    else if (!token) _ghLog('callback: hash present, NO token');
     if (token) {
+      _ghLog('callback: token received');
       const returnedState = frag.get('state');
       // Use localStorage (not sessionStorage) — survives iOS PWA external navigation
       const stored        = JSON.parse(localStorage.getItem('gh_state_pkg') || 'null');
@@ -1543,15 +1559,15 @@ function initGoogleHealth() {
       localStorage.removeItem('gh_state_pkg'); // consume once
 
       const stateOk = returnedState && returnedState === expectedState;
-      if (!stateOk) {
-        // State mismatch — warn but still accept: personal single-user PWA, no real CSRF surface.
-        console.warn('[GH OAuth] state mismatch — expected:', expectedState, 'got:', returnedState);
-      }
+      _ghLog(stateOk ? 'state OK' : 'state mismatch (accepting anyway)');
       // Accept token regardless (state mismatch just gets logged, not thrown away silently)
       ghToken       = token;
       ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
-      localStorage.setItem('gh_token',        ghToken);
-      localStorage.setItem('gh_token_expiry', String(ghTokenExpiry));
+      try {
+        localStorage.setItem('gh_token',        ghToken);
+        localStorage.setItem('gh_token_expiry', String(ghTokenExpiry));
+        _ghLog('token stored OK');
+      } catch(e) { _ghLog('token store FAILED: ' + e.message); }
       history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar
     }
   }
@@ -1578,7 +1594,9 @@ function handleGhConnect() {
   const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
     .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
   // localStorage survives iOS PWA navigation to external origin; TTL = 5 min
-  localStorage.setItem('gh_state_pkg', JSON.stringify({ state: state, exp: Date.now() + 300000 }));
+  try { localStorage.setItem('gh_state_pkg', JSON.stringify({ state: state, exp: Date.now() + 300000 })); } catch(e) {}
+  var standalone = (window.navigator.standalone === true);
+  _ghLog('connect tapped (' + (standalone ? 'standalone PWA' : 'browser') + ') -> redirecting');
   const url = new URL(GH_AUTH_URL);
   url.searchParams.set('client_id',              GH_CLIENT_ID);
   url.searchParams.set('redirect_uri',           GH_REDIRECT);
@@ -1602,6 +1620,22 @@ function updateGhBtn() {
       ? ' · expires ' + new Date(ghTokenExpiry).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
       : '';
     status.textContent = (connected ? '● Google Health: Connected' : '○ Google Health: Not connected') + expStr;
+  }
+  // Diagnostic readout — shows the last OAuth events so connection issues are visible
+  const diagEl = document.getElementById('ghDiag');
+  if (diagEl) {
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem('gh_diag') || '[]'); } catch(e) {}
+    if (!arr.length) {
+      diagEl.style.display = 'none';
+    } else {
+      diagEl.style.display = 'block';
+      diagEl.innerHTML = '<div class="gh-diag-title">OAuth log (newest first)</div>' +
+        arr.map(function(e) {
+          const t = new Date(e.t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+          return '<div class="gh-diag-row">' + t + ' — ' + escHtml(e.msg) + '</div>';
+        }).join('');
+    }
   }
 }
 
@@ -4313,6 +4347,7 @@ async function searchMixTracks(count) {
     <hr class="settings-divider">
     <label class="settings-label">❤️ Google Health</label>
     <button id="ghBtn" class="gh-connect-btn" onclick="handleGhConnect()">Connect Google Health</button>
+    <div id="ghDiag" class="gh-diag" style="display:none"></div>
     <div id="ghStatus" class="settings-status inactive">○ Google Health: Not connected</div>
     <div class="settings-info" style="margin-top:8px">
       Syncs heart rate data from your Fitbit Air after each workout.<br>
