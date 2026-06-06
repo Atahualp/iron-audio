@@ -660,7 +660,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.3.1 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v12.3.2 · KNICKS EDITION</div>
 
 </div>
 
@@ -1456,6 +1456,22 @@ const DB = {
 function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
 async function genChallenge(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
 
+// ─── GOOGLE HEALTH config + state ─────────────────────────────────────
+// Declared before the init IIFE below — initGoogleHealth() runs inside that
+// IIFE and must not reference these in the temporal dead zone.
+const GH_CLIENT_ID = '466327546643-1firoc0bcgr7naitsc1v53efame3ghe6.apps.googleusercontent.com';
+const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/';
+const GH_SCOPE     = [
+  'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
+  'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
+].join(' ');
+const GH_AUTH_URL  = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GH_API_BASE  = 'https://health.googleapis.com/v4/users/me';
+
+let ghToken       = null;
+let ghTokenExpiry = 0;
+let _ghSyncTimer  = null;
+
 (async function init(){
   const p=new URLSearchParams(window.location.search),code=p.get('code');
   if(code){
@@ -1520,18 +1536,9 @@ async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return
 // ═══════════════════════════════════════════════════════════════════════
 // ── GOOGLE HEALTH API ──────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
-const GH_CLIENT_ID = '466327546643-1firoc0bcgr7naitsc1v53efame3ghe6.apps.googleusercontent.com';
-const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/';
-const GH_SCOPE     = [
-  'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
-  'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
-].join(' ');
-const GH_AUTH_URL  = 'https://accounts.google.com/o/oauth2/v2/auth';
-const GH_API_BASE  = 'https://health.googleapis.com/v4/users/me';
-
-let ghToken       = null;
-let ghTokenExpiry = 0;
-let _ghSyncTimer  = null;
+// NOTE: GH config + state (GH_CLIENT_ID, GH_REDIRECT, ghToken, …) are declared
+// ABOVE the init IIFE to avoid a temporal-dead-zone error, since initGoogleHealth()
+// runs synchronously inside that IIFE before this point in the file is reached.
 
 // Persistent OAuth diagnostic — survives navigation so we can see where the flow breaks.
 // Self-healing: if localStorage is full, trims itself and retries so it never fails silently.
