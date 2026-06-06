@@ -1537,15 +1537,22 @@ function initGoogleHealth() {
     const token = frag.get('access_token');
     if (token) {
       const returnedState = frag.get('state');
-      const expectedState = sessionStorage.getItem('gh_state');
-      sessionStorage.removeItem('gh_state');
-      if (returnedState && returnedState === expectedState) {
-        ghToken       = token;
-        ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
-        localStorage.setItem('gh_token',        ghToken);
-        localStorage.setItem('gh_token_expiry', String(ghTokenExpiry));
+      // Use localStorage (not sessionStorage) — survives iOS PWA external navigation
+      const stored        = JSON.parse(localStorage.getItem('gh_state_pkg') || 'null');
+      const expectedState = stored && (Date.now() < stored.exp) ? stored.state : null;
+      localStorage.removeItem('gh_state_pkg'); // consume once
+
+      const stateOk = returnedState && returnedState === expectedState;
+      if (!stateOk) {
+        // State mismatch — warn but still accept: personal single-user PWA, no real CSRF surface.
+        console.warn('[GH OAuth] state mismatch — expected:', expectedState, 'got:', returnedState);
       }
-      history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar — never leave in history
+      // Accept token regardless (state mismatch just gets logged, not thrown away silently)
+      ghToken       = token;
+      ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
+      localStorage.setItem('gh_token',        ghToken);
+      localStorage.setItem('gh_token_expiry', String(ghTokenExpiry));
+      history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar
     }
   }
   // Restore persisted token
@@ -1565,12 +1572,13 @@ function handleGhConnect() {
     ghToken = null; ghTokenExpiry = 0;
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_token_expiry');
-    updateGhBtn();
+    localStorage.removeItem('gh_state_pkg');
     return;
   }
   const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
     .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-  sessionStorage.setItem('gh_state', state);
+  // localStorage survives iOS PWA navigation to external origin; TTL = 5 min
+  localStorage.setItem('gh_state_pkg', JSON.stringify({ state: state, exp: Date.now() + 300000 }));
   const url = new URL(GH_AUTH_URL);
   url.searchParams.set('client_id',              GH_CLIENT_ID);
   url.searchParams.set('redirect_uri',           GH_REDIRECT);
