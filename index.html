@@ -484,6 +484,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .gh-diag{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
 .gh-diag-title{font-family:'Oswald',sans-serif;font-size:8px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
 .gh-diag-row{font-family:'Roboto Condensed',monospace;font-size:10px;color:var(--text);line-height:1.5;word-break:break-word}
+.gh-push-status{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:.5px;padding:9px 10px;border-radius:8px;margin-bottom:10px;text-align:center;background:var(--card);border:1px solid var(--border);color:var(--muted)}
+.gh-push-status.ok{color:#006BB6;border-color:rgba(0,107,182,.3);background:rgba(0,107,182,.08)}
+.gh-push-status.err{color:#f87171;border-color:rgba(248,113,113,.35);cursor:pointer}
+.gh-push-status.warn{color:#F58426;border-color:rgba(245,132,38,.35);cursor:pointer}
 
 </style>
 </head>
@@ -660,7 +664,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.3.2 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v12.5.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -693,6 +697,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
       <div class="ew-hr-section-tag">❤️ Heart Rate · Fitbit Air</div>
       <div id="ewHrBody"><div class="ew-hr-syncing">⟳ Syncing from Fitbit…</div></div>
     </div>
+    <!-- Google Health workout-push status -->
+    <div class="gh-push-status" id="ghPushStatus" style="display:none"></div>
 
     <div class="ew-consist" id="ewConsist">
       <span class="ew-consist-icon">🔥</span>
@@ -1464,6 +1470,7 @@ const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/';
 const GH_SCOPE     = [
   'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
   'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
+  'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly',
 ].join(' ');
 const GH_AUTH_URL  = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GH_API_BASE  = 'https://health.googleapis.com/v4/users/me';
@@ -1789,6 +1796,105 @@ async function startHrSync(workoutStart, workoutEnd) {
 }
 
 // Called on lazy fetch from history (pending entries)
+// ─── WRITE: push completed workout to Google Health as an Exercise ────────
+function ghUtcOffsetSeconds() {
+  // getTimezoneOffset() returns minutes BEHIND UTC (EDT → 240). Offset secs = -(min*60).
+  return -(new Date().getTimezoneOffset() * 60);
+}
+function ghRfc3339(ms) {
+  return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z'); // 2026-06-06T17:31:00Z
+}
+
+// Fire-and-forget: writes hist[histIndex] to Google Health. Idempotent (deterministic
+// data-point id + local ghSynced flag), so retries/re-presses never double-log.
+async function pushWorkoutToGoogleHealth(histIndex) {
+  const el = document.getElementById('ghPushStatus');
+  function setStatus(html, cls) {
+    if (!el) return;
+    el.style.display = 'block';
+    el.className = 'gh-push-status ' + (cls || '');
+    el.innerHTML = html;
+    el.onclick = null;
+  }
+  function retryable(html, cls) {
+    setStatus(html, cls);
+    if (el) el.onclick = function(){ pushWorkoutToGoogleHealth(histIndex); };
+  }
+
+  if (!ghToken || ghTokenExpiry <= Date.now()) {
+    if (el) el.style.display = 'none'; // not connected — stay quiet
+    return;
+  }
+
+  let hist;
+  try { hist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) { return; }
+  const entry = hist[histIndex];
+  if (!entry || !entry.workoutStart) return;
+  if (entry.ghSynced) { setStatus('✓ Synced to Google Health', 'ok'); return; } // local dedup
+
+  const start = entry.workoutStart, end = entry.workoutEnd || Date.now();
+  const muscleStr = (entry.muscles || []).map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(', ');
+  const exCount   = (entry.exercises || []).length;
+  const volStr    = entry.totalVolume ? Math.round(entry.totalVolume).toLocaleString() + ' lbs' : null;
+  const notes     = [muscleStr, exCount + ' exercises', volStr].filter(Boolean).join(' · ');
+  const offset    = ghUtcOffsetSeconds() + 's';
+  const dpId       = 'ia-' + Math.floor(start / 1000);
+
+  const metricsSummary = {};
+  if (entry.hr && entry.hr.avg) metricsSummary.averageHeartRateBeatsPerMinute = String(entry.hr.avg);
+
+  function payload(includeName) {
+    const p = {
+      exercise: {
+        interval: {
+          startTime: ghRfc3339(start), startUtcOffset: offset,
+          endTime:   ghRfc3339(end),   endUtcOffset:   offset
+        },
+        exerciseType: 'STRENGTH_TRAINING',     // Iron Audio only generates resistance sessions
+        displayName: (muscleStr || 'Workout') + ' — Iron Audio',
+        activeDuration: Math.round((end - start) / 1000) + 's',
+        notes: notes,
+        metricsSummary: metricsSummary          // required object; HR included only if synced
+      }
+    };
+    if (includeName) p.name = 'users/me/dataTypes/exercise/dataPoints/' + dpId;
+    return p;
+  }
+
+  async function post(includeName) {
+    return fetch(GH_API_BASE + '/dataTypes/exercise/dataPoints', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload(includeName))
+    });
+  }
+
+  setStatus('⟳ Syncing to Google Health…', '');
+  _ghLog('push: starting');
+  try {
+    let res = await post(true);
+    // If the client-provided name is rejected (400), retry without it; local flag handles dedup.
+    if (res.status === 400) { _ghLog('push: 400 w/ name, retrying w/o'); res = await post(false); }
+
+    if (res.ok || res.status === 409) {          // 409 = already exists = already synced
+      entry.ghSynced = true;
+      try { hist[histIndex] = entry; localStorage.setItem('iron_history', JSON.stringify(hist)); } catch(e){}
+      setStatus('✓ Synced to Google Health', 'ok');
+      _ghLog('push: OK (' + res.status + ')');
+    } else if (res.status === 403) {
+      retryable('⚠ Reconnect Google Health to grant workout sync', 'warn');
+      _ghLog('push: 403 missing write scope');
+    } else {
+      const txt = await res.text().catch(function(){ return ''; });
+      retryable('✕ Sync failed (' + res.status + ') · tap to retry', 'err');
+      _ghLog('push: fail ' + res.status + ' ' + txt.slice(0,80));
+    }
+  } catch(e) {
+    retryable('✕ Sync failed (offline?) · tap to retry', 'err');
+    _ghLog('push: exception ' + e.message);
+  }
+}
+
 async function fetchHistoryHr(index, workoutStart, workoutEnd) {
   if (!ghToken || ghTokenExpiry <= Date.now()) {
     alert('Google Health token expired. Reconnect in Settings.');
@@ -3397,6 +3503,8 @@ function endWorkout() {
     } catch(e){}
     startHrSync(wStart, wEnd);
   }
+  // Push the completed workout to Google Health (fire-and-forget; no-op if not connected)
+  pushWorkoutToGoogleHealth(0);
 }
 
 function applyNextSession() {
