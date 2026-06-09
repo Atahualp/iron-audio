@@ -167,6 +167,43 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .set-log-pr{font-size:10px;color:#F58426;font-weight:800;margin-left:4px}
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
 .set-log-del:active{color:#f87171}
+.set-log-chk{background:none;border:1.5px solid var(--border);border-radius:50%;width:22px;height:22px;color:var(--muted);font-size:11px;line-height:1;cursor:pointer;flex-shrink:0;padding:0;transition:all .15s}
+.set-log-chk.on{background:#F58426;border-color:#F58426;color:#040C1A;font-weight:800}
+.set-log-row.done .set-log-input{opacity:.55}
+.wt-wrap{position:relative;flex-shrink:0;display:flex}
+.plate-btn{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:11px;padding:2px;cursor:pointer;line-height:1;opacity:.8}
+.wt-wrap .set-log-input{padding-right:18px}
+.ar-toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(var(--safe-bottom) + 16px);background:#1a1208;border:1px solid #F58426;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;z-index:1200;opacity:0;pointer-events:none;transition:all .25s}
+.ar-toast.show{opacity:1;pointer-events:all;transform:translate(-50%,0)}
+.ar-toast-txt{font-size:12px;font-weight:700;color:#F58426}
+.ar-undo{background:none;border:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;padding:2px 4px}
+.elapsed-ctrl-btn.ar-on{background:rgba(245,132,38,.18);border-color:#F58426;color:#F58426}
+.plate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.plate-overlay.open{opacity:1;pointer-events:all}
+.plate-sheet{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:12px 18px calc(var(--safe-bottom) + 18px)}
+.plate-grab{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 12px}
+.plate-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.plate-total{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:1px}
+.plate-bar-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.plate-bar-toggle button{background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;padding:7px 11px;cursor:pointer;letter-spacing:.5px}
+.plate-bar-toggle button.on{background:#F58426;color:#040C1A}
+.plate-visual{display:flex;align-items:center;justify-content:center;gap:5px;height:96px;margin-bottom:6px}
+.plate-sleeve{width:34px;height:5px;background:#55556a;border-radius:2px;flex-shrink:0}
+.plate-disc{border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.plate-side-label{text-align:center;font-size:10px;color:#006BB6;letter-spacing:2px;font-weight:700;margin-bottom:14px}
+.plate-actions{display:flex;gap:8px;justify-content:center}
+.plate-adj{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:11px 18px;cursor:pointer}
+.plate-use{background:#F58426;border:none;border-radius:10px;color:#040C1A;font-size:14px;font-weight:800;padding:11px 22px;cursor:pointer;letter-spacing:.5px}
+.wv-card{margin:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.wv-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.wv-title{font-size:10px;color:var(--muted);letter-spacing:2px;font-weight:700}
+.wv-total{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#F58426;letter-spacing:1px}
+.wv-row{display:grid;grid-template-columns:62px 1fr 26px;gap:8px;align-items:center;margin-bottom:6px}
+.wv-m{font-size:11px;color:var(--muted)}
+.wv-track{background:rgba(255,255,255,.06);border-radius:4px;height:11px;overflow:hidden}
+.wv-fill{display:block;height:11px;border-radius:4px}
+.wv-n{font-size:11px;color:#fff;font-weight:700;text-align:right}
+.wv-delta{font-size:10px;color:var(--muted);margin-top:6px}
 .set-log-prev{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:.5px;color:#006BB6;margin-bottom:8px}
 .set-log-prev strong{color:#F58426;font-weight:700}
 .set-log-prev-none{color:var(--muted)}
@@ -253,7 +290,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .timer-actions{display:flex;gap:12px}
 .timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .timer-btn:active{transform:scale(.95)}
-.timer-btn.skip{background:#1a1a28;color:var(--muted)}
 .timer-btn.minus{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
 .timer-btn.stop{background:#F58426;color:#fff}
 
@@ -642,6 +678,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
       <div class="elapsed-controls">
         <button class="elapsed-ctrl-btn" id="elapsedToggleBtn" onclick="toggleElapsedTimer()">▶ Start</button>
         <button class="elapsed-ctrl-btn" onclick="open1RMCalc()">💪 1RM</button>
+        <button class="elapsed-ctrl-btn" id="autoRestBtn" onclick="toggleAutoRest()">⏱ AUTO</button>
         <button class="elapsed-ctrl-btn" onclick="resetElapsedTimer()">↺</button>
       </div>
     </div>
@@ -678,7 +715,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v12.6.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v13.0.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -2933,7 +2970,7 @@ async function generate() {
       dur: dur,
       muscles: muscles,
       genre: genre,
-      equipment: equipment,
+      equipment: equipmentMode,
       ts: Date.now()
     }));
   } catch(e) {}
@@ -3173,6 +3210,13 @@ let timerInterval = null;
 let timerRemaining = 0;
 let timerTotal = 0;
 let timerEndTime = 0; // module-scoped so adjustTimer can modify it
+let _wakeLock = null;
+async function acquireWakeLock() {
+  try { if ('wakeLock' in navigator) _wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+function releaseWakeLock() {
+  try { if (_wakeLock) { _wakeLock.release(); _wakeLock = null; } } catch(e) {}
+}
 
 // Web Audio beep
 
@@ -3192,7 +3236,7 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
     if (session.dur)       dur       = session.dur;
     if (session.muscles)   muscles   = session.muscles;
     if (session.genre)     genre     = session.genre;
-    if (session.equipment) equipment = session.equipment;
+    if (session.equipment) equipmentMode = session.equipment;
 
     // Rebuild the workout view from saved exercises
     window.addEventListener('DOMContentLoaded', function() {
@@ -3238,6 +3282,8 @@ let timerEndTime = 0; // module-scoped so adjustTimer can modify it
 })()
 
 // Pre-select next session muscles when no active session exists
+window.addEventListener('DOMContentLoaded', function() { syncAutoRestBtn(); });
+
 window.addEventListener('DOMContentLoaded', function() {
   if (localStorage.getItem('ia_session')) return;
   try {
@@ -3628,11 +3674,11 @@ function updateStorageCounts() {
 
 const _ac = (function(){ try { return new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } })();
 
-function beep(freq = 880, dur = 0.15, vol = 0.4) {
+async function beep(freq = 880, dur = 0.15, vol = 0.4) {
   try {
     const ctx = _ac;
     if (!ctx) return;
-    if (ctx.state === 'suspended') ctx.resume();
+    if (ctx.state === 'suspended') await ctx.resume();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
@@ -3663,6 +3709,7 @@ function startRestTimer(secs, exName) {
   ringEl.style.strokeDashoffset = 0;
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  acquireWakeLock(); // keep screen on so the end-of-rest alert actually fires
 
   beep(660, 0.1);
 
@@ -3702,6 +3749,7 @@ function adjustTimer(delta) {
 }
 
 function stopTimer() {
+  releaseWakeLock();
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   document.getElementById('timerOverlay').classList.remove('open');
   document.body.style.overflow = '';
@@ -3756,6 +3804,46 @@ function toggleHistDetail(index) {
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
+function renderWeeklyVolume(history) {
+  try {
+    var now = Date.now(), WK = 6048e5;
+    function tally(entries) {
+      var per = {}, total = 0;
+      entries.forEach(function(e) {
+        var hasLogs = Object.keys(e.setLogs || {}).length > 0;
+        (e.exercises || []).forEach(function(ex) {
+          var logs = (e.setLogs || {})[ex.name];
+          var n = logs ? logs.filter(function(l) { return l.weight && l.reps; }).length : 0;
+          if (!n && !hasLogs) n = parseInt(ex.sets) || 0; // unlogged workout: count planned sets
+          if (!n) return;
+          var m = ex.muscle || 'Other';
+          per[m] = (per[m] || 0) + n; total += n;
+        });
+      });
+      return { per: per, total: total };
+    }
+    var cur  = tally(history.filter(function(e) { return e.id > now - WK; }));
+    var prev = tally(history.filter(function(e) { return e.id <= now - WK && e.id > now - 2 * WK; }));
+    if (!cur.total) return '';
+    var rows = Object.keys(cur.per).map(function(m) { return [m, cur.per[m]]; })
+                     .sort(function(a, b) { return b[1] - a[1]; });
+    var max = rows[0][1];
+    var bars = rows.map(function(r, i) {
+      var pct = Math.max(6, Math.round(r[1] / max * 100));
+      var col = i < 2 ? '#F58426' : '#006BB6';
+      return '<div class="wv-row"><span class="wv-m">' + escHtml(r[0]) + '</span>' +
+             '<span class="wv-track"><span class="wv-fill" style="width:' + pct + '%;background:' + col + '"></span></span>' +
+             '<span class="wv-n">' + r[1] + '</span></div>';
+    }).join('');
+    var d = cur.total - prev.total;
+    var delta = prev.total
+      ? '<div class="wv-delta">vs last week <span style="color:' + (d >= 0 ? '#1D9E75' : '#f87171') + ';font-weight:700">' + (d >= 0 ? '+' : '') + d + ' sets</span></div>'
+      : '';
+    return '<div class="wv-card"><div class="wv-head"><span class="wv-title">THIS WEEK</span>' +
+           '<span class="wv-total">' + cur.total + ' SETS</span></div>' + bars + delta + '</div>';
+  } catch(e) { return ''; }
+}
+
 function renderHistoryList() {
   const list = document.getElementById('histList');
   if (!list) return;
@@ -3767,7 +3855,7 @@ function renderHistoryList() {
     return;
   }
 
-  list.innerHTML = history.map((entry, i) => {
+  list.innerHTML = renderWeeklyVolume(history) + history.map((entry, i) => {
     var hrBadge = '';
     if (entry.hr && !entry.hr.pending) {
       hrBadge = '<div class="hist-hr-badge">❤️ ' + entry.hr.avg + ' avg · ' + entry.hr.peak + ' peak bpm</div>';
@@ -4142,22 +4230,174 @@ function logSet(exIndex, setIndex, field, value) {
   updateSession(); // persist set logs so reload doesn't lose them
 }
 
+// ── AUTO-REST ON SET CHECK ─────────────────────────────────────────────
+let _autoRestPending = null;
+
+function autoRestEnabled() { return localStorage.getItem('ia_autorest') !== '0'; }
+
+function toggleAutoRest() {
+  localStorage.setItem('ia_autorest', autoRestEnabled() ? '0' : '1');
+  syncAutoRestBtn();
+  if (!autoRestEnabled()) cancelAutoRest();
+}
+
+function syncAutoRestBtn() {
+  var b = document.getElementById('autoRestBtn');
+  if (b) b.classList.toggle('ar-on', autoRestEnabled());
+}
+
+function toggleSetDone(exIndex, setIndex) {
+  if (!window._setLogs[exIndex] || !window._setLogs[exIndex][setIndex]) return;
+  var log = window._setLogs[exIndex][setIndex];
+  log.done = !log.done;
+  var row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
+  if (row) {
+    row.classList.toggle('done', !!log.done);
+    var chk = row.querySelector('.set-log-chk');
+    if (chk) chk.classList.toggle('on', !!log.done);
+  }
+  updateSession();
+  if (log.done && autoRestEnabled()) scheduleAutoRest(exIndex);
+  else cancelAutoRest();
+}
+
+function scheduleAutoRest(exIndex) {
+  cancelAutoRest();
+  var ex = window._currentWorkout && window._currentWorkout[exIndex];
+  if (!ex) return;
+  var secs = parseRestSecs(ex.rest);
+  var toast = document.getElementById('arToast');
+  var txt = document.getElementById('arToastTxt');
+  if (txt) txt.textContent = 'Rest starting \u00b7 ' + secs + 's';
+  if (toast) toast.classList.add('show');
+  if (navigator.vibrate) navigator.vibrate(20);
+  _autoRestPending = setTimeout(function() {
+    _autoRestPending = null;
+    if (toast) toast.classList.remove('show');
+    startRestTimer(secs, ex.name);
+  }, 3000);
+}
+
+function cancelAutoRest() {
+  if (_autoRestPending) { clearTimeout(_autoRestPending); _autoRestPending = null; }
+  var toast = document.getElementById('arToast');
+  if (toast) toast.classList.remove('show');
+}
+
+// ── PLATE CALCULATOR ───────────────────────────────────────────────────
+let _plateEx = 0, _plateSet = 0, _plateW = 45;
+const PLATE_SIZES  = [45, 35, 25, 10, 5, 2.5];
+const PLATE_COLORS = { '45':'#006BB6', '35':'#7F77DD', '25':'#F58426', '10':'#8888a0', '5':'#1D9E75', '2.5':'#f87171' };
+const PLATE_DIMS   = { '45':[16,84], '35':[15,74], '25':[14,62], '10':[12,46], '5':[11,36], '2.5':[10,28] };
+
+function isBarbellEx(name) {
+  var n = (name || '').toLowerCase();
+  if (/dumbbell|\bdb\b|cable|machine|smith|band|kettlebell|goblet|bulgarian|pistol|leg press|chest press/.test(n)) return false;
+  return /barbell|deadlift|rack pull|bench press|overhead press|push press|hip thrust|good morning|romanian|\brdl\b|\bsquat\b|bent.?over row|pendlay|clean|snatch|yoke|landmine|t.?bar/.test(n);
+}
+
+function getBarWeight() {
+  var b = parseInt(localStorage.getItem('ia_bar') || '45');
+  return (b === 35) ? 35 : 45;
+}
+
+function setBarWeight(w) {
+  localStorage.setItem('ia_bar', String(w));
+  var b45 = document.getElementById('barBtn45'), b35 = document.getElementById('barBtn35');
+  if (b45) b45.classList.toggle('on', w === 45);
+  if (b35) b35.classList.toggle('on', w === 35);
+  if (_plateW < w) _plateW = w;
+  renderPlates();
+}
+
+function openPlateCalc(exIndex, setIndex) {
+  _plateEx = exIndex; _plateSet = setIndex;
+  var row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
+  var input = row && row.querySelector('input[data-field="weight"]');
+  var v = input && parseFloat(input.value);
+  _plateW = (v && v > 0) ? v : Math.max(getBarWeight(), 135);
+  setBarWeight(getBarWeight()); // syncs toggle UI + renders
+  var ov = document.getElementById('plateOverlay');
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlateCalc() {
+  document.getElementById('plateOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function adjPlateWeight(d) {
+  _plateW = Math.max(getBarWeight(), _plateW + d);
+  renderPlates();
+}
+
+function renderPlates() {
+  var bar = getBarWeight();
+  var totalEl = document.getElementById('plateTotal');
+  var visEl   = document.getElementById('plateVisual');
+  var sideEl  = document.getElementById('plateSideLabel');
+  var useBtn  = document.getElementById('plateUseBtn');
+  if (!visEl) return;
+  totalEl.textContent = _plateW + ' LB';
+  useBtn.textContent  = 'USE ' + _plateW;
+  var perSide = (_plateW - bar) / 2;
+  if (perSide < 0) {
+    visEl.innerHTML = '<span class="plate-sleeve"></span><span class="plate-sleeve" style="width:48px"></span>';
+    sideEl.textContent = 'BELOW ' + bar + ' LB BAR';
+    return;
+  }
+  var rem = perSide, discs = [];
+  PLATE_SIZES.forEach(function(p) {
+    while (rem >= p - 0.001) { discs.push(p); rem -= p; }
+  });
+  var html = '<span class="plate-sleeve"></span>';
+  discs.forEach(function(p) {
+    var dim = PLATE_DIMS[String(p)], col = PLATE_COLORS[String(p)];
+    var txtCol = (p === 35 || p === 45 || p === 5) ? '#fff' : '#040C1A';
+    html += '<span class="plate-disc" style="width:' + dim[0] + 'px;height:' + dim[1] +
+            'px;background:' + col + ';color:' + txtCol + '">' + (p % 1 ? '2\u00bd' : p) + '</span>';
+  });
+  html += '<span class="plate-sleeve" style="width:48px"></span>';
+  visEl.innerHTML = html;
+  sideEl.textContent = discs.length
+    ? 'PER SIDE \u00b7 ' + bar + ' LB BAR' + (rem > 0.01 ? ' \u00b7 +' + rem.toFixed(1) + ' SHORT' : '')
+    : 'EMPTY ' + bar + ' LB BAR';
+}
+
+function usePlateWeight() {
+  var row = document.getElementById('setrow-' + _plateEx + '-' + _plateSet);
+  var input = row && row.querySelector('input[data-field="weight"]');
+  if (input) {
+    input.value = _plateW;
+    logSet(_plateEx, _plateSet, 'weight', String(_plateW));
+  }
+  closePlateCalc();
+}
+
 // H2: ONE canonical row renderer. Used by buildSetLogRows, addSetLogRow, and deleteSetRow.
 function renderSetRow(exIndex, setIndex, log) {
   log = log || { weight:'', reps:'' };
   const ex = window._currentWorkout && window._currentWorkout[exIndex];
   const isPR = ex ? checkPR(ex.name, log.weight, log.reps) : false;
+  const isBB = ex ? isBarbellEx(ex.name) : false;
   return '' +
-    '<div class="set-log-row" id="setrow-' + exIndex + '-' + setIndex + '">' +
+    '<div class="set-log-row' + (log.done ? ' done' : '') + '" id="setrow-' + exIndex + '-' + setIndex + '">' +
       '<div class="set-log-num">' + (setIndex + 1) + '</div>' +
+      '<div class="wt-wrap">' +
       '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight || '') + '"' +
         ' inputmode="decimal" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="weight"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
+      (isBB ? '<button class="plate-btn" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
+        ' onclick="openPlateCalc(+this.dataset.ex,+this.dataset.s)" aria-label="Plate calculator">🏋</button>' : '') +
+      '</div>' +
       '<div class="set-log-label">×</div>' +
       '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps || '') + '"' +
         ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
       (isPR ? '<span class="set-log-pr">🏀 PR</span>' : '') +
+      '<button class="set-log-chk' + (log.done ? ' on' : '') + '" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
+        ' onclick="toggleSetDone(+this.dataset.ex,+this.dataset.s)" aria-label="Set done">✓</button>' +
       '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
         ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove set" aria-label="Remove set">✕</button>' +
     '</div>';
@@ -4470,6 +4710,32 @@ async function searchMixTracks(count) {
   </div>
   <div class="timer-actions">
     <button class="timer-btn minus" onclick="adjustTimer(-10)">-10s</button><button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
+  </div>
+</div>
+
+<!-- ── AUTO-REST TOAST ─────────────────────────────────────────────── -->
+<div class="ar-toast" id="arToast">
+  <span class="ar-toast-txt" id="arToastTxt">Rest starting</span>
+  <button class="ar-undo" onclick="cancelAutoRest()">UNDO</button>
+</div>
+
+<!-- ── PLATE CALCULATOR SHEET ──────────────────────────────────────── -->
+<div class="plate-overlay" id="plateOverlay" onclick="if(event.target===this)closePlateCalc()">
+  <div class="plate-sheet">
+    <div class="plate-grab"></div>
+    <div class="plate-head">
+      <span class="plate-total" id="plateTotal">185 LB</span>
+      <div class="plate-bar-toggle">
+        <button id="barBtn45" class="on" onclick="setBarWeight(45)">45 BAR</button><button id="barBtn35" onclick="setBarWeight(35)">35 BAR</button>
+      </div>
+    </div>
+    <div class="plate-visual" id="plateVisual"></div>
+    <div class="plate-side-label" id="plateSideLabel">PER SIDE</div>
+    <div class="plate-actions">
+      <button class="plate-adj" onclick="adjPlateWeight(-5)">−5</button>
+      <button class="plate-use" id="plateUseBtn" onclick="usePlateWeight()">USE 185</button>
+      <button class="plate-adj" onclick="adjPlateWeight(5)">+5</button>
+    </div>
   </div>
 </div>
 
