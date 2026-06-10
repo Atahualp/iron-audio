@@ -167,17 +167,9 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .set-log-pr{font-size:10px;color:#F58426;font-weight:800;margin-left:4px}
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
 .set-log-del:active{color:#f87171}
-.set-log-chk{background:none;border:1.5px solid var(--border);border-radius:50%;width:22px;height:22px;color:var(--muted);font-size:11px;line-height:1;cursor:pointer;flex-shrink:0;padding:0;transition:all .15s}
-.set-log-chk.on{background:#F58426;border-color:#F58426;color:#040C1A;font-weight:800}
-.set-log-row.done .set-log-input{opacity:.55}
 .wt-wrap{position:relative;flex-shrink:0;display:flex}
 .plate-btn{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:11px;padding:2px;cursor:pointer;line-height:1;opacity:.8}
 .wt-wrap .set-log-input{padding-right:18px}
-.ar-toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(var(--safe-bottom) + 16px);background:#1a1208;border:1px solid #F58426;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;z-index:1200;opacity:0;pointer-events:none;transition:all .25s}
-.ar-toast.show{opacity:1;pointer-events:all;transform:translate(-50%,0)}
-.ar-toast-txt{font-size:12px;font-weight:700;color:#F58426}
-.ar-undo{background:none;border:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;padding:2px 4px}
-.elapsed-ctrl-btn.ar-on{background:rgba(245,132,38,.18);border-color:#F58426;color:#F58426}
 .plate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .plate-overlay.open{opacity:1;pointer-events:all}
 .plate-sheet{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:12px 18px calc(var(--safe-bottom) + 18px)}
@@ -678,7 +670,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
       <div class="elapsed-controls">
         <button class="elapsed-ctrl-btn" id="elapsedToggleBtn" onclick="toggleElapsedTimer()">▶ Start</button>
         <button class="elapsed-ctrl-btn" onclick="open1RMCalc()">💪 1RM</button>
-        <button class="elapsed-ctrl-btn" id="autoRestBtn" onclick="toggleAutoRest()">⏱ AUTO</button>
         <button class="elapsed-ctrl-btn" onclick="resetElapsedTimer()">↺</button>
       </div>
     </div>
@@ -715,7 +706,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v13.0.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v13.1.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -3282,8 +3273,6 @@ function releaseWakeLock() {
 })()
 
 // Pre-select next session muscles when no active session exists
-window.addEventListener('DOMContentLoaded', function() { syncAutoRestBtn(); });
-
 window.addEventListener('DOMContentLoaded', function() {
   if (localStorage.getItem('ia_session')) return;
   try {
@@ -3583,6 +3572,7 @@ function endWorkout() {
     if (hist.length > 0) {
       hist[0].totalVolume = totalVolume;
       hist[0].durationMin = minutes;
+      hist[0].setLogs = collectSetLogs(); // finalize logs (generation-time snapshot is empty)
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
@@ -3597,6 +3587,13 @@ function endWorkout() {
   // Kick off Google Health HR sync for this workout window
   var wStart = parseInt(localStorage.getItem('ia_elapsed_start') || '0', 10);
   var wEnd   = Date.now();
+  if (!wStart) {
+    // Game clock never started — fall back to generation time so GH sync still works
+    try {
+      var h0 = JSON.parse(localStorage.getItem('iron_history') || '[]')[0];
+      if (h0 && h0.id) wStart = h0.id;
+    } catch(e){}
+  }
   if (wStart > 0) {
     // Store timestamps on latest history entry for lazy fetch later
     try {
@@ -4191,9 +4188,10 @@ window._setLogs = {};
 function buildSetLogRows(ex, index) {
   const setCount = parseInt(ex.sets) || 3;
   const logs = window._setLogs[index] || [];
+  const rows = Math.max(setCount, logs.length); // don't drop user-added sets on restore
   let html = '';
-  for (let s = 0; s < setCount; s++) {
-    html += renderSetRow(index, logs[s] || { weight:'', reps:'' });  // H2: one renderer
+  for (let s = 0; s < rows; s++) {
+    html += renderSetRow(index, s, logs[s] || { weight:'', reps:'' });  // H2: one renderer
   }
   return html;
 }
@@ -4228,60 +4226,6 @@ function logSet(exIndex, setIndex, field, value) {
     }
   }
   updateSession(); // persist set logs so reload doesn't lose them
-}
-
-// ── AUTO-REST ON SET CHECK ─────────────────────────────────────────────
-let _autoRestPending = null;
-
-function autoRestEnabled() { return localStorage.getItem('ia_autorest') !== '0'; }
-
-function toggleAutoRest() {
-  localStorage.setItem('ia_autorest', autoRestEnabled() ? '0' : '1');
-  syncAutoRestBtn();
-  if (!autoRestEnabled()) cancelAutoRest();
-}
-
-function syncAutoRestBtn() {
-  var b = document.getElementById('autoRestBtn');
-  if (b) b.classList.toggle('ar-on', autoRestEnabled());
-}
-
-function toggleSetDone(exIndex, setIndex) {
-  if (!window._setLogs[exIndex] || !window._setLogs[exIndex][setIndex]) return;
-  var log = window._setLogs[exIndex][setIndex];
-  log.done = !log.done;
-  var row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
-  if (row) {
-    row.classList.toggle('done', !!log.done);
-    var chk = row.querySelector('.set-log-chk');
-    if (chk) chk.classList.toggle('on', !!log.done);
-  }
-  updateSession();
-  if (log.done && autoRestEnabled()) scheduleAutoRest(exIndex);
-  else cancelAutoRest();
-}
-
-function scheduleAutoRest(exIndex) {
-  cancelAutoRest();
-  var ex = window._currentWorkout && window._currentWorkout[exIndex];
-  if (!ex) return;
-  var secs = parseRestSecs(ex.rest);
-  var toast = document.getElementById('arToast');
-  var txt = document.getElementById('arToastTxt');
-  if (txt) txt.textContent = 'Rest starting \u00b7 ' + secs + 's';
-  if (toast) toast.classList.add('show');
-  if (navigator.vibrate) navigator.vibrate(20);
-  _autoRestPending = setTimeout(function() {
-    _autoRestPending = null;
-    if (toast) toast.classList.remove('show');
-    startRestTimer(secs, ex.name);
-  }, 3000);
-}
-
-function cancelAutoRest() {
-  if (_autoRestPending) { clearTimeout(_autoRestPending); _autoRestPending = null; }
-  var toast = document.getElementById('arToast');
-  if (toast) toast.classList.remove('show');
 }
 
 // ── PLATE CALCULATOR ───────────────────────────────────────────────────
@@ -4382,7 +4326,7 @@ function renderSetRow(exIndex, setIndex, log) {
   const isPR = ex ? checkPR(ex.name, log.weight, log.reps) : false;
   const isBB = ex ? isBarbellEx(ex.name) : false;
   return '' +
-    '<div class="set-log-row' + (log.done ? ' done' : '') + '" id="setrow-' + exIndex + '-' + setIndex + '">' +
+    '<div class="set-log-row" id="setrow-' + exIndex + '-' + setIndex + '">' +
       '<div class="set-log-num">' + (setIndex + 1) + '</div>' +
       '<div class="wt-wrap">' +
       '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight || '') + '"' +
@@ -4396,8 +4340,6 @@ function renderSetRow(exIndex, setIndex, log) {
         ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
       (isPR ? '<span class="set-log-pr">🏀 PR</span>' : '') +
-      '<button class="set-log-chk' + (log.done ? ' on' : '') + '" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
-        ' onclick="toggleSetDone(+this.dataset.ex,+this.dataset.s)" aria-label="Set done">✓</button>' +
       '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
         ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove set" aria-label="Remove set">✕</button>' +
     '</div>';
@@ -4711,12 +4653,6 @@ async function searchMixTracks(count) {
   <div class="timer-actions">
     <button class="timer-btn minus" onclick="adjustTimer(-10)">-10s</button><button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
   </div>
-</div>
-
-<!-- ── AUTO-REST TOAST ─────────────────────────────────────────────── -->
-<div class="ar-toast" id="arToast">
-  <span class="ar-toast-txt" id="arToastTxt">Rest starting</span>
-  <button class="ar-undo" onclick="cancelAutoRest()">UNDO</button>
 </div>
 
 <!-- ── PLATE CALCULATOR SHEET ──────────────────────────────────────── -->
