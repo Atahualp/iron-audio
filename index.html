@@ -173,6 +173,29 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
 .wt-wrap{position:relative;flex-shrink:0;display:flex}
 .plate-btn{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:11px;padding:2px;cursor:pointer;line-height:1;opacity:.8}
 .wt-wrap .set-log-input{padding-right:18px}
+.swap-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.swap-overlay.open{opacity:1;pointer-events:all}
+.swap-sheet{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:12px 16px calc(var(--safe-bottom) + 14px);display:flex;flex-direction:column;max-height:72vh}
+.swap-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.swap-title{font-family:'Oswald',sans-serif;font-size:19px;font-weight:700;color:#fff;letter-spacing:1px}
+.swap-title em{font-style:normal;color:#F58426}
+.swap-count{font-size:10px;color:var(--muted)}
+.swap-search{background:#1a1a28;border:1px solid var(--border);border-radius:9px;color:#fff;font-size:13px;padding:8px 11px;width:100%;margin-bottom:9px;font-family:inherit}
+.swap-search:focus{outline:none;border-color:#F58426}
+.swap-chips{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.swap-chip{font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--muted);background:#1a1a28;border:none;border-radius:7px;padding:5px 9px;cursor:pointer}
+.swap-chip.on{background:#F58426;color:#040C1A}
+.swap-list{overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:5px;flex:1}
+.swap-row{background:#1a1a28;border:1px solid transparent;border-radius:10px;padding:9px 11px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left;width:100%;font-family:inherit}
+.swap-row:active{border-color:#F58426}
+.swap-row.current{border-color:#F58426;pointer-events:none}
+.swap-row.current .swap-row-name{color:#F58426}
+.swap-row-name{font-size:12px;color:#fff;font-weight:600}
+.swap-row-meta{font-size:9px;color:var(--muted);flex-shrink:0;margin-left:8px}
+.swap-row-cur{font-size:8px;color:#F58426;letter-spacing:1px;flex-shrink:0;margin-left:8px}
+.swap-random{border:1px dashed var(--border);background:none;border-radius:10px;padding:9px;text-align:center;font-size:11px;color:var(--muted);cursor:pointer;margin-top:7px;font-family:inherit;width:100%}
+.swap-random:active{border-color:#F58426;color:#F58426}
+.swap-empty{text-align:center;font-size:11px;color:var(--muted);padding:14px 0}
 .plate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .plate-overlay.open{opacity:1;pointer-events:all}
 .plate-sheet{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:12px 18px calc(var(--safe-bottom) + 18px)}
@@ -713,7 +736,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;h
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v14.0.0 · KNICKS EDITION</div>
+  <div class="version-footer">IRON AUDIO v14.1.0 · KNICKS EDITION</div>
 
 </div>
 
@@ -4248,48 +4271,140 @@ function commitExerciseName(index, val) {
   persistWorkoutState();
 }
 
-function swapExercise(index) {
-  const workout = window._currentWorkout;
-  if (!workout) return;
-  const ex = workout[index];
-  const muscleGroup = ex.muscleGroup || ex.muscle?.toLowerCase() || 'chest';
-  const pool = DB[muscleGroup] || [];
+// ── SWAP PICKER ────────────────────────────────────────────────────────
+let _swapIndex = 0, _swapEquip = 'all';
+const SWAP_EQUIP_CHIPS = ['all','barbell','dumbbell','cable','machine','bodyweight'];
 
-  // Get candidates: same muscle group, not the current exercise, not already in workout
-  const currentNames = new Set(workout.map(e => e.name));
-  let candidates = pool.filter(e => e.name !== ex.name && !currentNames.has(e.name));
-  // Also respect equipment mode
-  if (equipmentMode === 'bodyweight') candidates = candidates.filter(e => e.bw);
-  if (!candidates.length) candidates = pool.filter(e => e.name !== ex.name);
-  if (!candidates.length) { alert('No other exercises available for this muscle group.'); return; }
+function detectEquip(e) {
+  var n = (e.name || '').toLowerCase();
+  if (e.bw || /push-up|pull-up|chin-up|\bdip\b|dips|plank|crunch|leg raise|burpee|pistol|bodyweight|inverted row|superman|bird dog|dead bug|dragon flag|hollow|sit-up|bridge|mountain climber|russian twist|back extension|hyperextension/.test(n)) return 'bodyweight';
+  if (/dumbbell|\bdb\b|goblet/.test(n)) return 'dumbbell';
+  if (/cable|rope|pushdown|pulldown|face pull|lat prayer/.test(n)) return 'cable';
+  if (/machine|smith|pec deck|leg press|leg extension|leg curl|hack squat|preacher curl machine/.test(n)) return 'machine';
+  if (isBarbellEx(e.name)) return 'barbell';
+  return 'other';
+}
 
-  // Pick a random candidate, apply difficulty
-  const picked = candidates[Math.floor(Math.random() * candidates.length)];
+function swapCandidates() {
+  const workout = window._currentWorkout || [];
+  const ex = workout[_swapIndex] || {};
+  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  const currentNames = new Set(workout.map(function(e){ return e.name; }));
+  let pool = (DB[muscleGroup] || []).filter(function(e){ return e.name !== ex.name && !currentNames.has(e.name); });
+  if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw; });
+  return pool;
+}
+
+function applyDiffToPick(picked, ex, muscleGroup) {
   const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
   const dm = diffMap[difficulty] || diffMap.intermediate;
   const s = Math.max(2, Math.round(parseFloat(picked.sets) * dm.setsM));
   const restSecs = parseRestSecs(picked.rest);
   const newRest = Math.round(restSecs * dm.restM);
   const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';
-  // First exercise in a superset pair keeps the minimal in-pair rest.
   const swapRest = (workoutMode === 'superset' && ex.ssConnector) ? '15s' : restStr;
-  const newEx = { ...picked, sets: String(s), rest: swapRest, muscleGroup, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
+  return { ...picked, sets: String(s), rest: swapRest, muscleGroup, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
+}
 
+function swapExercise(index) {
+  const workout = window._currentWorkout;
+  if (!workout || !workout[index]) return;
+  _swapIndex = index;
+  _swapEquip = 'all';
+  const ex = workout[index];
+  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  document.getElementById('swapMuscle').textContent = muscleGroup.toUpperCase();
+  const search = document.getElementById('swapSearch');
+  search.value = '';
+  renderSwapChips();
+  renderSwapList();
+  document.getElementById('swapOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSwapPicker() {
+  document.getElementById('swapOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setSwapEquip(eq) { _swapEquip = eq; renderSwapChips(); renderSwapList(); }
+
+function renderSwapChips() {
+  const pool = swapCandidates();
+  const present = new Set(pool.map(detectEquip));
+  const el = document.getElementById('swapChips');
+  el.innerHTML = SWAP_EQUIP_CHIPS
+    .filter(function(c){ return c === 'all' || present.has(c); })
+    .map(function(c){
+      return '<button class="swap-chip' + (_swapEquip === c ? ' on' : '') + '" data-eq="' + c + '"' +
+             ' onclick="setSwapEquip(this.dataset.eq)">' + c.toUpperCase() + '</button>';
+    }).join('');
+}
+
+function renderSwapList() {
+  const workout = window._currentWorkout || [];
+  const ex = workout[_swapIndex] || {};
+  const q = (document.getElementById('swapSearch').value || '').toLowerCase().trim();
+  let pool = swapCandidates();
+  if (_swapEquip !== 'all') pool = pool.filter(function(e){ return detectEquip(e) === _swapEquip; });
+  if (q) pool = pool.filter(function(e){ return e.name.toLowerCase().indexOf(q) !== -1; });
+
+  document.getElementById('swapCount').textContent = pool.length + ' exercise' + (pool.length === 1 ? '' : 's');
+  const list = document.getElementById('swapList');
+  const curRow = '<div class="swap-row current"><span class="swap-row-name">' + escHtml(ex.name) + '</span><span class="swap-row-cur">CURRENT</span></div>';
+  if (!pool.length) {
+    list.innerHTML = curRow + '<div class="swap-empty">No matches — clear the filter or try Surprise me.</div>';
+    return;
+  }
+  list.innerHTML = curRow + pool.map(function(e){
+    const i = (DB[ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest')] || []).indexOf(e);
+    return '<button class="swap-row" data-pi="' + i + '" onclick="pickSwap(+this.dataset.pi)">' +
+           '<span class="swap-row-name">' + escHtml(e.name) + '</span>' +
+           '<span class="swap-row-meta">' + escHtml(e.sets) + '\u00d7' + escHtml(e.reps) + ' \u00b7 ' + escHtml(e.rest) + '</span>' +
+           '</button>';
+  }).join('');
+}
+
+function pickSwap(poolIndex) {
+  const workout = window._currentWorkout;
+  const ex = workout[_swapIndex];
+  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  const picked = (DB[muscleGroup] || [])[poolIndex];
+  if (!picked) return;
+  closeSwapPicker();
+  performSwap(_swapIndex, applyDiffToPick(picked, ex, muscleGroup));
+}
+
+function swapRandom() {
+  const workout = window._currentWorkout;
+  const ex = workout[_swapIndex];
+  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  let candidates = swapCandidates();
+  if (_swapEquip !== 'all') {
+    const filtered = candidates.filter(function(e){ return detectEquip(e) === _swapEquip; });
+    if (filtered.length) candidates = filtered; // random respects the active chip when possible
+  }
+  if (!candidates.length) candidates = (DB[muscleGroup] || []).filter(function(e){ return e.name !== ex.name; });
+  if (!candidates.length) { alert('No other exercises available for this muscle group.'); return; }
+  const picked = candidates[Math.floor(Math.random() * candidates.length)];
+  closeSwapPicker();
+  performSwap(_swapIndex, applyDiffToPick(picked, ex, muscleGroup));
+}
+
+function performSwap(index, newEx) {
+  const workout = window._currentWorkout;
   workout[index] = newEx;
   // Swapped-in exercise starts fresh — drop the old exercise's logged sets for this slot.
   if (window._setLogs) window._setLogs[index] = [];
   persistWorkoutState(); // survive iOS restore + reflect in share card / history
 
-  // Re-render just this card
   const card = document.getElementById('card-' + index);
   if (card) {
     const tmp = document.createElement('div');
     tmp.innerHTML = renderExerciseCard(newEx, index);
     const newCard = tmp.firstElementChild;
     card.parentNode.replaceChild(newCard, card);
-    // Reload GIF
     loadExerciseGif(newEx, index);
-    // Subtle flash
     newCard.style.borderLeftColor = 'var(--blue)';
     setTimeout(() => { newCard.style.borderLeftColor = ''; }, 800);
   }
@@ -4807,6 +4922,22 @@ async function searchMixTracks(count) {
   </div>
   <div class="timer-actions">
     <button class="timer-btn minus" onclick="adjustTimer(-10)">-10s</button><button class="timer-btn stop" onclick="stopTimer()">Done ✓</button>
+  </div>
+</div>
+
+<!-- ── EXERCISE SWAP PICKER ────────────────────────────────────────── -->
+<div class="swap-overlay" id="swapOverlay" onclick="if(event.target===this)closeSwapPicker()">
+  <div class="swap-sheet">
+    <div class="plate-grab"></div>
+    <div class="swap-head">
+      <span class="swap-title">SWAP · <em id="swapMuscle">CHEST</em></span>
+      <span class="swap-count" id="swapCount"></span>
+    </div>
+    <input class="swap-search" id="swapSearch" type="text" placeholder="Filter exercises…"
+      oninput="renderSwapList()" autocomplete="off" autocorrect="off" autocapitalize="off">
+    <div class="swap-chips" id="swapChips"></div>
+    <div class="swap-list" id="swapList"></div>
+    <button class="swap-random" onclick="swapRandom()">🔀 Surprise me (random)</button>
   </div>
 </div>
 
