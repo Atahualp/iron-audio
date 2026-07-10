@@ -3717,6 +3717,16 @@ function updateStorageCounts() {
   } catch(e) {}
 }
 
+// App-shortcut deep link (long-press home icon -> History)
+window.addEventListener('DOMContentLoaded', function() {
+  try {
+    if (new URLSearchParams(location.search).get('view') === 'history') {
+      history.replaceState(null, '', location.pathname); // clean URL so reload != history view
+      setTimeout(openHistory, 100);
+    }
+  } catch(e) {}
+});
+
 // Android: SW required for notifications (new Notification() throws on Chrome Android)
 if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js'); } catch(e) {} }
 
@@ -4132,10 +4142,26 @@ function roundRect(ctx, x, y, w, h, r) {
 
 function downloadShareCard() {
   const canvas = document.getElementById('shareCanvas');
-  const link   = document.createElement('a');
-  link.download = `iron-audio-workout-${Date.now()}.png`;
-  link.href      = canvas.toDataURL('image/png');
-  link.click();
+  // Android: native share sheet (Instagram/WhatsApp/etc). Fallback: download.
+  if (navigator.canShare) {
+    canvas.toBlob(function(blob) {
+      if (!blob) return fallbackDownload();
+      const file = new File([blob], 'iron-audio-workout.png', { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'Iron Audio Workout' }).catch(function(err) {
+          if (err && err.name !== 'AbortError') fallbackDownload();
+        });
+      } else { fallbackDownload(); }
+    }, 'image/png');
+    return;
+  }
+  fallbackDownload();
+  function fallbackDownload() {
+    const link = document.createElement('a');
+    link.download = `iron-audio-workout-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
 }
 
 
