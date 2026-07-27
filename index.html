@@ -171,7 +171,8 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .set-log-label{font-size:10px;color:var(--muted);width:16px;text-align:center;flex-shrink:0}
 .set-log-add{background:none;border:1px dashed var(--border);border-radius:8px;padding:6px;color:var(--muted);font-size:12px;cursor:pointer;width:100%;transition:all .2s;margin-top:2px}
 .set-log-add:active{border-color:var(--accent);color:var(--accent)}
-.set-log-pr{font-size:10px;color:var(--accent);font-weight:800;margin-left:4px}
+.set-log-pr{font-size:10px;color:#FAC775;font-weight:800;margin-left:4px}
+.set-log-reppr{font-size:10px;color:#85B7EB;font-weight:800;margin-left:4px}
 .set-log-del{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:3px 5px;line-height:1;flex-shrink:0;transition:color .15s}
 .set-log-del:active{color:#f87171}
 .wt-wrap{position:relative;flex-shrink:0;display:flex}
@@ -297,7 +298,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .modal-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
 .modal-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Sora',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
 .modal-inp:focus{border-color:var(--accent)}
-.modal-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:3px;color:#fff;cursor:pointer}
+.modal-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:3px;color:var(--navy);cursor:pointer}
 .modal-link{color:var(--accent)}
 
 /* ── REST TIMER ──────────────────────────────────────────────────── */
@@ -313,7 +314,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .timer-btn:active{transform:scale(.95)}
 .timer-btn.minus{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
-.timer-btn.stop{background:var(--accent);color:#fff}
+.timer-btn.stop{background:var(--accent);color:var(--navy)}
 
 /* ── EXERCISE MODAL ──────────────────────────────────────────────── */
 .ex-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -381,7 +382,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .share-actions{display:flex;gap:10px;width:100%;max-width:400px}
 .share-action-btn{flex:1;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .share-action-btn:active{transform:scale(.95)}
-.share-action-btn.save{background:var(--accent);color:#fff}
+.share-action-btn.save{background:var(--accent);color:var(--navy)}
 .share-action-btn.close{background:#1a1a28;color:var(--muted)}
 
 /* ── SETTINGS PANEL ──────────────────────────────────────────────── */
@@ -395,7 +396,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .settings-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block}
 .settings-input{width:100%;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'Sora',sans-serif;box-sizing:border-box;margin-bottom:8px}
 .settings-input:focus{outline:none;border-color:var(--accent)}
-.settings-save-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:2px;transition:all .2s}
+.settings-save-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:10px;color:var(--navy);font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:2px;transition:all .2s}
 .settings-save-btn:active{transform:scale(.97)}
 .settings-info{font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px}
 .settings-cost-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:12px}
@@ -751,7 +752,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
     <div class="ew-stats-top">
       <div class="ew-stat"><div class="ew-stat-val" id="ewTime">0</div><div class="ew-stat-lbl">Minutes</div></div>
       <div class="ew-stat"><div class="ew-stat-val" id="ewExCount">0</div><div class="ew-stat-lbl">Exercises</div></div>
-      <div class="ew-stat"><div class="ew-stat-val" id="ewPRs">0</div><div class="ew-stat-lbl">New PRs 🏆</div></div>
+      <div class="ew-stat"><div class="ew-stat-val" id="ewPRs">0</div><div class="ew-stat-lbl" data-pr-lbl>New PRs 🏆</div></div>
     </div>
     <div class="ew-stats-bot">
       <div class="ew-stat">
@@ -3526,7 +3527,7 @@ function endWorkout() {
   var exCount = exArr.length;
 
   // Compute set logs stats
-  var totalSets = 0, totalVolume = 0, prCount = 0;
+  var totalSets = 0, totalVolume = 0, prCount = 0, repPrCount = 0;
   var exRows = [];
   exArr.forEach(function(ex, exIndex) {
     var logs = (window._setLogs && window._setLogs[exIndex]) || [];
@@ -3549,7 +3550,22 @@ function endWorkout() {
       exTopWeight > (prevPR.weight || 0) ||
       (exTopWeight === prevPR.weight && exTopReps > (prevPR.reps || 0))
     );
-    if (isPR) { prCount++; savePR(ex.name, exTopWeight, exTopReps); } // C1: commit PR here, at finish
+    if (isPR) { prCount++; savePR(ex.name, exTopWeight, exTopReps); } // C1: commit weight PR at finish
+    // Rep PRs: for each weight bucket this exercise hit, take the best reps and
+    // commit if it beats the stored mark (and isn't the weight-PR set itself).
+    var bucketBest = {};
+    validSets.forEach(function(r){
+      var b = repBucket(r.weight), rp = parseInt(r.reps);
+      if (!rp || rp <= 0) return;
+      var isThisWtPR = isPR && parseFloat(r.weight) === exTopWeight && rp === exTopReps;
+      if (isThisWtPR) return;
+      if (!bucketBest[b] || rp > bucketBest[b].reps) bucketBest[b] = { weight: parseFloat(r.weight) || 0, reps: rp };
+    });
+    Object.keys(bucketBest).forEach(function(b){
+      var bb = bucketBest[b];
+      var prev = getRepPR(ex.name, bb.weight);
+      if (!prev || bb.reps > prev.reps) { if (saveRepPR(ex.name, bb.weight, bb.reps)) repPrCount++; }
+    });
     exRows.push({name: ex.name, muscle: ex.muscle, sets: validSets.length,
       validSets: validSets,
       topWeight: exTopWeight, topReps: exTopReps, isPR: isPR});
@@ -3632,7 +3648,9 @@ function endWorkout() {
   document.getElementById('ewDate').textContent = 'Today · ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) + ' · ' + (genre || '');
   document.getElementById('ewTime').textContent = minutes;
   document.getElementById('ewExCount').textContent = exCount;
-  document.getElementById('ewPRs').textContent = prCount;
+  document.getElementById('ewPRs').textContent = prCount + repPrCount;
+  var prLbl = document.querySelector('.ew-stat-lbl[data-pr-lbl]');
+  if (prLbl) prLbl.textContent = repPrCount > 0 ? (prCount + ' wt · ' + repPrCount + ' rep') : 'New PRs 🏆';
 
   var volEl = document.getElementById('ewVolume');
   if (volEl) volEl.textContent = totalVolume > 0 ? totalVolume.toLocaleString() : '—';
@@ -3762,7 +3780,7 @@ function clearStorage(type) {
   };
   if (!confirm(messages[type] || 'Are you sure?')) return;
   if (type === 'history' || type === 'all') localStorage.removeItem('iron_history');
-  if (type === 'prs'     || type === 'all') localStorage.removeItem('iron_prs');
+  if (type === 'prs'     || type === 'all') { localStorage.removeItem('iron_prs'); localStorage.removeItem('iron_rep_prs'); }
   if (type === 'session' || type === 'all') localStorage.removeItem('ia_session');
   if (type === 'all') {
     localStorage.removeItem('ia_cost');
@@ -4594,9 +4612,38 @@ function buildSetLogRows(ex, index) {
 
 // H3: "previous best" line shown above an exercise's set log
 function prevBestLine(exName) {
-  const pr = getPR(exName);
-  if (!pr || !pr.weight) return '<div class="set-log-prev set-log-prev-none">No previous record — set the first!</div>';
-  return '<div class="set-log-prev">📈 Previous best: <strong>' + pr.weight + ' × ' + pr.reps + '</strong></div>';
+  const pr  = getPR(exName);
+  const rep = topRepPR(exName);
+  if ((!pr || !pr.weight) && !rep) return '<div class="set-log-prev set-log-prev-none">No previous record — set the first!</div>';
+  var parts = [];
+  if (pr && pr.weight) parts.push('Heaviest <strong>' + pr.weight + ' × ' + pr.reps + '</strong>');
+  if (rep) parts.push('Most <strong>' + rep.reps + '</strong> @ ' + (rep.weight ? rep.weight + ' lb' : 'BW'));
+  return '<div class="set-log-prev">📈 ' + parts.join(' · ') + '</div>';
+}
+
+// Sets the correct badge (gold weight-PR, blue rep-PR, or none) on one row.
+// Returns true if the row now carries any PR badge. Single source of truth so
+// live edits and initial render can't disagree.
+function refreshRowBadges(exIndex, setIndex) {
+  var ex  = window._currentWorkout && window._currentWorkout[exIndex];
+  var row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
+  if (!ex || !row) return false;
+  var sl = (window._setLogs[exIndex] || [])[setIndex] || {};
+  var isWt  = checkPR(ex.name, sl.weight, sl.reps, exIndex, setIndex);
+  var isRep = !isWt && checkRepPR(ex.name, sl.weight, sl.reps, exIndex, setIndex);
+  var wb = row.querySelector('.set-log-pr');
+  var rb = row.querySelector('.set-log-reppr');
+  if (isWt) {
+    if (rb) rb.remove();
+    if (!wb) { var e = document.createElement('span'); e.className = 'set-log-pr'; e.textContent = '⚾ PR'; row.appendChild(e); }
+  } else if (isRep) {
+    if (wb) wb.remove();
+    if (!rb) { var e2 = document.createElement('span'); e2.className = 'set-log-reppr'; e2.textContent = '🔁 REP'; row.appendChild(e2); }
+  } else {
+    if (wb) wb.remove();
+    if (rb) rb.remove();
+  }
+  return isWt || isRep;
 }
 
 function logSet(exIndex, setIndex, field, value) {
@@ -4604,34 +4651,17 @@ function logSet(exIndex, setIndex, field, value) {
   if (!window._setLogs[exIndex][setIndex]) window._setLogs[exIndex][setIndex] = {weight:'', reps:''};
   window._setLogs[exIndex][setIndex][field] = value;
 
-  // C1: recompute the PR badge live — ADD when it qualifies, REMOVE when a correction drops it below.
+  // C1: recompute badges live — ADD when a set qualifies, REMOVE on a correction.
   // Note: we do NOT persist here. PRs commit at endWorkout() so a typo (1000→100) can't poison the record.
-  const ex  = window._currentWorkout && window._currentWorkout[exIndex];
-  const log = window._setLogs[exIndex][setIndex];
-  const row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
-  // A new top set demotes previously-badged sets — refresh all sibling badges.
+  const ex = window._currentWorkout && window._currentWorkout[exIndex];
+  // Any edit can promote/demote sibling sets (a new top set steals the badge,
+  // a new rep record shifts the bucket winner) — refresh the whole exercise.
   if (ex) {
     (window._setLogs[exIndex] || []).forEach((sl, si) => {
-      if (si === setIndex) return;
-      const sib = document.getElementById('setrow-' + exIndex + '-' + si);
-      if (!sib) return;
-      const ok = checkPR(ex.name, sl.weight, sl.reps, exIndex, si);
-      const b = sib.querySelector('.set-log-pr');
-      if (ok && !b) { const e = document.createElement('span'); e.className='set-log-pr'; e.textContent='🏀 PR'; sib.appendChild(e); }
-      else if (!ok && b) b.remove();
+      const hadBadge = refreshRowBadges(exIndex, si) &&
+        !document.getElementById('setrow-' + exIndex + '-' + si + '-hadpr');
     });
-  }
-  if (ex && row) {
-    const qualifies = checkPR(ex.name, log.weight, log.reps, exIndex, setIndex);
-    const badge = row.querySelector('.set-log-pr');
-    if (qualifies && !badge) {
-      const b = document.createElement('span');
-      b.className = 'set-log-pr'; b.textContent = '🏀 PR';
-      row.appendChild(b);
-      if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-    } else if (!qualifies && badge) {
-      badge.remove();
-    }
+    if (refreshRowBadges(exIndex, setIndex) && navigator.vibrate) navigator.vibrate([50, 30, 50]);
   }
   updateSession(); // persist set logs so reload doesn't lose them
 }
@@ -4731,23 +4761,24 @@ function usePlateWeight() {
 function renderSetRow(exIndex, setIndex, log) {
   log = log || { weight:'', reps:'' };
   const ex = window._currentWorkout && window._currentWorkout[exIndex];
-  const isPR = ex ? checkPR(ex.name, log.weight, log.reps, exIndex, setIndex) : false;
-  const isBB = ex ? isBarbellEx(ex.name) : false;
+  const isPR  = ex ? checkPR(ex.name, log.weight, log.reps, exIndex, setIndex) : false;
+  const isRep = ex && !isPR ? checkRepPR(ex.name, log.weight, log.reps, exIndex, setIndex) : false;
+  const isBB  = ex ? isBarbellEx(ex.name) : false;
   return '' +
     '<div class="set-log-row" id="setrow-' + exIndex + '-' + setIndex + '">' +
       '<div class="set-log-num">' + (setIndex + 1) + '</div>' +
       '<div class="wt-wrap">' +
-      '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight || '') + '"' +
-        ' inputmode="decimal" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="weight"' +
+      '<input class="set-log-input" type="number" placeholder="lbs" value="' + (log.weight === 0 || log.weight ? log.weight : '') + '"' +
+        ' inputmode="decimal" min="0" step="any" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="weight"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
       (isBB ? '<button class="plate-btn" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
         ' onclick="openPlateCalc(+this.dataset.ex,+this.dataset.s)" aria-label="Plate calculator">🏋</button>' : '') +
       '</div>' +
       '<div class="set-log-label">×</div>' +
       '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps || '') + '"' +
-        ' inputmode="numeric" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
+        ' inputmode="numeric" min="0" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
-      (isPR ? '<span class="set-log-pr">🏀 PR</span>' : '') +
+      (isPR ? '<span class="set-log-pr">⚾ PR</span>' : (isRep ? '<span class="set-log-reppr">🔁 REP</span>' : '')) +
       '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
         ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove set" aria-label="Remove set">✕</button>' +
     '</div>';
@@ -4786,6 +4817,31 @@ function deleteSetRow(exIndex, setIndex) {
 function getPRs() {
   try { return JSON.parse(localStorage.getItem('iron_prs') || '{}'); } catch(e) { return {}; }
 }
+// Rep PRs: best reps ever at each exact weight. Bucket key is the numeric
+// weight as a string; bodyweight / plank sets bucket under '0'. Structure:
+//   iron_rep_prs[exKey] = { '0': {reps, date}, '185': {reps, date}, ... }
+function getRepPRs() {
+  try { return JSON.parse(localStorage.getItem('iron_rep_prs') || '{}'); } catch(e) { return {}; }
+}
+function repBucket(weight) {
+  var w = parseFloat(weight);
+  return String((!w || w < 0) ? 0 : w);
+}
+// Best stored reps at a given weight for an exercise (null if none).
+function getRepPR(name, weight) {
+  var m = getRepPRs()[prKey(name)];
+  return (m && m[repBucket(weight)]) || null;
+}
+// Best rep bucket overall (highest reps) — for the "previous best" line.
+function topRepPR(name) {
+  var m = getRepPRs()[prKey(name)];
+  if (!m) return null;
+  var best = null;
+  Object.keys(m).forEach(function(w){
+    if (!best || m[w].reps > best.reps) best = { weight: +w, reps: m[w].reps };
+  });
+  return best;
+}
 // C2: single source of truth for PR keys — used by checkPR, savePR, getPR, and endWorkout
 function prKey(name) {
   return String(name || '').toLowerCase().trim().replace(/\s+/g, '_');
@@ -4819,6 +4875,39 @@ function isSessionTopSet(name, weight, reps, exIndex, setIndex) {
   }
   return true;
 }
+// Is this the session's best set within its own weight bucket for this exercise?
+// Ties resolve to the FIRST occurrence so exactly one row in a bucket wins.
+function isSessionTopRepSet(name, weight, reps, exIndex, setIndex) {
+  var w = parseFloat(weight), r = parseInt(reps);
+  var bucket = repBucket(w);
+  var wo = window._currentWorkout || [];
+  for (var ei = 0; ei < wo.length; ei++) {
+    if (prKey(wo[ei].name) !== prKey(name)) continue;
+    var rows = window._setLogs[ei] || [];
+    for (var si = 0; si < rows.length; si++) {
+      if (ei === exIndex && si === setIndex) continue;
+      if (!rows[si]) continue;
+      var or = parseInt(rows[si].reps);
+      if (repBucket(rows[si].weight) !== bucket || !or || or <= 0) continue;
+      if (or > r) return false; // another set did more reps at this weight
+      if (or === r && (ei < exIndex || (ei === exIndex && si < setIndex))) return false;
+    }
+  }
+  return true;
+}
+// A rep PR: more reps than ever at this exact weight, not also a weight PR,
+// and the session's top set in that weight bucket. Weight 0 (BW) is allowed.
+function checkRepPR(name, weight, reps, exIndex, setIndex) {
+  var w = parseFloat(weight), r = parseInt(reps);
+  if (w < 0 || !r || r <= 0) return false;
+  if (isNaN(w)) return false;
+  // Don't double-badge: a heavier-than-ever set is a weight PR, not a rep PR.
+  if (exIndex !== undefined && checkPR(name, weight, reps, exIndex, setIndex)) return false;
+  var prev = getRepPR(name, w);
+  if (prev && r <= prev.reps) return false;
+  if (exIndex === undefined) return true;
+  return isSessionTopRepSet(name, w, r, exIndex, setIndex);
+}
 // A set is a PR only if it beats the stored record AND is the session's top set
 // (first occurrence on ties) — so a brand-new exercise badges once, not every row.
 function checkPR(name, weight, reps, exIndex, setIndex) {
@@ -4839,6 +4928,19 @@ function savePR(name, weight, reps) {
   if (prev && !(w > prev.weight || (w === prev.weight && r > prev.reps))) return false;
   prs[key] = { weight: w, reps: r, date: new Date().toISOString() };
   try { localStorage.setItem('iron_prs', JSON.stringify(prs)); } catch(e) {}
+  return true;
+}
+// Commit a rep PR for the exact weight bucket. Monotonic: never lowers a mark.
+function saveRepPR(name, weight, reps) {
+  var w = parseFloat(weight), r = parseInt(reps);
+  if (w < 0 || isNaN(w) || !r || r <= 0) return false;
+  var all = getRepPRs();
+  var key = prKey(name), bucket = repBucket(w);
+  if (!all[key]) all[key] = {};
+  var prev = all[key][bucket];
+  if (prev && r <= prev.reps) return false;
+  all[key][bucket] = { reps: r, date: new Date().toISOString() };
+  try { localStorage.setItem('iron_rep_prs', JSON.stringify(all)); } catch(e) {}
   return true;
 }
 
