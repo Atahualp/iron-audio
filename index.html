@@ -28,6 +28,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 
 /* ── HEADER ─────────────────────────────────────────────────────── */
 .hdr{padding:max(env(safe-area-inset-top,0px),20px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:repeating-linear-gradient(90deg,rgba(5,8,16,.98) 0 7px,rgba(10,19,34,.98) 7px 8px);backdrop-filter:blur(24px);z-index:100;border-bottom:2px solid var(--accent2)}
+.logo-icon{width:40px;height:auto;display:block}
 .logo{display:flex;align-items:center;gap:8px;line-height:1}
 .logo-icon{flex-shrink:0}
 .logo-iron{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;color:var(--accent);display:block;line-height:1}
@@ -145,6 +146,8 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .illus-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;background:#0a0a14}
 .illus-placeholder .ph-icon{font-size:32px;opacity:.25}
 .illus-placeholder .ph-text{font-size:10px;color:var(--muted);text-align:center;line-height:1.5;max-width:160px}
+.wk-done-chip{font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:5px;color:var(--accent)}
+.wk-done-chip.cb{color:#FAC775}
 .wk-pat-badge{font-size:9px;letter-spacing:.8px;color:var(--muted);border:0.5px solid var(--border);border-radius:100px;padding:3px 8px;margin-left:5px;text-transform:uppercase}
 .muscle-tag{position:absolute;bottom:8px;left:8px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(6px)}
 .wk-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
@@ -574,13 +577,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
   <!-- HEADER -->
   <div class="hdr">
     <div class="logo">
-      <svg class="logo-icon" width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-      <circle cx="17" cy="11" r="7.5" fill="#FFFFFF"/>
-      <path d="M12 6.5 A9 9 0 0 1 12 15.5 M22 6.5 A9 9 0 0 0 22 15.5" stroke="#D85A30" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-dasharray="1.6 2"/>
-      <rect x="6" y="23" width="22" height="4" rx="2" fill="var(--accent2)"/>
-      <rect x="3" y="20.5" width="4" height="9" rx="1.6" fill="#FFFFFF"/>
-      <rect x="27" y="20.5" width="4" height="9" rx="1.6" fill="#FFFFFF"/>
-    </svg>
+      <img class="logo-icon" width="40" alt="" src="data:image/png;base64,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">
       <div style="line-height:1"><div class="logo-iron">IRON</div><div class="logo-audio">AUDIO</div></div>
     </div>
     <button class="hdr-icon-btn" onclick="openHistory()" title="Workout History">📋</button>
@@ -688,7 +685,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
 
     <div class="gen-wrap">
-      <button class="gen-btn" onclick="generate()">⚾ PLAY BALL</button>
+      <button class="gen-btn" onclick="generate()">💪 PUMP IT UP</button>
     </div>
   </div>
 
@@ -728,7 +725,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     <div id="quoteCard" style="padding:8px 14px 0;"></div>
     <div class="wk-list" id="wkList"></div>
     <div style="padding:0 14px 4px">
-      <button class="end-workout-btn" onclick="endWorkout()">⚾ FINAL OUT</button>
+      <button class="end-workout-btn" onclick="endWorkout()">🤖 I'LL BE BACK</button>
     </div>
     <div class="pl-sec" id="plSection">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -747,7 +744,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v17.1.0 · YANKEES EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v18.0.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -2976,6 +2973,7 @@ function renderExerciseCard(ex, index) {
           '<div class="wk-desc">' + escHtml(ex.desc) + '</div>' +
           '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + ex.muscle + '</span>' +
           (ex.pat && PAT_LABELS[ex.pat] ? '<span class="wk-pat-badge">' + escHtml(PAT_LABELS[ex.pat]) + '</span>' : '') +
+          '<span class="wk-done-chip" id="doneChip-' + i + '"></span>' +
         '</div>' +
         '<div class="wk-sets-box">' +
           '<div class="wk-sets">' + ex.sets + '</div>' +
@@ -3130,7 +3128,11 @@ async function generate() {
     }
     exercises = exercises.concat(group);
   }
-  shuffle(exercises);
+  // V18: Foundation First (Arnold §2) — heavy compounds lead the session,
+  // isolation and pump work follow. Stable sort keeps muscle grouping intact.
+  const COMPOUND_PATS = ['hpress','ipress','vpull','hrow','hinge','knee','hip','press','full'];
+  const isComp = e => COMPOUND_PATS.indexOf(e.pat) !== -1 ? 0 : 1;
+  exercises.sort((a, b) => isComp(a) - isComp(b));
 
   // Apply superset pairing — V17: Arnold agonist/antagonist rules. Pair
   // opposing muscle groups back-to-back (chest↔back, biceps↔triceps); within
@@ -3832,7 +3834,7 @@ function endWorkout() {
     nextEl.style.display = 'none';
   }
 
-  // ── Final Out AUTO-SAVES here (no confirmation gate) ─────────────────
+  // ── I'll Be Back AUTO-SAVES here (no confirmation gate) ─────────────
   // Workout is already in history (saved at generation); finalize the totals now.
   try {
     var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
@@ -3840,6 +3842,7 @@ function endWorkout() {
       hist[0].totalVolume = totalVolume;
       hist[0].durationMin = minutes;
       hist[0].setLogs = collectSetLogs(); // finalize logs (generation-time snapshot is empty)
+      hist[0].performedOrder = computePerformedOrder(); // V18: the order you actually trained
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
@@ -3893,7 +3896,7 @@ function closeEwModal() {
 }
 
 function confirmEndWorkout() {
-  // Save already happened when Final Out was pressed (see endWorkout).
+  // Save already happened when I'll Be Back was pressed (see endWorkout).
   // This is now just the recap dismiss → back to home.
   closeEwModal();
   showCfg();
@@ -4267,6 +4270,7 @@ function renderHistoryList() {
       </div>
       <div id="hist-detail-${i}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
         ${entry.hr && !entry.hr.pending ? renderHrHistoryDetail(entry.hr) : ''}
+        ${entry.performedOrder && entry.performedOrder.length ? `<div style="font-size:10px;color:var(--accent2);letter-spacing:.5px;margin-bottom:8px">DONE IN ORDER: ${entry.performedOrder.map(escHtml).join(' → ')}</div>` : ''}
         ${(entry.exercises||[]).map(ex => {
           const logs = (entry.setLogs||{})[ex.name];
           return `<div style="margin-bottom:8px">
@@ -4521,8 +4525,8 @@ function updateElapsedDisplay() {
 function updateQuarterBanner(secs) {
   var qtrSecs = (dur || 30) * 60 / 4;
   var q = secs <= 0 ? 0 : Math.min(4, Math.ceil(secs / qtrSecs));
-  var labels = ['PRE-GAME', 'EARLY INNINGS', 'MIDDLE INNINGS', 'LATE INNINGS', 'BOTTOM OF THE 9TH'];
-  var label = secs > (dur || 30) * 60 ? 'EXTRA INNINGS' : (labels[q] || 'BOTTOM OF THE 9TH');
+  var labels = ['WARM-UP', 'STAY HUNGRY', 'THE PUMP', 'SHOCK THE MUSCLE', 'CONQUER'];
+  var label = secs > (dur || 30) * 60 ? 'ONE MORE REP' : (labels[q] || 'CONQUER');
   var lEl = document.getElementById('qtrLabel');
   if (lEl) lEl.textContent = label;
   [1,2,3,4].forEach(function(i) {
@@ -4676,7 +4680,13 @@ function commitExerciseName(index, val) {
 }
 
 // ── SWAP PICKER ────────────────────────────────────────────────────────
-let _swapIndex = 0, _swapEquip = 'all';
+let _swapIndex = 0, _swapEquip = 'all', _swapPatLock = true;
+
+// Pattern class of an exercise within its DB group ('' when untagged).
+function swapPatOf(name, muscleGroup) {
+  var t = (EX_PATTERNS[muscleGroup] || {})[name] || '';
+  return t === 'other' ? '' : t;
+}
 const SWAP_EQUIP_CHIPS = ['all','barbell','dumbbell','cable','machine','bodyweight'];
 
 function detectEquip(e) {
@@ -4696,10 +4706,19 @@ function swapCandidates() {
   const currentNames = new Set(workout.map(function(e){ return e.name; }));
   let pool = (DB[muscleGroup] || []).filter(function(e){ return e.name !== ex.name && !currentNames.has(e.name); });
   if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw; });
+  // V17.1: preserve the logic the workout was built on — a vertical pull only
+  // swaps for another vertical pull (toggleable via the pattern chip).
+  var pat = ex.pat || swapPatOf(ex.name, muscleGroup);
+  if (_swapPatLock && pat) pool = pool.filter(function(e){ return swapPatOf(e.name, muscleGroup) === pat; });
+  // Exact fine-muscle matches (e.g. Inner Chest → Inner Chest) rank first.
+  pool.sort(function(a, b){
+    return (b.muscle === ex.muscle ? 1 : 0) - (a.muscle === ex.muscle ? 1 : 0);
+  });
   return pool;
 }
 
 function applyDiffToPick(picked, ex, muscleGroup) {
+  var _pat = swapPatOf(picked.name, muscleGroup);
   const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
   const dm = diffMap[difficulty] || diffMap.intermediate;
   const s = Math.max(2, Math.round(parseFloat(picked.sets) * dm.setsM));
@@ -4707,7 +4726,7 @@ function applyDiffToPick(picked, ex, muscleGroup) {
   const newRest = Math.round(restSecs * dm.restM);
   const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';
   const swapRest = (workoutMode === 'superset' && ex.ssConnector) ? '15s' : restStr;
-  return { ...picked, sets: String(s), rest: swapRest, muscleGroup, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
+  return { ...picked, sets: String(s), rest: swapRest, muscleGroup, pat: _pat, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
 }
 
 function swapExercise(index) {
@@ -4715,6 +4734,7 @@ function swapExercise(index) {
   if (!workout || !workout[index]) return;
   _swapIndex = index;
   _swapEquip = 'all';
+  _swapPatLock = true;
   const ex = workout[index];
   const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
   document.getElementById('swapMuscle').textContent = muscleGroup.toUpperCase();
@@ -4733,11 +4753,22 @@ function closeSwapPicker() {
 
 function setSwapEquip(eq) { _swapEquip = eq; renderSwapChips(); renderSwapList(); }
 
+function toggleSwapPatLock() { _swapPatLock = !_swapPatLock; renderSwapChips(); renderSwapList(); }
+
 function renderSwapChips() {
   const pool = swapCandidates();
   const present = new Set(pool.map(detectEquip));
   const el = document.getElementById('swapChips');
-  el.innerHTML = SWAP_EQUIP_CHIPS
+  const workout = window._currentWorkout || [];
+  const ex = workout[_swapIndex] || {};
+  const mg = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  const pat = ex.pat || swapPatOf(ex.name, mg);
+  const patChip = pat
+    ? '<button class="swap-chip' + (_swapPatLock ? ' on' : '') + '" onclick="toggleSwapPatLock()">' +
+      (_swapPatLock ? '\uD83D\uDD12 ' : '') + escHtml((PAT_LABELS[pat] || pat).toUpperCase()) +
+      (_swapPatLock ? '' : ' \u00b7 SHOWING ALL') + '</button>'
+    : '';
+  el.innerHTML = patChip + SWAP_EQUIP_CHIPS
     .filter(function(c){ return c === 'all' || present.has(c); })
     .map(function(c){
       return '<button class="swap-chip' + (_swapEquip === c ? ' on' : '') + '" data-eq="' + c + '"' +
@@ -4846,6 +4877,51 @@ function prevBestLine(exName) {
 // Sets the correct badge (gold weight-PR, blue rep-PR, or none) on one row.
 // Returns true if the row now carries any PR badge. Single source of truth so
 // live edits and initial render can't disagree.
+// V18: reflect the real done-order on each card. An exercise's position in
+// the sequence = the timestamp of its first logged set. Exercises sitting
+// unlogged ABOVE your furthest logged one get a circle-back reminder.
+function updateDoneChips() {
+  var wo = window._currentWorkout || [];
+  var firstTs = wo.map(function(_, i) {
+    var rows = window._setLogs[i] || [];
+    var t = null;
+    rows.forEach(function(r) { if (r && r.ts && (r.weight || r.reps)) t = (t === null || r.ts < t) ? r.ts : t; });
+    return t;
+  });
+  var ranked = firstTs.map(function(t, i) { return { t: t, i: i }; })
+    .filter(function(x) { return x.t !== null; })
+    .sort(function(a, b) { return a.t - b.t; });
+  var maxDone = ranked.length ? Math.max.apply(null, ranked.map(function(x) { return x.i; })) : -1;
+  wo.forEach(function(_, i) {
+    var el = document.getElementById('doneChip-' + i);
+    if (!el) return;
+    var pos = ranked.findIndex(function(x) { return x.i === i; });
+    if (pos >= 0) {
+      el.textContent = pos < 20 ? String.fromCharCode(0x2460 + pos) : '#' + (pos + 1);
+      el.classList.remove('cb');
+    } else if (i < maxDone) {
+      el.textContent = '⏳ CIRCLE BACK';
+      el.classList.add('cb');
+    } else {
+      el.textContent = '';
+      el.classList.remove('cb');
+    }
+  });
+}
+
+// Exposed for history: exercise names in the order they were actually done.
+function computePerformedOrder() {
+  var wo = window._currentWorkout || [];
+  return wo.map(function(ex, i) {
+    var rows = window._setLogs[i] || [];
+    var t = null;
+    rows.forEach(function(r) { if (r && r.ts && (r.weight || r.reps)) t = (t === null || r.ts < t) ? r.ts : t; });
+    return { name: ex.name, t: t };
+  }).filter(function(x) { return x.t !== null; })
+    .sort(function(a, b) { return a.t - b.t; })
+    .map(function(x) { return x.name; });
+}
+
 function refreshRowBadges(exIndex, setIndex) {
   var ex  = window._currentWorkout && window._currentWorkout[exIndex];
   var row = document.getElementById('setrow-' + exIndex + '-' + setIndex);
@@ -4857,7 +4933,7 @@ function refreshRowBadges(exIndex, setIndex) {
   var rb = row.querySelector('.set-log-reppr');
   if (isWt) {
     if (rb) rb.remove();
-    if (!wb) { var e = document.createElement('span'); e.className = 'set-log-pr'; e.textContent = '⚾ PR'; row.appendChild(e); }
+    if (!wb) { var e = document.createElement('span'); e.className = 'set-log-pr'; e.textContent = '🏆 PR'; row.appendChild(e); }
   } else if (isRep) {
     if (wb) wb.remove();
     if (!rb) { var e2 = document.createElement('span'); e2.className = 'set-log-reppr'; e2.textContent = '🔁 REP'; row.appendChild(e2); }
@@ -4872,6 +4948,10 @@ function logSet(exIndex, setIndex, field, value) {
   if (!window._setLogs[exIndex]) window._setLogs[exIndex] = [];
   if (!window._setLogs[exIndex][setIndex]) window._setLogs[exIndex][setIndex] = {weight:'', reps:''};
   window._setLogs[exIndex][setIndex][field] = value;
+  // V18: first touch on a set stamps it — this is how the app learns the
+  // order you ACTUALLY did things, independent of list order.
+  if (value !== '' && !window._setLogs[exIndex][setIndex].ts)
+    window._setLogs[exIndex][setIndex].ts = Date.now();
 
   // C1: recompute badges live — ADD when a set qualifies, REMOVE on a correction.
   // Note: we do NOT persist here. PRs commit at endWorkout() so a typo (1000→100) can't poison the record.
@@ -4885,6 +4965,7 @@ function logSet(exIndex, setIndex, field, value) {
     });
     if (refreshRowBadges(exIndex, setIndex) && navigator.vibrate) navigator.vibrate([50, 30, 50]);
   }
+  updateDoneChips();
   updateSession(); // persist set logs so reload doesn't lose them
 }
 
@@ -5000,7 +5081,7 @@ function renderSetRow(exIndex, setIndex, log) {
       '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps || '') + '"' +
         ' inputmode="numeric" min="0" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
-      (isPR ? '<span class="set-log-pr">⚾ PR</span>' : (isRep ? '<span class="set-log-reppr">🔁 REP</span>' : '')) +
+      (isPR ? '<span class="set-log-pr">🏆 PR</span>' : (isRep ? '<span class="set-log-reppr">🔁 REP</span>' : '')) +
       '<button class="set-log-del" data-ex="' + exIndex + '" data-s="' + setIndex + '"' +
         ' onclick="deleteSetRow(+this.dataset.ex,+this.dataset.s)" title="Remove set" aria-label="Remove set">✕</button>' +
     '</div>';
