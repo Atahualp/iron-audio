@@ -779,7 +779,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v18.3.0 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v18.4.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -1667,7 +1667,7 @@ let _ghSyncTimer  = null;
       try{
         const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:r,client_id:SPOTIFY_CLIENT_ID,code_verifier:v})});
         const d=await res.json();
-        if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);localStorage.removeItem('pkce_v');}
+        if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);localStorage.setItem('sp_authorized_at',String(Date.now()));localStorage.removeItem('pkce_v');}
         else console.error('Token exchange failed:',d);
       }catch(e){console.error(e);}
     }
@@ -1683,9 +1683,60 @@ let _ghSyncTimer  = null;
   updateGhReconnectBanner();
 })();
 
+// V18.4: Spotify refresh tokens expire 6 months after the ORIGINAL authorization
+// (enforced for existing apps from 2026-07-20). Expiry returns 400 invalid_grant.
+// Per Spotify's guidance: do not retry — discard and re-authorize.
+function spClearAuth(reason){
+  spToken=null; spUserId=null;
+  ['sp_token','sp_refresh','sp_expiry','sp_authorized_at'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+  try{updateSpBtn();}catch(e){}
+  if(reason)console.warn('Spotify auth cleared:',reason);
+  try{showSpReauthBanner(reason);}catch(e){}
+}
+
+// Visible banner — the silent failure is what cost a whole debugging session.
+function showSpReauthBanner(msg){
+  var el=document.getElementById('spReauthBanner');
+  if(!el){
+    el=document.createElement('div');
+    el.id='spReauthBanner';
+    el.className='update-banner';
+    el.style.top='calc(56px + env(safe-area-inset-top,0px))';
+    document.body.appendChild(el);
+  }
+  el.innerHTML='<span>🎵 '+escHtml(msg||'Spotify sign-in expired')+'</span>'+
+    '<button onclick="handleSpotifyConnect()">Reconnect</button>';
+  el.style.display='flex';
+}
+function hideSpReauthBanner(){var el=document.getElementById('spReauthBanner');if(el)el.style.display='none';}
+
+// True when the 6-month authorization window is nearly up (warn at 5.5 months).
+function spAuthAging(){
+  var t=parseInt(localStorage.getItem('sp_authorized_at')||'0',10);
+  if(!t)return false;
+  return (Date.now()-t) > 1.44e10; // ~166 days
+}
+
 async function refreshTok(){
   const rt=localStorage.getItem('sp_refresh');if(!rt)return;
-  try{const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:SPOTIFY_CLIENT_ID})});const d=await r.json();if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);}}catch(e){}
+  try{
+    const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:SPOTIFY_CLIENT_ID})});
+    const d=await r.json();
+    // Auth endpoints use {error:"string", error_description}, NOT the API's {error:{...}} shape.
+    if(d.error==='invalid_grant'||r.status===400){
+      spClearAuth('Spotify sign-in expired — reconnect to restore music');
+      return;
+    }
+    if(d.access_token){
+      spToken=d.access_token;
+      localStorage.setItem('sp_token',d.access_token);
+      localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);
+      if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);
+      hideSpReauthBanner();
+    }else{
+      console.warn('Spotify refresh failed:',d.error||'unknown',d.error_description||'');
+    }
+  }catch(e){console.warn('Spotify refresh network error:',e.message);}
 }
 
 async function fetchSpUser(){
@@ -2962,78 +3013,180 @@ async function searchTracks(g, count) {
 // playback queue. Spotify's AI DJ is NOT reachable from any public API
 // (it lives only inside Spotify's own app), so this is the closest
 // equivalent that costs no LLM tokens.
-const RADIO_SEEDS = {
-  'Hip-Hop': ['hip hop workout', 'rap gym', 'trap hype'],
-  'Rock': ['hard rock workout', 'metal gym', 'rock anthems'],
-  'EDM': ['edm workout', 'festival bangers', 'electro house'],
-  '80s': ['80s hits', '80s rock anthems', '80s workout'],
-  'Pop': ['pop workout', 'pop hits', 'dance pop'],
-  'Latin': ['latin workout', 'salsa hits', 'latin party'],
-  'R&B': ['rnb workout', 'r&b hits', 'soul groove'],
-  'Reggae': ['reggae hits', 'dancehall', 'roots reggae'],
-  'Reggaeton': ['reggaeton hits', 'perreo', 'reggaeton workout'],
-  'Anime': ['anime openings', 'anime rock', 'jpop energy'],
-  'Mix': ['workout hits', 'gym motivation', 'pump up'],
-  'Random': ['workout hits', 'gym motivation', 'pump up']
+// V18.4: RADIO SEEDS ARE ARTISTS, NOT SEARCH PHRASES.
+// The old approach fed free text ("hip hop workout") to /search, which matches
+// track/album/artist NAMES — hence the junk results. We now start an ARTIST
+// CONTEXT via PUT /me/player/play {context_uri}, which lets Spotify's own
+// autoplay extend the session indefinitely. /recommendations is permanently
+// gone (403 for apps created after 2024-11-27), so this is the only remaining
+// route to real radio behaviour.
+//
+// Names, not IDs: Spotify artist IDs are opaque 22-char strings and must never
+// be guessed. They're resolved once via /search?type=artist and cached.
+const RADIO_ARTISTS = {
+  'Hip-Hop':   ['Kendrick Lamar','DMX','Eminem','Jay-Z','Nas','Busta Rhymes','Ludacris','50 Cent','Ice Cube','Method Man','Travis Scott','J. Cole','Meek Mill','Notorious B.I.G.','Snoop Dogg'],
+  'Rock':      ['Metallica','AC/DC','Rage Against the Machine','Foo Fighters','Guns N Roses','Led Zeppelin','Black Sabbath','System of a Down','Pantera','Audioslave','Soundgarden','Disturbed','Pearl Jam','Queens of the Stone Age','Alice in Chains'],
+  'EDM':       ['Avicii','Calvin Harris','Martin Garrix','Deadmau5','Skrillex','Daft Punk','Zedd','Swedish House Mafia','Tiesto','Above & Beyond','Porter Robinson','Illenium','Odesza','Alesso','Knife Party'],
+  '80s':       ['Survivor','Bon Jovi','Journey','Foreigner','Van Halen','Def Leppard','Pat Benatar','Duran Duran','The Police','Tears for Fears','INXS','Heart','Billy Idol','Scorpions','Twisted Sister'],
+  'Pop':       ['The Weeknd','Bruno Mars','Dua Lipa','Lady Gaga','Katy Perry','Justin Timberlake','Rihanna','Ariana Grande','Maroon 5','Pink','Kelly Clarkson','Doja Cat','Harry Styles','Olivia Rodrigo','Charlie Puth'],
+  'Latin':     ['Marc Anthony','Celia Cruz','Hector Lavoe','Willie Colon','Ruben Blades','Gilberto Santa Rosa','Victor Manuelle','Romeo Santos','Aventura','Prince Royce','Juan Luis Guerra','Elvis Crespo','Olga Tanon','Eddie Santiago','Jerry Rivera'],
+  'R&B':       ['Usher','Beyonce','Stevie Wonder','Marvin Gaye','Alicia Keys','SZA','Frank Ocean','Mary J. Blige','TLC','Janet Jackson','Aaliyah','Erykah Badu','Khalid','Bryson Tiller','Ne-Yo'],
+  'Reggae':    ['Bob Marley','Sean Paul','Jimmy Cliff','Damian Marley','Toots and the Maytals','Shaggy','Burning Spear','Chronixx','Steel Pulse','Peter Tosh','Ziggy Marley','Stephen Marley','Inner Circle','Barrington Levy','Beres Hammond'],
+  'Reggaeton': ['Daddy Yankee','Bad Bunny','J Balvin','Don Omar','Wisin & Yandel','Ozuna','Nicky Jam','Karol G','Rauw Alejandro','Farruko','Anuel AA','Maluma','Tego Calderon','Myke Towers','Arcangel'],
+  'Anime':     ['LiSA','One Ok Rock','Kenshi Yonezu','FLOW','Yoasobi','Linked Horizon','Hiroyuki Sawano','Man With a Mission','JAM Project','Aimer','Ado','SiM','Eve','Asian Kung-Fu Generation','Granrodeo'],
+  'Mix':       ['Kendrick Lamar','AC/DC','Avicii','The Weeknd','Daddy Yankee','Usher','Bob Marley','Metallica','Bruno Mars','Eminem','Calvin Harris','Bad Bunny','Foo Fighters','Beyonce','Dua Lipa'],
+  'Random':    ['Michael Jackson','Eminem','AC/DC','The Weeknd','Queen','Daft Punk','Beyonce','Metallica','Bruno Mars','Bob Marley','Avicii','Kendrick Lamar','Rihanna','Foo Fighters','Daddy Yankee']
 };
 
-async function spFetch(path, opts) {
-  return fetch('https://api.spotify.com/v1' + path, Object.assign({
-    headers: { Authorization: 'Bearer ' + spToken, 'Content-Type': 'application/json' }
-  }, opts || {}));
+// V18.4: was a bare fetch — every failure vanished into a caller's empty catch{}.
+// Now: refresh-and-retry on 401, Retry-After backoff on transient 429, and a hard
+// stop on quota exhaustion (Spotify returns {error:{reason:"QUOTA_EXCEEDED"}}).
+var _spQuotaBlockedUntil = 0;
+
+function spLastError(){ return window._spLastError || ''; }
+
+async function spFetch(path, opts, _depth) {
+  _depth = _depth || 0;
+  if (Date.now() < _spQuotaBlockedUntil && _depth === 0) {
+    window._spLastError = 'Spotify daily limit reached — try again later.';
+    return new Response(null, { status: 429 });
+  }
+  var res;
+  try {
+    res = await fetch('https://api.spotify.com/v1' + path, Object.assign({
+      headers: { Authorization: 'Bearer ' + spToken, 'Content-Type': 'application/json' }
+    }, opts || {}));
+  } catch (e) {
+    window._spLastError = 'Network error: ' + (e.message || 'offline');
+    throw e;
+  }
+
+  if (res.ok || res.status === 204) { window._spLastError = ''; return res; }
+
+  // 401 — token died mid-session. Refresh once, then retry once.
+  if (res.status === 401 && _depth === 0) {
+    await refreshTok();
+    if (!spToken) { window._spLastError = 'Spotify sign-in expired.'; return res; }
+    return spFetch(path, opts, _depth + 1);
+  }
+
+  if (res.status === 429) {
+    var reason = '', retryAfter = parseInt(res.headers.get('Retry-After') || '0', 10);
+    try { var b = await res.clone().json(); reason = (b && b.error && b.error.reason) || ''; } catch (e) {}
+    if (reason === 'QUOTA_EXCEEDED') {
+      // Backoff is useless here — quota does not clear in seconds. Stop trying.
+      _spQuotaBlockedUntil = Date.now() + 15 * 60 * 1000;
+      window._spLastError = 'Spotify daily request limit reached.';
+      return res;
+    }
+    if (_depth < 3) {
+      var waitMs = retryAfter > 0 ? retryAfter * 1000 : Math.pow(2, _depth) * 1000;
+      if (waitMs > 30000) { window._spLastError = 'Rate limited (retry in ' + retryAfter + 's).'; return res; }
+      await new Promise(function (r) { setTimeout(r, waitMs); });
+      return spFetch(path, opts, _depth + 1);
+    }
+    window._spLastError = 'Spotify rate limit — too many requests.';
+    return res;
+  }
+
+  try { var j = await res.clone().json(); window._spLastError = (j && j.error && j.error.message) || ('HTTP ' + res.status); }
+  catch (e) { window._spLastError = 'HTTP ' + res.status; }
+  return res;
 }
 
 // Build a shuffled track pool for a genre using /search (limit max is 10
 // since Spotify's Feb-2026 changes, so we page a few seeds).
-async function radioTracks(g, count) {
-  var seeds = RADIO_SEEDS[g] || RADIO_SEEDS['Mix'];
-  var seen = {}, out = [];
-  for (var i = 0; i < seeds.length && out.length < count; i++) {
-    for (var off = 0; off < 30 && out.length < count; off += 10) {
-      try {
-        var r = await spFetch('/search?q=' + encodeURIComponent(seeds[i]) +
-          '&type=track&limit=10&offset=' + off);
-        if (!r.ok) break;
-        var j = await r.json();
-        var items = (j.tracks && j.tracks.items) || [];
-        if (!items.length) break;
-        items.forEach(function(t) {
-          if (t && t.uri && !seen[t.uri]) { seen[t.uri] = 1; out.push(t); }
-        });
-      } catch(e) { break; }
-    }
-  }
-  for (var k = out.length - 1; k > 0; k--) { var j2 = Math.floor(Math.random() * (k + 1)); var tmp = out[k]; out[k] = out[j2]; out[j2] = tmp; }
-  return out.slice(0, count);
+// Resolve an artist NAME to a Spotify artist URI. Cached — IDs never change.
+async function resolveArtistUri(name) {
+  var cache = {};
+  try { cache = JSON.parse(localStorage.getItem('ia_artist_uris') || '{}'); } catch(e) {}
+  var key = name.toLowerCase();
+  if (cache[key]) return cache[key];
+  var r = await spFetch('/search?q=' + encodeURIComponent('artist:"' + name + '"') + '&type=artist&limit=1');
+  if (!r.ok) throw new Error(spLastError() || 'artist lookup failed');
+  var j = await r.json();
+  var a = j && j.artists && j.artists.items && j.artists.items[0];
+  if (!a || !a.uri) throw new Error('Artist not found: ' + name);
+  cache[key] = a.uri;
+  try { localStorage.setItem('ia_artist_uris', JSON.stringify(cache)); } catch(e) {}
+  return a.uri;
+}
+
+// Rotate through the roster so the same artist doesn't open every session.
+// (offset is unavailable on artist contexts, so a context always starts at the
+// same track — variety has to come from picking a different artist.)
+function pickRadioArtist(g) {
+  var roster = RADIO_ARTISTS[g] || RADIO_ARTISTS['Mix'];
+  var recent = [];
+  try { recent = JSON.parse(localStorage.getItem('ia_radio_recent') || '[]'); } catch(e) {}
+  var fresh = roster.filter(function(n){ return recent.indexOf(n.toLowerCase()) === -1; });
+  if (fresh.length < 3) { fresh = roster.slice(); recent = []; }
+  var pick = fresh[Math.floor(Math.random() * fresh.length)];
+  recent.unshift(pick.toLowerCase());
+  try { localStorage.setItem('ia_radio_recent', JSON.stringify(recent.slice(0, 8))); } catch(e) {}
+  return pick;
 }
 
 async function startGenreRadio(g, container) {
   try {
     var dev = await spFetch('/me/player/devices');
-    var devices = dev.ok ? ((await dev.json()).devices || []) : [];
-    var active = devices.filter(function(d){ return !d.is_restricted; })[0];
+    if (!dev.ok) throw new Error(spLastError() || 'device lookup failed');
+    var devices = (await dev.json()).devices || [];
+    // is_restricted === true means the device accepts no Web API commands at all.
+    var active = devices.filter(function(d){ return !d.is_restricted && d.id; });
+    active = active.filter(function(d){ return d.is_active; })[0] || active[0];
     if (!active) {
-      if (container) container.innerHTML = '<div class="msg msg-info">🎧 Open Spotify on your phone and press play once, then tap Start Radio again.</div>';
+      if (container) container.innerHTML = '<div class="msg msg-info">\ud83c\udfa7 Open Spotify on your phone and press play once, then tap Start Radio again.</div>';
       return false;
     }
-    var tracks = await radioTracks(g, 30);
-    if (!tracks.length) throw new Error('No tracks found for ' + g);
+
+    var artist = pickRadioArtist(g);
+    var artistUri = await resolveArtistUri(artist);
+
+    // context_uri (not uris[]) — a bare track array is NOT a context, so Spotify
+    // autoplay can never engage and playback hard-stops when the list runs out.
     var res = await spFetch('/me/player/play?device_id=' + encodeURIComponent(active.id), {
-      method: 'PUT', body: JSON.stringify({ uris: tracks.map(function(t){ return t.uri; }) })
+      method: 'PUT', body: JSON.stringify({ context_uri: artistUri })
     });
     if (res.status === 403) {
       if (container) container.innerHTML = '<div class="msg msg-info">Playback control needs Spotify Premium. Playlist mode still works.</div>';
       return false;
     }
-    if (!res.ok && res.status !== 204) throw new Error('play ' + res.status);
+    if (!res.ok && res.status !== 204) throw new Error(spLastError() || ('play ' + res.status));
+
     window._activeGenre = g;
-    if (container) container.innerHTML = '<div class="msg msg-ok">📻 ' + escHtml(g) + ' radio playing on ' + escHtml(active.name) + ' — ' + tracks.length + ' tracks queued.</div>';
+    window._radioArtist = artist;
+    if (container) container.innerHTML =
+      '<div class="msg msg-ok">\ud83d\udcfb ' + escHtml(g) + ' radio \u2014 starting with ' +
+      escHtml(artist) + ' on ' + escHtml(active.name) + '.</div>' +
+      '<div id="radioQueueNote" style="font-size:10px;color:var(--muted);padding:6px 0"></div>';
+
+    // Player writes settle asynchronously ("order of execution is not guaranteed"),
+    // so give it a beat, then report queue depth. This is how we learn whether
+    // Spotify autoplay is extending the context or the station will run dry.
+    setTimeout(function(){ reportRadioQueue(); }, 2500);
     startMiniPlayer();
     return true;
   } catch(e) {
-    if (container) container.innerHTML = '<div class="msg msg-info">Radio failed: ' + escHtml(e.message || 'unknown') + '</div>';
+    if (container) container.innerHTML =
+      '<div class="msg msg-err">Radio failed: ' + escHtml(e.message || spLastError() || 'unknown') + '</div>';
     return false;
   }
+}
+
+// One-shot diagnostic: how deep is the queue after the context starts?
+async function reportRadioQueue() {
+  var note = document.getElementById('radioQueueNote');
+  if (!note) return;
+  try {
+    var r = await spFetch('/me/player/queue');
+    if (!r.ok) { note.textContent = ''; return; }
+    var j = await r.json();
+    var n = (j && j.queue && j.queue.length) || 0;
+    note.textContent = n
+      ? ('\u25b6 ' + n + ' tracks queued \u00b7 autoplay will extend this if enabled in Spotify settings')
+      : 'Queue empty \u2014 turn on Autoplay in Spotify \u2192 Settings \u2192 Playback to keep the music going.';
+  } catch(e) { note.textContent = ''; }
 }
 
 // ── V18.3: MINI PLAYER ────────────────────────────────────────────────
@@ -3069,6 +3222,15 @@ async function pollMiniPlayer() {
     var j = await r.json();
     var t = j && j.item;
     if (!t) { _mpBusy = false; return; }
+    window._mpPlaying = !!j.is_playing;
+    // Ads have no useful metadata and can't be skipped — show a placeholder.
+    if (j.currently_playing_type === 'ad' || t.type === 'ad') {
+      var ta = document.getElementById('mpTitle');
+      var aa = document.getElementById('mpArtist');
+      if (ta) ta.textContent = 'Advertisement';
+      if (aa) aa.textContent = '';
+      _mpBusy = false; return;
+    }
     var art = (t.album && t.album.images && t.album.images.length) ? t.album.images[t.album.images.length - 1].url : '';
     var el = function(id) { return document.getElementById(id); };
     if (el('mpArt')) el('mpArt').style.backgroundImage = art ? 'url(' + art + ')' : '';
@@ -3086,12 +3248,18 @@ async function mpControl(action) {
     if (action === 'next')      await spFetch('/me/player/next', { method: 'POST' });
     else if (action === 'prev') await spFetch('/me/player/previous', { method: 'POST' });
     else {
-      var r = await spFetch('/me/player');
-      var playing = r.ok ? ((await r.json()) || {}).is_playing : false;
+      // V18.4: reuse is_playing from the last poll instead of re-reading /me/player.
+      // Halves the request cost of a play/pause tap.
+      var playing = !!window._mpPlaying;
       await spFetch('/me/player/' + (playing ? 'pause' : 'play'), { method: 'PUT' });
+      window._mpPlaying = !playing;
+      var pb = document.getElementById('mpPlay');
+      if (pb) pb.textContent = window._mpPlaying ? '\u23f8' : '\u25b6'; // optimistic
     }
-    setTimeout(pollMiniPlayer, 400);
-  } catch(e) {}
+    // Spotify does not guarantee ordering between Player endpoints; 400ms was
+    // reading pre-skip state and briefly showing the previous track.
+    setTimeout(pollMiniPlayer, 1000);
+  } catch(e) { console.warn('Player control failed:', spLastError() || e.message); }
 }
 
 async function createPlaylist(name, uris){
@@ -4040,6 +4208,7 @@ function endWorkout() {
   try {
     var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
     if (hist.length > 0) {
+      hist[0].provisional = false; // workout finished — no longer a ghost
       hist[0].totalVolume = totalVolume;
       hist[0].durationMin = minutes;
       hist[0].setLogs = collectSetLogs(); // finalize logs (generation-time snapshot is empty)
@@ -4542,9 +4711,12 @@ function stopTimer() {
 // ═══════════════════════════════════════════════════════════════════════
 function saveWorkoutToHistory(exercises) {
   try {
-    const history = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    let history = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    // Drop the ghost from any workout generated but never finished.
+    history = history.filter(function(e){ return !e.provisional; });
     const entry = {
       id: Date.now(),
+      provisional: true, // cleared by endWorkout(); purged if the workout is abandoned
       date: new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
       setLogs: {}, // logs are finalized at endWorkout(); capturing here reads the prior workout's logs
       time: new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}),
@@ -4705,6 +4877,55 @@ function rebuildPRsFor(name) {
   } catch(e) {}
 }
 
+// ── Session deletion ───────────────────────────────────────────────────
+// A session counts as empty when no set has a positive weight OR reps.
+function isEmptySession(e) {
+  var logs = (e && e.setLogs) || {};
+  return !Object.keys(logs).some(function(n) {
+    return (logs[n] || []).some(function(l) {
+      return (parseFloat(l.weight) > 0) || (parseInt(l.reps, 10) > 0);
+    });
+  });
+}
+
+// hist[0] is the live workout while a session is open — never delete it.
+function isActiveEntry(i) {
+  return i === 0 && !!localStorage.getItem('ia_session');
+}
+
+function deleteHistoryEntry(i) {
+  if (isActiveEntry(i)) { alert('That workout is still in progress. Finish it first.'); return; }
+  var hist;
+  try { hist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) { return; }
+  var entry = hist[i];
+  if (!entry) return;
+  var label = (entry.date || 'this workout') + ' · ' + ((entry.muscles || []).join(', ') || 'workout');
+  if (!confirm('Delete ' + label + '?\n\nPersonal records will be recalculated without it.')) return;
+
+  var names = Object.keys(entry.setLogs || {});
+  hist.splice(i, 1);
+  try { localStorage.setItem('iron_history', JSON.stringify(hist)); }
+  catch(e) { alert('Delete failed — storage error.'); return; }
+
+  names.forEach(rebuildPRsFor); // must run after the write so it rescans without the entry
+  _histEdits = {};              // indices shifted; drop staged edits
+  if (navigator.vibrate) navigator.vibrate(15);
+  renderHistoryList();
+}
+
+function purgeEmptySessions() {
+  var hist;
+  try { hist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) { return; }
+  var kept = hist.filter(function(e, i) { return isActiveEntry(i) || !isEmptySession(e); });
+  var n = hist.length - kept.length;
+  if (!n) { alert('No empty sessions to remove.'); return; }
+  if (!confirm('Remove ' + n + ' session' + (n > 1 ? 's' : '') + ' with no logged sets?')) return;
+  try { localStorage.setItem('iron_history', JSON.stringify(kept)); } catch(e) { return; }
+  _histEdits = {}; // no PR rebuild needed — empty sessions contributed none
+  if (navigator.vibrate) navigator.vibrate(15);
+  renderHistoryList();
+}
+
 function renderHistoryList() {
   const list = document.getElementById('histList');
   if (!list) return;
@@ -4716,7 +4937,10 @@ function renderHistoryList() {
     return;
   }
 
-  list.innerHTML = renderWeeklyVolume(history) + history.map((entry, i) => {
+  var emptyCount = history.filter(function(e, i){ return !isActiveEntry(i) && isEmptySession(e); }).length;
+  var purgeBar = emptyCount ? '<div style="padding:0 0 10px"><button onclick="purgeEmptySessions()" style="width:100%;padding:9px;background:transparent;border:0.5px solid var(--border);border-radius:28px;color:var(--muted);font-weight:700;font-size:11px;cursor:pointer">🧹 Purge ' + emptyCount + ' empty session' + (emptyCount > 1 ? 's' : '') + '</button></div>' : '';
+
+  list.innerHTML = renderWeeklyVolume(history) + purgeBar + history.map((entry, i) => {
     var hrBadge = '';
     if (entry.hr && !entry.hr.pending) {
       hrBadge = '<div class="hist-hr-badge">❤️ ' + entry.hr.avg + ' avg · ' + entry.hr.peak + ' peak bpm</div>';
@@ -4724,8 +4948,10 @@ function renderHistoryList() {
       hrBadge = '<div class="hist-hr-badge pending" onclick="fetchHistoryHr(' + i + ',' + entry.workoutStart + ',' + entry.workoutEnd + ')">❤️ Tap to sync HR from Fitbit</div>';
     }
     return `
-    <div class="hist-item">
-      <div onclick="toggleHistDetail(${i})" style="cursor:pointer">
+    <div class="hist-item" style="position:relative">
+      ${isActiveEntry(i) ? '' : `<button onclick="deleteHistoryEntry(${i})" aria-label="Delete this workout"
+        style="position:absolute;top:6px;right:6px;min-width:40px;min-height:40px;background:transparent;border:none;color:var(--muted);font-size:15px;cursor:pointer;touch-action:manipulation;z-index:2">🗑</button>`}
+      <div onclick="toggleHistDetail(${i})" style="cursor:pointer;padding-right:40px">
         <div class="hist-item-date">${entry.date} · ${entry.time}</div>
         <div class="hist-item-title">${entry.duration}MIN · ${(entry.muscles||[]).map(m=>m.toUpperCase()).join(', ')}</div>
         <div class="hist-item-meta">${entry.exercises?.length || 0} exercises · ${entry.difficulty || 'intermediate'} · ${entry.mode || 'standard'} · ${entry.genre || ''}</div>
