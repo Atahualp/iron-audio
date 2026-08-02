@@ -744,7 +744,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v18.0.0 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v18.2.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -1613,6 +1613,7 @@ const GH_SCOPE     = [
   'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
   'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
   'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly',
+  'https://www.googleapis.com/auth/drive.appdata', // V18.2: hidden app-only backup folder
 ].join(' ');
 const GH_AUTH_URL  = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GH_API_BASE  = 'https://health.googleapis.com/v4/users/me';
@@ -2293,6 +2294,7 @@ function openSettings() { updateStorageCounts();
   updateCostDisplay();
   updateGhBtn();
   document.getElementById('settingsOverlay').classList.add('open');
+  try { updateBackupStatus(); } catch(e) {}
   document.getElementById('settingsPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -3516,6 +3518,7 @@ function releaseWakeLock() {
           }
         } catch(e) {}
         updateElapsedDisplay();
+        try { updateDoneChips(); } catch(e) {} // V18.1: restore done-order chips
 
       } catch(e) { console.error('Session restore error:', e); }
 
@@ -3846,6 +3849,7 @@ function endWorkout() {
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
+  driveBackup(true); // V18.2: silent off-device snapshot while the token is fresh
   // Stop the game clock and end the session — can't resume anyway.
   if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
   elapsedRunning = false;
@@ -3904,6 +3908,139 @@ function confirmEndWorkout() {
 
 
 // ── STORAGE MANAGEMENT ─────────────────────────────────────────────────
+// ── V18.2: DATA BACKUP (Google Drive appDataFolder + file export) ─────
+// The app's data lives ONLY in localStorage; these functions give it an
+// off-device copy. Restore MERGES (never clobbers): histories union by id,
+// records keep the better mark.
+const BACKUP_NAME = 'iron-audio-backup.json';
+
+function buildBackupSnapshot() {
+  var get = function(k, d) { try { return JSON.parse(localStorage.getItem(k) || d); } catch(e) { return JSON.parse(d); } };
+  return {
+    app: 'iron-audio', schema: 1, ts: Date.now(),
+    history: get('iron_history', '[]'),
+    prs: get('iron_prs', '{}'),
+    repPrs: get('iron_rep_prs', '{}')
+  };
+}
+
+function mergeBackupIntoLocal(data) {
+  if (!data || data.app !== 'iron-audio' || !Array.isArray(data.history)) throw new Error('not an Iron Audio backup');
+  var localHist = [];
+  try { localHist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) {}
+  var byId = {};
+  localHist.concat(data.history).forEach(function(e) { if (e && e.id && !byId[e.id]) byId[e.id] = e; });
+  var merged = Object.keys(byId).map(function(k) { return byId[k]; }).sort(function(a, b) { return b.id - a.id; });
+
+  var prs = {}; try { prs = JSON.parse(localStorage.getItem('iron_prs') || '{}'); } catch(e) {}
+  Object.keys(data.prs || {}).forEach(function(k) {
+    var inc = data.prs[k], cur = prs[k];
+    if (!cur || inc.weight > cur.weight || (inc.weight === cur.weight && inc.reps > cur.reps)) prs[k] = inc;
+  });
+  var reps = {}; try { reps = JSON.parse(localStorage.getItem('iron_rep_prs') || '{}'); } catch(e) {}
+  Object.keys(data.repPrs || {}).forEach(function(k) {
+    if (!reps[k]) reps[k] = {};
+    Object.keys(data.repPrs[k]).forEach(function(b) {
+      if (!reps[k][b] || data.repPrs[k][b].reps > reps[k][b].reps) reps[k][b] = data.repPrs[k][b];
+    });
+  });
+  localStorage.setItem('iron_history', JSON.stringify(merged));
+  localStorage.setItem('iron_prs', JSON.stringify(prs));
+  localStorage.setItem('iron_rep_prs', JSON.stringify(reps));
+  return { entries: merged.length, added: merged.length - localHist.length };
+}
+
+function driveHeaders() { return { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' }; }
+
+async function driveFindBackup() {
+  var res = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id,modifiedTime)&q=' +
+    encodeURIComponent("name='" + BACKUP_NAME + "'"), { headers: driveHeaders() });
+  if (!res.ok) throw new Error('drive list ' + res.status);
+  var j = await res.json();
+  return (j.files && j.files[0]) || null;
+}
+
+async function driveBackup(silent) {
+  try {
+    if (!ghToken || ghTokenExpiry <= Date.now()) {
+      if (!silent) alert('Connect Google first (Settings → Google Health) — same sign-in covers backup.');
+      _ghLog('backup: no token, skipped');
+      return false;
+    }
+    var body = JSON.stringify(buildBackupSnapshot());
+    var existing = await driveFindBackup();
+    var res;
+    if (existing) {
+      res = await fetch('https://www.googleapis.com/upload/drive/v3/files/' + existing.id + '?uploadType=media',
+        { method: 'PATCH', headers: driveHeaders(), body: body });
+    } else {
+      var boundary = 'ia' + Date.now();
+      var multi = '--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
+        JSON.stringify({ name: BACKUP_NAME, parents: ['appDataFolder'] }) +
+        '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + body + '\r\n--' + boundary + '--';
+      res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'multipart/related; boundary=' + boundary },
+        body: multi });
+    }
+    if (!res.ok) { _ghLog('backup: upload ' + res.status); if (!silent) alert('Backup failed (' + res.status + '). Reconnect Google and retry.'); return false; }
+    localStorage.setItem('ia_last_backup', String(Date.now()));
+    _ghLog('backup: ok');
+    updateBackupStatus();
+    if (!silent) alert('✓ Backed up to Google Drive');
+    return true;
+  } catch(e) { _ghLog('backup: err ' + (e && e.message)); if (!silent) alert('Backup failed: ' + (e && e.message)); return false; }
+}
+
+async function driveRestore() {
+  try {
+    if (!ghToken || ghTokenExpiry <= Date.now()) { alert('Connect Google first (Settings → Google Health).'); return; }
+    var f = await driveFindBackup();
+    if (!f) { alert('No backup found in Drive yet. Run a backup first.'); return; }
+    if (!confirm('Restore from Drive backup? Your local data is MERGED with the backup — nothing gets deleted.')) return;
+    var res = await fetch('https://www.googleapis.com/drive/v3/files/' + f.id + '?alt=media', { headers: driveHeaders() });
+    if (!res.ok) { alert('Restore failed (' + res.status + ')'); return; }
+    var data = await res.json();
+    var r = mergeBackupIntoLocal(data);
+    alert('✓ Restored. ' + r.entries + ' workouts total (' + Math.max(0, r.added) + ' added).');
+    try { renderHistoryList(); } catch(e) {}
+    updateBackupStatus();
+  } catch(e) { alert('Restore failed: ' + (e && e.message)); }
+}
+
+function exportBackupFile() {
+  var blob = new Blob([JSON.stringify(buildBackupSnapshot(), null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var d = new Date();
+  a.download = 'iron-audio-backup-' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 5000);
+}
+
+function importBackupFile(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    try {
+      var r = mergeBackupIntoLocal(JSON.parse(reader.result));
+      alert('✓ Imported. ' + r.entries + ' workouts total (' + Math.max(0, r.added) + ' added).');
+      try { renderHistoryList(); } catch(e) {}
+    } catch(e) { alert('Import failed: ' + (e && e.message)); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function updateBackupStatus() {
+  var el = document.getElementById('backupStatus');
+  if (!el) return;
+  var t = parseInt(localStorage.getItem('ia_last_backup') || '0', 10);
+  el.textContent = t ? ('✓ Last Drive backup: ' + new Date(t).toLocaleString()) : '○ No Drive backup yet';
+  el.className = 'settings-status ' + (t ? 'active' : 'inactive');
+}
+
 function clearStorage(type) {
   var messages = {
     'history': 'Clear all workout history?',
@@ -5642,6 +5779,26 @@ async function searchMixTracks(count) {
     <div class="settings-info" style="margin-top:8px">
       Syncs heart rate data from your Fitbit Air after each workout.<br>
       Tokens last ~60 min — reconnect when expired.
+    </div>
+  </div>
+
+  <!-- Data backup -->
+  <div class="settings-section">
+    <hr class="settings-divider">
+    <label class="settings-label">☁️ Data &amp; Backup</label>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="gh-connect-btn" style="flex:1" onclick="driveBackup(false)">⬆ Back Up Now</button>
+      <button class="gh-connect-btn" style="flex:1" onclick="driveRestore()">⬇ Restore</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="gh-connect-btn" style="flex:1" onclick="exportBackupFile()">💾 Export File</button>
+      <button class="gh-connect-btn" style="flex:1" onclick="document.getElementById('backupImportInput').click()">📂 Import File</button>
+      <input type="file" id="backupImportInput" accept=".json,application/json" style="display:none" onchange="importBackupFile(this)">
+    </div>
+    <div id="backupStatus" class="settings-status inactive">○ No Drive backup yet</div>
+    <div class="settings-info" style="margin-top:8px">
+      Auto-backs up to your Google Drive (hidden app folder) after every finished workout while connected.
+      Restore and Import MERGE with local data — nothing is overwritten or deleted.
     </div>
   </div>
 

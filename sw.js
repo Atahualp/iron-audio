@@ -2,7 +2,7 @@
 // Network-first so a fresh deploy is picked up immediately (version hygiene);
 // cache fallback keeps the app openable offline. Also required so
 // showNotification() works for rest-complete alerts.
-const CACHE = 'iron-audio-v18';
+const CACHE = 'iron-audio-v18-2';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./'])).catch(() => {}));
