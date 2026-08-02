@@ -2973,7 +2973,7 @@ function renderExerciseCard(ex, index) {
           '<div class="wk-desc">' + escHtml(ex.desc) + '</div>' +
           '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + ex.muscle + '</span>' +
           (ex.pat && PAT_LABELS[ex.pat] ? '<span class="wk-pat-badge">' + escHtml(PAT_LABELS[ex.pat]) + '</span>' : '') +
-          '<span class="wk-done-chip" id="doneChip-' + i + '"></span>' +
+          '<span class="wk-done-chip" id="doneChip-' + index + '"></span>' +
         '</div>' +
         '<div class="wk-sets-box">' +
           '<div class="wk-sets">' + ex.sets + '</div>' +
