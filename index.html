@@ -76,6 +76,11 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 
 /* ── GENRE ───────────────────────────────────────────────────────── */
 .genre-row{display:flex;flex-wrap:wrap;gap:7px}
+.music-mode-row{display:flex;gap:8px;margin-bottom:10px}
+.mm-chip{flex:1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:9px 8px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;min-height:48px}
+.mm-chip.on{border-color:var(--accent);background:rgba(255,255,255,.08);color:var(--text)}
+.mm-chip:active{transform:scale(.97)}
+.mm-sub{display:block;font-size:9px;font-weight:400;color:var(--muted);letter-spacing:.3px;margin-top:1px}
 .g-pill{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
 .g-pill.on{border-color:var(--accent);background:rgba(255,255,255,.1)}
 .g-pill:active{transform:scale(.95)}
@@ -148,6 +153,16 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .illus-placeholder .ph-text{font-size:10px;color:var(--muted);text-align:center;line-height:1.5;max-width:160px}
 .wk-done-chip{font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:5px;color:var(--accent)}
 .wk-done-chip.cb{color:#FAC775}
+.update-banner{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:300;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--accent);color:var(--navy);border-radius:20px;font-size:13px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.update-banner button{background:var(--navy);color:#fff;border:none;border-radius:28px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;min-height:40px}
+.mini-player{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:150;display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(15,27,46,.97);backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.mp-art{width:40px;height:40px;border-radius:10px;background:var(--bg) center/cover no-repeat;flex-shrink:0}
+.mp-meta{flex:1;min-width:0}
+.mp-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-artist{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-btn{min-width:40px;min-height:40px;background:transparent;border:none;color:var(--accent2);font-size:16px;cursor:pointer;border-radius:12px}
+.mp-btn:active{transform:scale(.9);background:rgba(196,206,212,.1)}
+.mp-play{color:var(--accent);font-size:19px}
 .wk-pat-badge{font-size:9px;letter-spacing:.8px;color:var(--muted);border:0.5px solid var(--border);border-radius:100px;padding:3px 8px;margin-left:5px;text-transform:uppercase}
 .muscle-tag{position:absolute;bottom:8px;left:8px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(6px)}
 .wk-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
@@ -678,6 +693,10 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
           <div class="sec-title" style="margin-bottom:2px">SPOTIFY PLAYLIST</div>
           <div style="font-size:10px;color:var(--muted)">Auto-generate after workout</div>
         </div>
+        <div class="music-mode-row" id="musicModeRow">
+          <button class="mm-chip on" id="mmRadio" onclick="setMusicMode('radio')">📻 Radio <span class="mm-sub">instant · no AI</span></button>
+          <button class="mm-chip" id="mmAi" onclick="setMusicMode('ai')">✨ AI Playlist <span class="mm-sub">curated</span></button>
+        </div>
         <div class="pl-toggle-btn on" onclick="togglePlaylist(this)">
           <span class="pl-toggle-txt">ON</span>
         </div>
@@ -690,6 +709,22 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
   </div>
 
   <!-- RESULTS VIEW -->
+  <div class="update-banner" id="updateBanner" style="display:none">
+    <span>🆕 New version ready</span>
+    <button onclick="applyUpdate()">Reload</button>
+  </div>
+
+  <div class="mini-player" id="miniPlayer" style="display:none">
+    <div class="mp-art" id="mpArt"></div>
+    <div class="mp-meta">
+      <div class="mp-title" id="mpTitle">—</div>
+      <div class="mp-artist" id="mpArtist"></div>
+    </div>
+    <button class="mp-btn" onclick="mpControl('prev')" aria-label="Previous track">⏮</button>
+    <button class="mp-btn mp-play" id="mpPlay" onclick="mpControl('toggle')" aria-label="Play or pause">▶</button>
+    <button class="mp-btn" onclick="mpControl('next')" aria-label="Next track">⏭</button>
+  </div>
+
   <div id="results">
     <div class="res-hdr">
       <button class="back-btn" onclick="showCfg()">← Back</button>
@@ -744,7 +779,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v18.2.0 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v18.3.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -792,6 +827,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     <div class="ew-share-row">
       <button class="ew-share-pill" onclick="closeEwModal();setTimeout(()=>document.querySelector('.share-btn')&&document.querySelector('.share-btn').click(),200)">📸 Share Card</button>
     </div>
+    <div id="ewBackup" class="settings-status inactive" style="margin-bottom:10px;display:none"></div>
     <button class="ew-confirm" onclick="confirmEndWorkout()">✓ DONE</button>
   </div>
 </div>
@@ -843,6 +879,7 @@ function getMuscleColor(muscle) {
 
 // ─── APP STATE ────────────────────────────────────────────────────────
 let dur = 30;var perMuscleCount=2, muscles = [], genre = '', playlistEnabled = true;
+var musicMode = 'radio'; // 'radio' = search+queue, zero AI tokens; 'ai' = curated playlist
 let spToken = null, spUserId = null;
 
 
@@ -1675,7 +1712,7 @@ async function doSpotifyAuth(){
   const v=genVerifier(),ch=await genChallenge(v);localStorage.setItem('pkce_v',v);
   const u=new URL('https://accounts.spotify.com/authorize');
   u.searchParams.set('client_id',SPOTIFY_CLIENT_ID);u.searchParams.set('response_type','code');u.searchParams.set('redirect_uri',redir);
-  u.searchParams.set('scope','playlist-modify-public playlist-modify-private user-read-private user-read-email');
+  u.searchParams.set('scope','playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing');
   u.searchParams.set('code_challenge_method','S256');u.searchParams.set('code_challenge',ch);
   window.location.href=u.toString();
 }
@@ -1786,6 +1823,10 @@ function initGoogleHealth() {
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_token_expiry');
   }
+  // Deferred: consts declared later in the file (BACKUP_NAME etc.) are in the
+  // temporal dead zone during this initial evaluation — same TDZ class that
+  // once broke GH OAuth. setTimeout(0) runs it after the script fully loads.
+  setTimeout(maybeRunPendingBackup, 0); // V18.2.1: finish the backup the user reconnected for
   // If we have a live token now (fresh from callback or restored), flush any workouts
   // that couldn't sync earlier (e.g. token died mid-workout, or app was offline).
   if (ghToken && ghTokenExpiry > Date.now()) {
@@ -2295,6 +2336,7 @@ function openSettings() { updateStorageCounts();
   updateGhBtn();
   document.getElementById('settingsOverlay').classList.add('open');
   try { updateBackupStatus(); } catch(e) {}
+  try { updateGifCacheStatus(); } catch(e) {}
   document.getElementById('settingsPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -2915,6 +2957,143 @@ async function searchTracks(g, count) {
 
 
 
+// ── V18.3: GENRE RADIO ────────────────────────────────────────────────
+// Zero-AI music: search the catalog by genre tag and push straight to the
+// playback queue. Spotify's AI DJ is NOT reachable from any public API
+// (it lives only inside Spotify's own app), so this is the closest
+// equivalent that costs no LLM tokens.
+const RADIO_SEEDS = {
+  'Hip-Hop': ['hip hop workout', 'rap gym', 'trap hype'],
+  'Rock': ['hard rock workout', 'metal gym', 'rock anthems'],
+  'EDM': ['edm workout', 'festival bangers', 'electro house'],
+  '80s': ['80s hits', '80s rock anthems', '80s workout'],
+  'Pop': ['pop workout', 'pop hits', 'dance pop'],
+  'Latin': ['latin workout', 'salsa hits', 'latin party'],
+  'R&B': ['rnb workout', 'r&b hits', 'soul groove'],
+  'Reggae': ['reggae hits', 'dancehall', 'roots reggae'],
+  'Reggaeton': ['reggaeton hits', 'perreo', 'reggaeton workout'],
+  'Anime': ['anime openings', 'anime rock', 'jpop energy'],
+  'Mix': ['workout hits', 'gym motivation', 'pump up'],
+  'Random': ['workout hits', 'gym motivation', 'pump up']
+};
+
+async function spFetch(path, opts) {
+  return fetch('https://api.spotify.com/v1' + path, Object.assign({
+    headers: { Authorization: 'Bearer ' + spToken, 'Content-Type': 'application/json' }
+  }, opts || {}));
+}
+
+// Build a shuffled track pool for a genre using /search (limit max is 10
+// since Spotify's Feb-2026 changes, so we page a few seeds).
+async function radioTracks(g, count) {
+  var seeds = RADIO_SEEDS[g] || RADIO_SEEDS['Mix'];
+  var seen = {}, out = [];
+  for (var i = 0; i < seeds.length && out.length < count; i++) {
+    for (var off = 0; off < 30 && out.length < count; off += 10) {
+      try {
+        var r = await spFetch('/search?q=' + encodeURIComponent(seeds[i]) +
+          '&type=track&limit=10&offset=' + off);
+        if (!r.ok) break;
+        var j = await r.json();
+        var items = (j.tracks && j.tracks.items) || [];
+        if (!items.length) break;
+        items.forEach(function(t) {
+          if (t && t.uri && !seen[t.uri]) { seen[t.uri] = 1; out.push(t); }
+        });
+      } catch(e) { break; }
+    }
+  }
+  for (var k = out.length - 1; k > 0; k--) { var j2 = Math.floor(Math.random() * (k + 1)); var tmp = out[k]; out[k] = out[j2]; out[j2] = tmp; }
+  return out.slice(0, count);
+}
+
+async function startGenreRadio(g, container) {
+  try {
+    var dev = await spFetch('/me/player/devices');
+    var devices = dev.ok ? ((await dev.json()).devices || []) : [];
+    var active = devices.filter(function(d){ return !d.is_restricted; })[0];
+    if (!active) {
+      if (container) container.innerHTML = '<div class="msg msg-info">🎧 Open Spotify on your phone and press play once, then tap Start Radio again.</div>';
+      return false;
+    }
+    var tracks = await radioTracks(g, 30);
+    if (!tracks.length) throw new Error('No tracks found for ' + g);
+    var res = await spFetch('/me/player/play?device_id=' + encodeURIComponent(active.id), {
+      method: 'PUT', body: JSON.stringify({ uris: tracks.map(function(t){ return t.uri; }) })
+    });
+    if (res.status === 403) {
+      if (container) container.innerHTML = '<div class="msg msg-info">Playback control needs Spotify Premium. Playlist mode still works.</div>';
+      return false;
+    }
+    if (!res.ok && res.status !== 204) throw new Error('play ' + res.status);
+    window._activeGenre = g;
+    if (container) container.innerHTML = '<div class="msg msg-ok">📻 ' + escHtml(g) + ' radio playing on ' + escHtml(active.name) + ' — ' + tracks.length + ' tracks queued.</div>';
+    startMiniPlayer();
+    return true;
+  } catch(e) {
+    if (container) container.innerHTML = '<div class="msg msg-info">Radio failed: ' + escHtml(e.message || 'unknown') + '</div>';
+    return false;
+  }
+}
+
+// ── V18.3: MINI PLAYER ────────────────────────────────────────────────
+// Remote-controls the Spotify app already running on the phone via the
+// Player API (these endpoints survived the Feb-2026 cull). Requires Premium.
+var _mpTimer = null, _mpBusy = false;
+
+function startMiniPlayer() {
+  if (!spToken) return;
+  var bar = document.getElementById('miniPlayer');
+  if (bar) bar.style.display = '';
+  pollMiniPlayer();
+  if (_mpTimer) clearInterval(_mpTimer);
+  _mpTimer = setInterval(function() {
+    if (document.hidden) return;           // don't poll in the background
+    if (!document.getElementById('results').classList.contains('vis')) return;
+    pollMiniPlayer();
+  }, 5000);
+}
+
+function stopMiniPlayer() {
+  if (_mpTimer) { clearInterval(_mpTimer); _mpTimer = null; }
+  var bar = document.getElementById('miniPlayer');
+  if (bar) bar.style.display = 'none';
+}
+
+async function pollMiniPlayer() {
+  if (_mpBusy || !spToken) return;
+  _mpBusy = true;
+  try {
+    var r = await spFetch('/me/player/currently-playing');
+    if (r.status === 204 || !r.ok) { _mpBusy = false; return; }
+    var j = await r.json();
+    var t = j && j.item;
+    if (!t) { _mpBusy = false; return; }
+    var art = (t.album && t.album.images && t.album.images.length) ? t.album.images[t.album.images.length - 1].url : '';
+    var el = function(id) { return document.getElementById(id); };
+    if (el('mpArt')) el('mpArt').style.backgroundImage = art ? 'url(' + art + ')' : '';
+    if (el('mpTitle')) el('mpTitle').textContent = t.name || '';
+    if (el('mpArtist')) el('mpArtist').textContent = (t.artists || []).map(function(a){ return a.name; }).join(', ');
+    if (el('mpPlay')) el('mpPlay').textContent = j.is_playing ? '⏸' : '▶';
+  } catch(e) {}
+  _mpBusy = false;
+}
+
+async function mpControl(action) {
+  if (!spToken) return;
+  try {
+    if (navigator.vibrate) navigator.vibrate(10);
+    if (action === 'next')      await spFetch('/me/player/next', { method: 'POST' });
+    else if (action === 'prev') await spFetch('/me/player/previous', { method: 'POST' });
+    else {
+      var r = await spFetch('/me/player');
+      var playing = r.ok ? ((await r.json()) || {}).is_playing : false;
+      await spFetch('/me/player/' + (playing ? 'pause' : 'play'), { method: 'PUT' });
+    }
+    setTimeout(pollMiniPlayer, 400);
+  } catch(e) {}
+}
+
 async function createPlaylist(name, uris){
   const ok=await ensureUserId();
   if(!ok) throw new Error('Could not get Spotify user ID. Try reconnecting.');
@@ -2939,6 +3118,14 @@ async function createPlaylist(name, uris){
 }
 
 // ─── UI CONTROLS ──────────────────────────────────────────────────────
+function setMusicMode(m) {
+  musicMode = m;
+  var r = document.getElementById('mmRadio'), a = document.getElementById('mmAi');
+  if (r) r.classList.toggle('on', m === 'radio');
+  if (a) a.classList.toggle('on', m === 'ai');
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+
 function togglePlaylist(el) {
   playlistEnabled = !playlistEnabled;
   el.classList.toggle('on', playlistEnabled);
@@ -2948,12 +3135,15 @@ function togglePlaylist(el) {
   if (genreRow) genreRow.style.opacity = playlistEnabled ? '1' : '0.35';
   var genreRow2 = document.getElementById('genreRow');
   if (genreRow) genreRow.style.pointerEvents = playlistEnabled ? '' : 'none';
+  var mmRow = document.getElementById('musicModeRow');
+  if (mmRow) { mmRow.style.opacity = playlistEnabled ? '1' : '0.35'; mmRow.style.pointerEvents = playlistEnabled ? '' : 'none'; }
+  if (!playlistEnabled) stopMiniPlayer();
 }
 
 function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}function setExCount(n,el){perMuscleCount=n;document.querySelectorAll('.ex-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
 function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];}
 function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
-function showCfg(){document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
+function showCfg(){stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
 
 // ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
 function renderExerciseCard(ex, index) {
@@ -3198,6 +3388,7 @@ async function generate() {
     }));
   } catch(e) {}
   document.getElementById('app').scrollTo({top:0, behavior:'smooth'});
+  if (spToken && playlistEnabled) startMiniPlayer(); // V18.3: player bar during the workout
 
   // Load GIFs asynchronously — stagger requests to avoid rate limits
   for (let i = 0; i < exercises.length; i++) {
@@ -3252,6 +3443,13 @@ async function buildPlaylist() {
 
   // ── SPOTIFY PATH ───────────────────────────────────────────────────
   if (!spToken) { renderOffline(container, emoji, plName, trackCount); return; }
+
+  // V18.3: Radio mode plays straight from the catalog — no AI, no tokens.
+  if (musicMode === 'radio') {
+    container.innerHTML = '<div class="msg msg-info">📻 Starting ' + escHtml(genre) + ' radio…</div>';
+    await startGenreRadio(genre, container);
+    return;
+  }
 
   container.innerHTML = `<div class="msg msg-info">⏳ Creating your ${genre} playlist on Spotify...</div>`;
 
@@ -3849,7 +4047,7 @@ function endWorkout() {
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
-  driveBackup(true); // V18.2: silent off-device snapshot while the token is fresh
+  runEndWorkoutBackup(); // V18.2.1: visible on the recap; one-tap recover if token expired
   // Stop the game clock and end the session — can't resume anyway.
   if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
   elapsedRunning = false;
@@ -4033,6 +4231,55 @@ function importBackupFile(input) {
   input.value = '';
 }
 
+// V18.2.1: backup surfaced on the recap. Valid token → back up and show the
+// result. Expired token → one-tap "Reconnect & Back Up": the flag below makes
+// the post-sign-in code finish the backup automatically. The workout itself
+// is already saved locally before any of this, so the redirect risks nothing.
+function runEndWorkoutBackup() {
+  var el = document.getElementById('ewBackup');
+  if (!el) return driveBackup(true);
+  el.style.display = '';
+  if (ghToken && ghTokenExpiry > Date.now()) {
+    el.textContent = '☁ Backing up to Drive…';
+    el.className = 'settings-status inactive';
+    driveBackup(true).then(function(ok) {
+      el.textContent = ok ? '☁ Backed up to Drive ✓' : '⚠ Backup failed — use Settings → Back Up Now';
+      el.className = 'settings-status ' + (ok ? 'active' : 'inactive');
+    });
+  } else {
+    el.className = 'settings-status inactive';
+    el.innerHTML = '⚠ Not backed up — Google sign-in expired &nbsp;' +
+      '<button class="gh-rc-btn" onclick="reconnectAndBackup()">Reconnect &amp; Back Up</button>';
+  }
+}
+
+function reconnectAndBackup() {
+  try { localStorage.setItem('ia_pending_backup', '1'); } catch(e) {}
+  handleGhConnect(); // full OAuth redirect; workout is already saved locally
+}
+
+var _pendingBackupRunning = false;
+function maybeRunPendingBackup() {
+  try {
+    if (_pendingBackupRunning) return;
+    if (localStorage.getItem('ia_pending_backup') !== '1') return;
+    if (!ghToken || ghTokenExpiry <= Date.now()) return;
+    _pendingBackupRunning = true;
+    driveBackup(true).then(function(ok) {
+      _pendingBackupRunning = false;
+      // Only consume the flag on success — a failed attempt retries on the
+      // next token event instead of silently losing the backup.
+      if (ok) localStorage.removeItem('ia_pending_backup');
+      _ghLog('pending backup after reconnect: ' + (ok ? 'ok' : 'failed'));
+      var el = document.getElementById('ewBackup');
+      if (el && el.style.display !== 'none') {
+        el.textContent = ok ? '☁ Backed up to Drive ✓' : '⚠ Backup failed — use Settings → Back Up Now';
+        el.className = 'settings-status ' + (ok ? 'active' : 'inactive');
+      }
+    });
+  } catch(e) {}
+}
+
 function updateBackupStatus() {
   var el = document.getElementById('backupStatus');
   if (!el) return;
@@ -4094,7 +4341,83 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // Android: SW required for notifications (new Notification() throws on Chrome Android)
-if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js'); } catch(e) {} }
+// ── V18.3: SERVICE WORKER LIFECYCLE ───────────────────────────────────
+// The worker no longer self-activates; the page offers the update instead, so
+// a deploy can never swap the app mid-workout. Also the fix for "am I actually
+// running the new version?" — the banner is proof.
+var _swWaiting = null;
+
+function showUpdateBanner(reg) {
+  _swWaiting = reg.waiting;
+  var b = document.getElementById('updateBanner');
+  if (b) b.style.display = '';
+}
+
+function applyUpdate() {
+  try {
+    if (_swWaiting) _swWaiting.postMessage({ type: 'SKIP_WAITING' });
+    setTimeout(function(){ location.reload(); }, 300);
+  } catch(e) { location.reload(); }
+}
+
+if ('serviceWorker' in navigator) {
+  try {
+    navigator.serviceWorker.register('sw.js').then(function(reg) {
+      if (reg.waiting) showUpdateBanner(reg);
+      reg.addEventListener('updatefound', function() {
+        var nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', function() {
+          // controller present => this is an update, not a first install
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBanner(reg);
+        });
+      });
+      // Check for a new deploy when the app is reopened
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) { try { reg.update(); } catch(e) {} }
+      });
+    }).catch(function(){});
+
+    navigator.serviceWorker.addEventListener('message', function(e) {
+      var d = e.data || {};
+      if (d.type === 'REST_ACTION') {
+        if (d.action === 'add30') { try { adjustTimer(30); } catch(err) {} }
+        if (d.action === 'done')  { try { stopTimer(); } catch(err) {} }
+      }
+      if (d.type === 'GIF_PROGRESS' || d.type === 'GIF_DONE') {
+        var el = document.getElementById('gifCacheStatus');
+        if (el) {
+          el.textContent = d.type === 'GIF_DONE'
+            ? ('✓ ' + d.total + ' exercise GIFs available offline')
+            : ('⏳ Caching GIFs… ' + d.done + '/' + d.total);
+          el.className = 'settings-status ' + (d.type === 'GIF_DONE' ? 'active' : 'inactive');
+        }
+        if (d.type === 'GIF_DONE') { try { localStorage.setItem('ia_gifs_cached', String(d.total)); } catch(err) {} }
+      }
+    });
+  } catch(e) {}
+}
+
+// Warm the offline GIF cache from the baked exercise map.
+function precacheGifs() {
+  if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+    alert('Service worker still starting — reopen the app and try again.');
+    return;
+  }
+  var urls = Object.keys(EDB_GIFS).map(function(k){ return EDB_GIFS[k]; })
+    .filter(function(u){ return /^https?:/.test(u); });
+  var el = document.getElementById('gifCacheStatus');
+  if (el) { el.textContent = '⏳ Caching GIFs… 0/' + urls.length; el.className = 'settings-status inactive'; }
+  navigator.serviceWorker.controller.postMessage({ type: 'PRECACHE_GIFS', urls: urls });
+}
+
+function updateGifCacheStatus() {
+  var el = document.getElementById('gifCacheStatus');
+  if (!el) return;
+  var n = parseInt(localStorage.getItem('ia_gifs_cached') || '0', 10);
+  el.textContent = n ? ('✓ ' + n + ' exercise GIFs available offline') : '○ GIFs not cached for offline use';
+  el.className = 'settings-status ' + (n ? 'active' : 'inactive');
+}
 
 function notifyRestDone(exName) {
   if (!document.hidden) return; // only when app is backgrounded (e.g. user in Spotify)
@@ -4104,7 +4427,11 @@ function notifyRestDone(exName) {
     if (reg) reg.showNotification('\u23F1 Rest complete', {
       body: (exName || 'Next set') + ' \u2014 back to work',
       tag: 'ia-rest', renotify: true, vibrate: [100, 50, 100, 50, 300],
-      icon: 'icon-192.png', badge: 'icon-192.png'
+      icon: 'icon-192.png', badge: 'icon-192.png',
+      actions: [ // V18.3: act without unlocking the phone
+        { action: 'add30', title: '+30s' },
+        { action: 'done',  title: 'Done' }
+      ]
     });
   }).catch(function(){});
 }
@@ -5779,6 +6106,17 @@ async function searchMixTracks(count) {
     <div class="settings-info" style="margin-top:8px">
       Syncs heart rate data from your Fitbit Air after each workout.<br>
       Tokens last ~60 min — reconnect when expired.
+    </div>
+  </div>
+
+  <!-- Offline GIFs -->
+  <div class="settings-section">
+    <hr class="settings-divider">
+    <label class="settings-label">📶 Offline Exercise GIFs</label>
+    <button class="gh-connect-btn" onclick="precacheGifs()">⬇ Cache GIFs for Offline</button>
+    <div id="gifCacheStatus" class="settings-status inactive">○ GIFs not cached for offline use</div>
+    <div class="settings-info" style="margin-top:8px">
+      Downloads every exercise animation so they load instantly on bad gym wifi. ~20&nbsp;MB, one time.
     </div>
   </div>
 
