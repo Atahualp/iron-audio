@@ -1,15 +1,15 @@
-// Iron Audio service worker — V19.1.0
-// Network-first so a fresh deploy is picked up immediately (version hygiene);
-// cache fallback keeps the app openable offline. Also required so
-// showNotification() works for rest-complete alerts.
-const CACHE     = 'iron-audio-v19-1';
-const GIF_CACHE = 'iron-audio-gifs'; // version-independent: ~20MB, never re-fetch on a deploy
+// Iron Audio (iOS) service worker — v1.1.0
+// Scoped to /iron-audio/ios/ so it cannot collide with the Android build's
+// worker at /iron-audio/. Network-first so a deploy is picked up immediately;
+// cache fallback keeps the app openable on gym wifi.
+const CACHE     = 'iron-audio-ios-v2';
+const GIF_CACHE = 'iron-audio-ios-gifs'; // version-independent: never re-fetch on a deploy
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./'])).catch(() => {}));
-  // NO skipWaiting() here. The worker must NOT self-activate — a deploy landing
+  // NO skipWaiting() here. The worker must not self-activate — a deploy landing
   // mid-workout would swap the app out from under an active session. The page
-  // offers the update banner and calls SKIP_WAITING only when the user taps it.
+  // calls SKIP_WAITING from the update banner when the user taps it.
 });
 
 self.addEventListener('activate', (e) => {
@@ -54,23 +54,19 @@ self.addEventListener('fetch', (e) => {
 
 self.addEventListener('message', (e) => {
   const d = e.data || {};
-
-  // Page-controlled activation — the other half of the update banner.
   if (d.type === 'SKIP_WAITING') { self.skipWaiting(); return; }
-
   if (d.type === 'PRECACHE_GIFS' && Array.isArray(d.urls)) {
     e.waitUntil(warmGifCache(d.urls));
   }
 });
 
-// Warm the offline GIF cache in small batches so a few hundred cross-origin
-// requests don't stall the worker or trip rate limits. Progress is reported
-// back to whichever client asked.
+// Warm the offline GIF cache in small batches. iOS caps total origin storage
+// harder than Android, so failures here are expected and must not abort the run.
 async function warmGifCache(urls) {
   const total = urls.length;
   let done = 0;
   const cache = await caches.open(GIF_CACHE);
-  const BATCH = 6;
+  const BATCH = 4;
 
   for (let i = 0; i < total; i += BATCH) {
     await Promise.all(
@@ -80,7 +76,7 @@ async function warmGifCache(urls) {
             const res = await fetch(u, { mode: 'cors' });
             if (res && (res.ok || res.type === 'opaque')) await cache.put(u, res);
           }
-        } catch (err) { /* one bad GIF must not abort the run */ }
+        } catch (err) { /* one bad GIF, or a quota stop, must not kill the run */ }
         done++;
       })
     );
@@ -98,8 +94,8 @@ self.addEventListener('notificationclick', (e) => {
   const action = e.action;
   e.notification.close();
 
-  // V18.3: +30s / Done are actionable from the lock screen. Relay to the page
-  // and stay put — focusing the app on an action tap defeats the purpose.
+  // +30s / Done from the notification. iOS only surfaces action buttons on an
+  // expanded notification inside an installed PWA — harmless where it doesn't.
   if (action === 'add30' || action === 'done') {
     e.waitUntil(post({ type: 'REST_ACTION', action }));
     return;

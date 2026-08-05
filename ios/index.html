@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Iron Audio">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#050810">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#05070D">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="../icon-512.png">
 <title>IRON AUDIO</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -16,10 +20,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Sora:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg:#050810;--surface:#0A1322;--card:#0F1B2E;--border:#1E2E48;
-  --accent:#FFFFFF;--accent2:#C4CED4;--green:#C4CED4;--blue:#C4CED4;
-  --orange:#FFFFFF;--navy:#0C2340;
-  --text:#F0F3F7;--muted:#5A6E8C;
+  --bg:#05070D;--surface:#0A1220;--card:#0E1A2C;--border:#1C2E4A;
+  --accent:#F58426;--accent2:#3D8FDB;--green:#4FA8E8;--blue:#3D8FDB;
+  --orange:#F58426;--navy:#006BB6;--silver:#BEC0C2;
+  --text:#F2F5F9;--muted:#6B7F99;
   --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -27,16 +31,13 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 #app{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px)}
 
 /* ── HEADER ─────────────────────────────────────────────────────── */
-.hdr{padding:max(env(safe-area-inset-top,0px),20px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:repeating-linear-gradient(90deg,rgba(5,8,16,.98) 0 7px,rgba(10,19,34,.98) 7px 8px);backdrop-filter:blur(24px);z-index:100;border-bottom:2px solid var(--accent2)}
+.hdr{padding:max(env(safe-area-inset-top,0px),20px) 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(180deg,rgba(0,107,182,.92) 0%,rgba(5,7,13,.98) 100%);backdrop-filter:blur(24px);z-index:100;border-bottom:2px solid var(--accent)}
 .logo-icon{width:40px;height:auto;display:block}
 .logo{display:flex;align-items:center;gap:8px;line-height:1}
 .logo-icon{flex-shrink:0}
 .logo-iron{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;color:var(--accent);display:block;line-height:1}
 .logo-audio{font-family:'Oswald',sans-serif;font-size:9px;font-weight:400;letter-spacing:5px;color:rgba(240,237,232,.3);display:block;line-height:1;margin-top:1px}
 .logo span{color:var(--text)}
-.sp-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--accent);border:none;border-radius:10px;color:var(--navy);font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;cursor:pointer;transition:transform .15s}
-.sp-btn:active{transform:scale(.94)}
-.sp-btn.conn{background:rgba(255,255,255,.08);color:var(--accent);border:1px solid rgba(255,255,255,.3)}
 .sp-ico{width:14px;height:14px;flex-shrink:0}
 .hdr-hist-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;margin-left:2px}
 .hdr-icon-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
@@ -50,12 +51,12 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 /* ── DURATION ────────────────────────────────────────────────────── */
 .dur-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .dur-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
-.dur-card.on{border-color:var(--accent);background:rgba(255,255,255,.08)}
+.dur-card.on{border-color:var(--accent);background:rgba(245,132,38,.12)}
 .dur-card:active{transform:scale(.97)}
 .dur-num{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:var(--muted);line-height:1;letter-spacing:-1px}
 .dur-card.on .dur-num{color:var(--accent)}
 .ex-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s}
-.ex-card.on{border-color:var(--accent);background:rgba(255,255,255,.08)}
+.ex-card.on{border-color:var(--accent);background:rgba(245,132,38,.12)}
 .ex-card:active{transform:scale(.97)}
 .ex-card .dur-num{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:var(--muted);line-height:1;letter-spacing:-1px}
 .ex-card.on .dur-num{color:var(--accent)}
@@ -64,61 +65,46 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 /* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
 .mg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .mg-chip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 10px;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:7px;transition:all .2s}
-.mg-chip.on{border-color:var(--accent);background:rgba(255,255,255,.08)}
+.mg-chip.on{border-color:var(--accent);background:rgba(245,132,38,.12)}
 .mg-chip:active{transform:scale(.95)}
 .mg-ico{font-size:15px;flex-shrink:0}
 .mg-name{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.2px;line-height:1.2}
 .mg-chip.on .mg-name{color:var(--accent)}
 .mg-chk{display:none}
 .arn-head{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
-.arn-toggle{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;color:var(--muted);transition:all .2s;user-select:none}
+.arn-toggle{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;color:var(--muted);transition:all .2s;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .arn-toggle.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 .arn-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
 .arn-body.open{max-height:900px}
 .arn-sub{font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:2.5px;color:var(--accent2);text-transform:uppercase;margin-top:12px}
 .arn-presets{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 4px}
-.arn-preset{flex:1 1 30%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 6px;cursor:pointer;font-size:10px;font-weight:600;color:var(--text);text-align:center;transition:all .2s}
+.arn-preset{flex:1 1 30%;min-height:44px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 6px;cursor:pointer;font-size:10px;font-weight:600;color:var(--text);text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
 .arn-preset:active{transform:scale(.96)}
 .arn-row{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--border)}
-.arn-sw{flex:0 0 40px;height:22px;border-radius:11px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;margin-top:2px}
-.arn-sw::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:all .2s}
+.arn-sw{flex:0 0 44px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;margin-top:2px;-webkit-tap-highlight-color:transparent}
+.arn-sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:all .2s}
 .arn-sw.on{background:var(--accent)}
-.arn-sw.on::after{left:20px;background:var(--bg)}
+.arn-sw.on::after{left:21px;background:var(--bg)}
 .arn-sw.dis{opacity:.4;pointer-events:none}
 .arn-rt{flex:1}
 .arn-rn{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.5px}
 .arn-rd{font-size:10px;color:var(--muted);line-height:1.45;margin-top:2px}
 .arn-warn{font-size:10px;color:var(--accent2);margin-top:4px;font-style:italic}
 .pyr-target{font-size:9px;font-weight:700;color:var(--accent2);letter-spacing:.5px;flex:0 0 auto;opacity:.8}
-.shock-banner{display:flex;align-items:center;gap:8px;margin:8px 0 2px;padding:9px 11px;border-radius:9px;background:rgba(196,206,212,.07);border-left:2px solid var(--accent2)}
+.shock-banner{display:flex;align-items:center;gap:8px;margin:8px 0 2px;padding:9px 11px;border-radius:9px;background:rgba(61,143,219,.08);border-left:2px solid var(--accent2)}
 .shock-banner .sb-tag{font-size:8px;font-weight:800;letter-spacing:1.5px;color:var(--accent2);white-space:nowrap}
 .shock-banner .sb-txt{font-size:10px;color:var(--muted);line-height:1.45}
-.shock-chip{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:8px;background:rgba(196,206,212,.12);border:1px solid var(--accent2);color:var(--accent2);font-size:8px;font-weight:800;letter-spacing:1px}
 .mg-split-label{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:10px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--border)}
 .mg-chip-spacer{background:transparent;border-color:transparent;pointer-events:none;cursor:default}
 .mg-chip-spacer:active{transform:none}
-
-/* ── GENRE ───────────────────────────────────────────────────────── */
-.genre-row{display:flex;flex-wrap:wrap;gap:7px}
-.music-mode-row{display:flex;gap:8px;margin-bottom:10px}
-.mm-chip{flex:1;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:9px 8px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;min-height:48px}
-.mm-chip.on{border-color:var(--accent);background:rgba(255,255,255,.08);color:var(--text)}
-.mm-chip:active{transform:scale(.97)}
-.mm-sub{display:block;font-size:9px;font-weight:400;color:var(--muted);letter-spacing:.3px;margin-top:1px}
-.g-pill{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
-.g-pill.on{border-color:var(--accent);background:rgba(255,255,255,.1)}
-.g-pill:active{transform:scale(.95)}
-.g-pill-ico{font-size:13px;flex-shrink:0}
-.g-pill-lbl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px;line-height:1.2}
-.g-pill.on .g-pill-lbl{color:var(--accent)}
 
 /* ── DIFFICULTY / MODE / EQUIPMENT TOGGLES ──────────────────────────── */
 .toggle-row{display:flex;gap:8px}
 .toggle-pill{flex:1;text-align:center;padding:11px 6px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .2s;line-height:1.3}
 .toggle-pill:active{transform:scale(.96)}
-.toggle-pill.on.mode-std{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,.08)}
-.toggle-pill.on.eq-gym{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,.08)}
-.toggle-pill.on.eq-bw{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,.08)}
+.toggle-pill.on.mode-std{border-color:var(--accent);color:var(--accent);background:rgba(245,132,38,.12)}
+.toggle-pill.on.eq-gym{border-color:var(--accent);color:var(--accent);background:rgba(245,132,38,.12)}
+.toggle-pill.on.eq-bw{border-color:var(--accent);color:var(--accent);background:rgba(245,132,38,.12)}
 
 /* ── GENERATE BTN ────────────────────────────────────────────────── */
 .gen-wrap{padding:16px}
@@ -281,71 +267,12 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .ss-label{display:inline-flex;align-items:center;gap:5px;background:rgba(0,170,255,.12);border:1px solid var(--accent2);color:var(--accent2);font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
 .ss-connector{width:2px;background:linear-gradient(var(--accent2),rgba(0,170,255,.3));margin:0 auto;height:14px}
 
-/* ── PLAYLIST ────────────────────────────────────────────────────── */
-.pl-sec{padding:12px 14px 18px}
-.pl-toggle-btn{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);transition:all .2s;min-width:52px;text-align:center}
-.pl-toggle-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,.08)}
-.pl-create-btn{background:transparent;border:1.5px solid var(--accent);border-radius:8px;color:var(--accent);font-family:'Sora',sans-serif;font-size:11px;letter-spacing:1.5px;padding:5px 12px;cursor:pointer;transition:all .2s}
-.pl-create-btn:active{transform:scale(.97)}
-.pl-label{font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--accent);margin-bottom:10px}
-.pl-card{background:#0d1a0d;border:1px solid #162016;border-radius:20px;overflow:hidden}
-.pl-hdr{padding:14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(196,206,212,.1)}
-.pl-art{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),#0a5228);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.pl-info{flex:1;min-width:0}
-.pl-name{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-meta{font-size:10px;color:rgba(196,206,212,.7);margin-top:2px;font-weight:500}
-.pl-open{padding:7px 11px;background:var(--accent2);border:none;border-radius:8px;color:#000;font-weight:700;font-size:11px;cursor:pointer;flex-shrink:0;transition:transform .15s}
-.pl-open:active{transform:scale(.94)}
-.track-list{padding:6px 0}
-.track{padding:7px 14px;display:flex;align-items:center;gap:10px}
-.track-n{font-family:'Sora',sans-serif;font-size:13px;color:rgba(196,206,212,.35);width:16px;text-align:center}
-.track-info{flex:1;min-width:0}
-.track-name{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.track-artist{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
-.track-dur{font-size:10px;color:rgba(255,255,255,.2);font-weight:500}
-
-/* ── STATUS MESSAGES ─────────────────────────────────────────────── */
-.msg{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:10px;line-height:1.5}
-.msg-ok{background:rgba(196,206,212,.12);color:var(--accent2);border:1px solid rgba(196,206,212,.25)}
-.msg-err{background:rgba(255,255,255,.1);color:#FF6030;border:1px solid rgba(255,255,255,.25)}
-.msg-info{background:rgba(0,170,255,.07);color:var(--accent2);border:1px solid rgba(0,170,255,.18)}
-
-/* ── PLAYLIST PROMPT ─────────────────────────────────────────────── */
-.pl-prompt{text-align:center;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.pl-prompt-icon{font-size:32px}
-.pl-prompt-text{font-size:13px;color:var(--muted);font-weight:600}
-.pl-build-btn{padding:13px 26px;background:var(--green);border:none;border-radius:12px;color:#000;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s}
-.pl-build-btn:active{transform:scale(.96)}
-
-/* ── PLAYLIST PREVIEW ────────────────────────────────────────────── */
-.pl-preview-bar{background:rgba(0,170,255,.08);border:1px solid rgba(0,170,255,.25);border-radius:12px;padding:12px 14px;margin-bottom:10px}
-.pl-preview-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.pl-preview-actions{display:flex;gap:6px}
-.pl-preview-btn{flex:1;padding:9px 6px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px}
-.pl-preview-btn:active{transform:scale(.95)}
-.pl-preview-btn.regen{background:var(--card);color:var(--muted);border:1px solid var(--border)}
-.pl-preview-btn.create{background:var(--accent2);color:#000}
-.pl-preview-btn.cancel{background:var(--card);color:var(--muted);border:1px solid var(--border);flex:0;padding:9px 12px}
-.preview-list{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
-
 /* ── LOADING OVERLAY ─────────────────────────────────────────────── */
 .ov{display:none;position:fixed;inset:0;background:rgba(5,8,16,.97);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
 .ov.vis{display:flex}
 .ov-spin{width:48px;height:48px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 .ov-txt{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;letter-spacing:4px;color:var(--muted)}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── SPOTIFY MODAL ───────────────────────────────────────────────── */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:300;align-items:flex-end}
-.modal-bg.vis{display:flex}
-.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;padding:10px 18px calc(var(--safe-bottom)+18px);max-height:88vh;overflow-y:auto}
-.modal-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 18px}
-.modal-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
-.modal-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
-.modal-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Sora',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
-.modal-inp:focus{border-color:var(--accent)}
-.modal-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:28px;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:3px;color:var(--navy);cursor:pointer}
-.modal-link{color:var(--accent)}
 
 /* ── REST TIMER ──────────────────────────────────────────────────── */
 .timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -359,7 +286,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .timer-actions{display:flex;gap:12px}
 .timer-btn{padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .timer-btn:active{transform:scale(.95)}
-.timer-btn.minus{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
+.timer-btn.minus{background:rgba(245,132,38,.14);border:1px solid rgba(255,255,255,.2);color:#fff;margin-right:10px}
 .timer-btn.stop{background:var(--accent);color:var(--navy)}
 
 /* ── EXERCISE MODAL ──────────────────────────────────────────────── */
@@ -400,7 +327,7 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .orm-result-lbl{font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:3px}
 .orm-formula-row{display:flex;gap:6px;margin-bottom:16px}
 .orm-formula-btn{flex:1;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
-.orm-formula-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(255,255,255,.08)}
+.orm-formula-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(245,132,38,.12)}
 .orm-close{width:100%;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
 
 /* ── HISTORY PANEL ───────────────────────────────────────────────── */
@@ -456,20 +383,12 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .settings-cost-val.accent{color:var(--accent)}
 .settings-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
 .settings-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:9px 13px;border-radius:10px;margin-top:10px}
-.settings-status.active{background:rgba(255,255,255,.08);color:var(--accent)}
+.settings-status.active{background:rgba(245,132,38,.12);color:var(--accent)}
 .settings-status.inactive{background:var(--card);color:var(--muted)}
-
-/* ── PLATFORM TOGGLE ─────────────────────────────────────────────── */
-.platform-btn.on.spotify{border-color:var(--accent2);color:var(--accent2);background:rgba(196,206,212,.1)}
-
-/* ── BPM / ENERGY ────────────────────────────────────────────────── */
-.energy-wrap{margin-top:12px}
-
-
 
 /* ── END WORKOUT ─────────────────────────────────────────────────────── */
 .end-workout-btn{width:100%;padding:14px;background:transparent;border:1.5px solid var(--accent);border-radius:20px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--accent);cursor:pointer;transition:all .2s;margin-bottom:4px}
-.end-workout-btn:active{background:rgba(255,255,255,.1);transform:scale(.97)}
+.end-workout-btn:active{background:rgba(245,132,38,.14);transform:scale(.97)}
 .ew-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ew-overlay.open{opacity:1;pointer-events:all}
 .ew-sheet{background:#0C1929;border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:calc(100dvh - max(env(safe-area-inset-top,0px),20px) - 12px);overflow-y:auto;padding:20px 20px calc(env(safe-area-inset-bottom,0px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
@@ -534,17 +453,29 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 .gen-btn:active,.modal-btn:active,.sp-btn:active,.settings-save-btn:active,.timer-btn:active,.mg-chip:active,.ex-card:active,.dur-card:active{transform:scale(.97);transition:transform .1s ease}
 .timer-btn{min-height:44px}
 
-/* ── YANKEES STRUCTURAL ELEMENTS ─────────────────────────────────────── */
-/* Inning progress banner */
-.qtr-banner{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:rgba(196,206,212,.12);border-bottom:1px solid rgba(196,206,212,.25)}
+/* ── HAPTIC SUBSTITUTE (iOS has no Vibration API) ─────────────────────── */
+.ia-flash{position:fixed;inset:0;pointer-events:none;z-index:900;opacity:0;background:radial-gradient(circle at 50% 50%,rgba(245,132,38,.22) 0%,transparent 70%)}
+.ia-flash.on{animation:iaFlash .32s ease-out}
+@keyframes iaFlash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+
+/* ── iOS INSTALL BANNER ──────────────────────────────────────────────── */
+.ios-install-banner{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:400;background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.iib-text{font-size:12px;color:var(--text);line-height:1.4}
+.iib-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:10px}
+.iib-hint{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase}
+.iib-x{background:transparent;border:none;color:var(--muted);font-size:15px;min-width:40px;min-height:40px;cursor:pointer}
+
+/* ── KNICKS STRUCTURAL ELEMENTS ─────────────────────────────────────── */
+/* Quarter progress banner */
+.qtr-banner{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:rgba(0,107,182,.18);border-bottom:1px solid rgba(61,143,219,.3)}
 .qtr-label{font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:3px;color:rgba(240,237,232,.5);text-transform:uppercase}
 .qtr-dots{display:flex;gap:5px;align-items:center}
-.qtr-dot{width:22px;height:4px;border-radius:2px;background:rgba(196,206,212,.3);transition:all .3s}
+.qtr-dot{width:22px;height:4px;border-radius:2px;background:rgba(61,143,219,.3);transition:all .3s}
 .qtr-dot.active{background:var(--accent)}
 .qtr-dot.done{background:rgba(255,255,255,.35)}
-/* Infield divider */
+/* Court divider */
 .court-divider{position:relative;height:14px;margin:4px 0}
-.court-divider::before{content:'';position:absolute;top:6px;left:16px;right:16px;height:1px;background:rgba(255,255,255,.1)}
+.court-divider::before{content:'';position:absolute;top:6px;left:16px;right:16px;height:1px;background:rgba(245,132,38,.14)}
 .court-divider::after{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:var(--bg)}
 /* Jersey numbers on exercise cards */
 .wk-ex-num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:rgba(255,255,255,.12);line-height:1;width:32px;flex-shrink:0;text-align:right;margin-right:4px}
@@ -560,9 +491,6 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 .settings-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px}
 .settings-label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block}
 .settings-save-btn{font-family:'Oswald',sans-serif;letter-spacing:2px}
-/* Spotify button */
-.sp-btn{background:rgba(196,206,212,.15);border:1px solid rgba(196,206,212,.35);border-radius:10px;color:var(--accent2);font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px}
-.sp-btn.conn{background:rgba(255,255,255,.08);color:var(--accent);border:1px solid rgba(255,255,255,.3)}
 /* History item */
 .hist-item-title{font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 /* Version footer */
@@ -590,23 +518,12 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 .ew-hr-zone-note{font-family:'Oswald',sans-serif;font-size:8px;color:var(--muted);font-style:italic;margin-top:3px}
 .ew-hr-samples{font-family:'Oswald',sans-serif;font-size:9px;color:var(--muted);margin-top:6px;text-align:right}
 .ew-hr-syncing{font-family:'Oswald',sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:6px 0}
-.gh-connect-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:10px;color:#040C1A;font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-bottom:8px}
-.gh-connect-btn:active{transform:scale(.97)}
-.gh-connect-btn.connected{background:rgba(255,255,255,.12);color:var(--accent);border:1px solid rgba(255,255,255,.3)}
+.action-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:10px;color:#040C1A;font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.action-btn:active{transform:scale(.97)}
+.action-btn.connected{background:rgba(255,255,255,.12);color:var(--accent);border:1px solid rgba(245,132,38,.35)}
 .hist-hr-badge{font-family:'Oswald',sans-serif;font-size:10px;color:#f87171;margin-top:2px;letter-spacing:.5px}
 .hist-hr-badge.pending{color:var(--muted);cursor:pointer;text-decoration:underline dotted}
-.gh-diag{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
-.gh-diag-title{font-family:'Oswald',sans-serif;font-size:8px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
-.gh-diag-row{font-family:'Roboto Condensed',monospace;font-size:10px;color:var(--text);line-height:1.5;word-break:break-word}
-.gh-push-status{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:.5px;padding:9px 10px;border-radius:8px;margin-bottom:10px;text-align:center;background:var(--card);border:1px solid var(--border);color:var(--muted)}
-.gh-push-status.ok{color:var(--accent2);border-color:rgba(196,206,212,.3);background:rgba(196,206,212,.08)}
-.gh-push-status.err{color:#f87171;border-color:rgba(248,113,113,.35);cursor:pointer}
-.gh-push-status.warn{color:var(--accent);border-color:rgba(255,255,255,.35);cursor:pointer}
-.gh-reconnect-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:11px 13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.35);border-radius:12px}
-.gh-rc-text{font-family:'Oswald',sans-serif;font-size:12px;font-weight:500;letter-spacing:.3px;color:var(--accent);flex:1;line-height:1.3}
-.gh-rc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.gh-rc-btn{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;padding:7px 12px;background:var(--accent);color:#040C1A;border:none;border-radius:8px;cursor:pointer}
-.gh-rc-x{font-family:'Oswald',sans-serif;font-size:13px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;line-height:1}
+.inline-btn{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;padding:7px 12px;background:var(--accent);color:#040C1A;border:none;border-radius:8px;cursor:pointer}
 
 </style>
 </head>
@@ -621,23 +538,11 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
     <button class="hdr-icon-btn" onclick="openHistory()" title="Workout History">📋</button>
     <button class="hdr-icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
-    <button class="sp-btn" id="spBtn" onclick="handleSpotifyConnect()">
-      <svg class="sp-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      <span id="spBtnTxt">Connect Spotify</span>
-    </button>
   </div>
 
   <!-- CONFIG VIEW -->
   <div id="cfgView">
 
-    <!-- Google Health reconnect reminder (shown when token is stale/dead) -->
-    <div id="ghReconnectBanner" class="gh-reconnect-banner" style="display:none">
-      <div class="gh-rc-text">⚠ Google Health needs reconnecting to sync today's workout</div>
-      <div class="gh-rc-actions">
-        <button class="gh-rc-btn" onclick="handleGhConnect()">Reconnect</button>
-        <button class="gh-rc-x" onclick="dismissGhBanner()" aria-label="Dismiss">✕</button>
-      </div>
-    </div>
 
     <!-- Exercise Count -->
     <div class="sec">
@@ -718,7 +623,8 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
           <div class="arn-sw" id="arnSwShock" onclick="toggleArnOpt('shock')"></div>
           <div class="arn-rt">
             <div class="arn-rn">SHOCK THE MUSCLE</div>
-            <div class="arn-rd">§3 — Final set of isolation work gets a drop set, iso-hold, or partials cue — spoken aloud.</div>
+            <div class="arn-rd">§3 — Final set of isolation work gets a drop set, iso-hold, or partials cue.</div>
+            <div class="arn-warn" id="arnShockNote" style="display:none">Spoken aloud only while the app is open — the banner always shows.</div>
           </div>
         </div>
       </div>
@@ -734,43 +640,6 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
       </div>
     </div>
 
-    <!-- Playlist Toggle -->
-    <div class="sec" style="padding-bottom:8px">
-      <div class="sec-tag">05 — PLAYLIST</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
-        <div>
-          <div class="sec-title" style="margin-bottom:2px">SPOTIFY PLAYLIST</div>
-          <div style="font-size:10px;color:var(--muted)">Auto-generate after workout</div>
-        </div>
-        <div class="music-mode-row" id="musicModeRow">
-          <button class="mm-chip on" id="mmRadio" onclick="setMusicMode('radio')">📻 Radio <span class="mm-sub">instant · no AI</span></button>
-          <button class="mm-chip" id="mmAi" onclick="setMusicMode('ai')">✨ AI Playlist <span class="mm-sub">curated</span></button>
-        </div>
-        <div class="pl-toggle-btn on" onclick="togglePlaylist(this)">
-          <span class="pl-toggle-txt">ON</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Genre -->
-    <div class="sec">
-      <div class="sec-tag">06 — VIBE</div>
-      <div class="sec-title">PLAYLIST GENRE</div>
-      <div class="genre-row">
-        <div class="g-pill" onclick="setGenre('80s',this)"><span class="g-pill-ico">📼</span><span class="g-pill-lbl">80's</span></div>
-        <div class="g-pill" onclick="setGenre('Anime',this)"><span class="g-pill-ico">🎌</span><span class="g-pill-lbl">Anime</span></div>
-        <div class="g-pill" onclick="setGenre('EDM',this)"><span class="g-pill-ico">🎛️</span><span class="g-pill-lbl">EDM</span></div>
-        <div class="g-pill" onclick="setGenre('Hip-Hop',this)"><span class="g-pill-ico">🎤</span><span class="g-pill-lbl">Hip-Hop</span></div>
-        <div class="g-pill" onclick="setGenre('Latin',this)"><span class="g-pill-ico">🎺</span><span class="g-pill-lbl">Salsa/Bachata</span></div>
-        <div class="g-pill" onclick="setGenre('Pop',this)"><span class="g-pill-ico">🌟</span><span class="g-pill-lbl">Pop</span></div>
-        <div class="g-pill" onclick="setGenre('R&amp;B',this)"><span class="g-pill-ico">🎷</span><span class="g-pill-lbl">R&amp;B</span></div>
-        <div class="g-pill" onclick="setGenre('Reggae',this)"><span class="g-pill-ico">🌿</span><span class="g-pill-lbl">Reggae</span></div>
-        <div class="g-pill" onclick="setGenre('Reggaeton',this)"><span class="g-pill-ico">🌴</span><span class="g-pill-lbl">Reggaeton</span></div>
-        <div class="g-pill" onclick="setGenre('Rock',this)"><span class="g-pill-ico">🎸</span><span class="g-pill-lbl">Rock</span></div>
-        <div class="g-pill" onclick="setGenre('Mix',this)"><span class="g-pill-ico">🎲</span><span class="g-pill-lbl">Mix</span></div>
-      </div>
-    </div>
-
     <div class="gen-wrap">
       <button class="gen-btn" onclick="generate()">💪 PUMP IT UP</button>
     </div>
@@ -780,17 +649,6 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
   <div class="update-banner" id="updateBanner" style="display:none">
     <span>🆕 New version ready</span>
     <button onclick="applyUpdate()">Reload</button>
-  </div>
-
-  <div class="mini-player" id="miniPlayer" style="display:none">
-    <div class="mp-art" id="mpArt"></div>
-    <div class="mp-meta">
-      <div class="mp-title" id="mpTitle">—</div>
-      <div class="mp-artist" id="mpArtist"></div>
-    </div>
-    <button class="mp-btn" onclick="mpControl('prev')" aria-label="Previous track">⏮</button>
-    <button class="mp-btn mp-play" id="mpPlay" onclick="mpControl('toggle')" aria-label="Play or pause">▶</button>
-    <button class="mp-btn" onclick="mpControl('next')" aria-label="Next track">⏭</button>
   </div>
 
   <div id="results">
@@ -814,7 +672,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
         <button class="elapsed-ctrl-btn" onclick="resetElapsedTimer()">↺</button>
       </div>
     </div>
-    <!-- Inning progress banner -->
+    <!-- Quarter progress banner -->
     <div class="qtr-banner" id="qtrBanner">
       <div class="qtr-label" id="qtrLabel">PRE-GAME</div>
       <div class="qtr-dots">
@@ -830,24 +688,12 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     <div style="padding:0 14px 4px">
       <button class="end-workout-btn" onclick="endWorkout()">🤖 I'LL BE BACK</button>
     </div>
-    <div class="pl-sec" id="plSection">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div class="pl-label" style="margin-bottom:0">🎵 YOUR PLAYLIST</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span id="plSourceBadge" style="font-size:9px;color:var(--muted);letter-spacing:.5px"></span>
-          <button id="plCreateBtn" class="pl-create-btn" onclick="triggerPlaylist()" style="display:none">CREATE PLAYLIST</button>
-        </div>
-      </div>
-      <div id="plContainer">
-        <div id="plDisabledMsg" style="display:none;font-size:11px;color:var(--muted);padding:8px 0">
-          Playlist disabled. Tap CREATE PLAYLIST to generate one.
-        </div>
-      </div>
+    <div style="padding:4px 14px 20px">
       <button class="share-btn" onclick="openShareCard()">📸 Share Workout Card</button>
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v19.1.1 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v1.1.0-iOS · KNICKS EDITION · LOCAL ONLY</div>
 
 </div>
 
@@ -875,14 +721,6 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
         <div class="ew-stat-sub" id="ewTopSetEx"></div>
       </div>
     </div>
-    <!-- Google Health HR Data -->
-    <div class="ew-hr-section" id="ewHrSection" style="display:none">
-      <div class="ew-hr-section-tag">❤️ Heart Rate · Fitbit Air</div>
-      <div id="ewHrBody"><div class="ew-hr-syncing">⟳ Syncing from Fitbit…</div></div>
-    </div>
-    <!-- Google Health workout-push status -->
-    <div class="gh-push-status" id="ghPushStatus" style="display:none"></div>
-
     <div class="ew-consist" id="ewConsist">
       <span class="ew-consist-icon">🔥</span>
       <div><div class="ew-consist-text" id="ewConsistText"></div><div class="ew-consist-sub" id="ewConsistSub"></div></div>
@@ -892,10 +730,10 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
       <div><div class="ew-next-tag">💡 Next Session</div><div class="ew-next-val" id="ewNextVal"></div></div>
       <div class="ew-next-arrow">→</div>
     </div>
+    <div id="ewBackup" class="settings-status inactive" style="margin-bottom:10px;display:none"></div>
     <div class="ew-share-row">
       <button class="ew-share-pill" onclick="closeEwModal();setTimeout(()=>document.querySelector('.share-btn')&&document.querySelector('.share-btn').click(),200)">📸 Share Card</button>
     </div>
-    <div id="ewBackup" class="settings-status inactive" style="margin-bottom:10px;display:none"></div>
     <button class="ew-confirm" onclick="confirmEndWorkout()">✓ DONE</button>
   </div>
 </div>
@@ -903,22 +741,8 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 <!-- LOADING OVERLAY -->
 <div class="ov" id="ov"><div class="ov-spin"></div><div class="ov-txt" id="ovTxt">BUILDING WORKOUT</div></div>
 
-<!-- SPOTIFY MODAL -->
-<div class="modal-bg" id="spModal" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🎵 CONNECT SPOTIFY</div>
-    <p class="modal-desc">Enter your Netlify URL — must match the Redirect URI in your <a class="modal-link" href="https://developer.spotify.com/dashboard" target="_blank">Spotify Developer Dashboard</a>.</p>
-    <p class="modal-desc" style="color:rgba(232,255,61,.7)">Example: <strong>https://your-site.netlify.app</strong></p>
-    <p class="modal-desc" style="background:rgba(255,69,0,.1);border:1px solid rgba(255,69,0,.28);border-radius:10px;padding:10px;color:#FF6030;margin-bottom:14px">⚠️ <strong>Required step:</strong> In Spotify Dashboard → your app → <em>User Management</em> → add your Spotify account email. Without this, you get a 403 error.</p>
-    <input type="url" class="modal-inp" id="redirInp" placeholder="https://your-site.netlify.app" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="url">
-    <button class="modal-btn" onclick="doSpotifyAuth()">AUTHORIZE WITH SPOTIFY</button>
-  </div>
-</div>
-
 <script>
 // ─── CONSTANTS ────────────────────────────────────────────────────────
-const SPOTIFY_CLIENT_ID = '4ff1ebb0f69547138ab4d51f666dfd20';
 
 // Muscle → { color, bg } palette
 const MUSCLE_COLORS = {
@@ -946,9 +770,7 @@ function getMuscleColor(muscle) {
 }
 
 // ─── APP STATE ────────────────────────────────────────────────────────
-let dur = 30;var perMuscleCount=2, muscles = [], genre = '', playlistEnabled = true;
-var musicMode = 'radio'; // 'radio' = search+queue, zero AI tokens; 'ai' = curated playlist
-let spToken = null, spUserId = null;
+let dur = 30; var perMuscleCount = 2, muscles = [];
 
 
 // ─── EXERCISEDB ───────────────────────────────────────────────────────
@@ -1705,1681 +1527,10 @@ const DB = {
   ]
 };
 
-// ─── SPOTIFY PKCE ─────────────────────────────────────────────────────
-function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
-async function genChallenge(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
-
-// ─── GOOGLE HEALTH config + state ─────────────────────────────────────
-// Declared before the init IIFE below — initGoogleHealth() runs inside that
-// IIFE and must not reference these in the temporal dead zone.
-const GH_CLIENT_ID = '466327546643-1firoc0bcgr7naitsc1v53efame3ghe6.apps.googleusercontent.com';
-const GH_REDIRECT  = 'https://atahualp.github.io/iron-audio/';
-const GH_SCOPE     = [
-  'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
-  'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
-  'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.writeonly',
-  'https://www.googleapis.com/auth/drive.appdata', // V18.2: hidden app-only backup folder
-].join(' ');
-const GH_AUTH_URL  = 'https://accounts.google.com/o/oauth2/v2/auth';
-const GH_API_BASE  = 'https://health.googleapis.com/v4/users/me';
-
-let ghToken       = null;
-let ghTokenExpiry = 0;
-let _ghSyncTimer  = null;
-
-(async function init(){
-  const p=new URLSearchParams(window.location.search),code=p.get('code');
-  if(code){
-    const v=localStorage.getItem('pkce_v'),r=localStorage.getItem('sp_redirect');
-    if(v&&r){
-      try{
-        const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',code,redirect_uri:r,client_id:SPOTIFY_CLIENT_ID,code_verifier:v})});
-        const d=await res.json();
-        if(d.access_token){spToken=d.access_token;localStorage.setItem('sp_token',d.access_token);if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);localStorage.setItem('sp_authorized_at',String(Date.now()));localStorage.removeItem('pkce_v');}
-        else console.error('Token exchange failed:',d);
-      }catch(e){console.error(e);}
-    }
-    window.history.replaceState(null,'',window.location.pathname);
-  }
-  const saved=localStorage.getItem('sp_token'),exp=parseInt(localStorage.getItem('sp_expiry')||'0');
-  if(saved&&Date.now()<exp){spToken=saved;}
-  else if(localStorage.getItem('sp_refresh'))await refreshTok();
-  updateSpBtn();
-  if(spToken)fetchSpUser();
-  initGoogleHealth();
-  updateGhBtn();
-  updateGhReconnectBanner();
-})();
-
-// V18.4: Spotify refresh tokens expire 6 months after the ORIGINAL authorization
-// (enforced for existing apps from 2026-07-20). Expiry returns 400 invalid_grant.
-// Per Spotify's guidance: do not retry — discard and re-authorize.
-function spClearAuth(reason){
-  spToken=null; spUserId=null;
-  ['sp_token','sp_refresh','sp_expiry','sp_authorized_at'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
-  try{updateSpBtn();}catch(e){}
-  if(reason)console.warn('Spotify auth cleared:',reason);
-  try{showSpReauthBanner(reason);}catch(e){}
-}
-
-// Visible banner — the silent failure is what cost a whole debugging session.
-function showSpReauthBanner(msg){
-  var el=document.getElementById('spReauthBanner');
-  if(!el){
-    el=document.createElement('div');
-    el.id='spReauthBanner';
-    el.className='update-banner';
-    el.style.top='calc(56px + env(safe-area-inset-top,0px))';
-    document.body.appendChild(el);
-  }
-  el.innerHTML='<span>🎵 '+escHtml(msg||'Spotify sign-in expired')+'</span>'+
-    '<button onclick="handleSpotifyConnect()">Reconnect</button>';
-  el.style.display='flex';
-}
-function hideSpReauthBanner(){var el=document.getElementById('spReauthBanner');if(el)el.style.display='none';}
-
-// True when the 6-month authorization window is nearly up (warn at 5.5 months).
-function spAuthAging(){
-  var t=parseInt(localStorage.getItem('sp_authorized_at')||'0',10);
-  if(!t)return false;
-  return (Date.now()-t) > 1.44e10; // ~166 days
-}
-
-async function refreshTok(){
-  const rt=localStorage.getItem('sp_refresh');if(!rt)return;
-  try{
-    const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:rt,client_id:SPOTIFY_CLIENT_ID})});
-    const d=await r.json();
-    // Auth endpoints use {error:"string", error_description}, NOT the API's {error:{...}} shape.
-    if(d.error==='invalid_grant'||r.status===400){
-      spClearAuth('Spotify sign-in expired — reconnect to restore music');
-      return;
-    }
-    if(d.access_token){
-      spToken=d.access_token;
-      localStorage.setItem('sp_token',d.access_token);
-      localStorage.setItem('sp_expiry',Date.now()+d.expires_in*1000);
-      if(d.refresh_token)localStorage.setItem('sp_refresh',d.refresh_token);
-      hideSpReauthBanner();
-    }else{
-      console.warn('Spotify refresh failed:',d.error||'unknown',d.error_description||'');
-    }
-  }catch(e){console.warn('Spotify refresh network error:',e.message);}
-}
-
-async function fetchSpUser(){
-  if(!spToken)return;
-  try{const r=await fetch('https://api.spotify.com/v1/me',{headers:{Authorization:'Bearer '+spToken}});if(r.status===401){spToken=null;localStorage.removeItem('sp_token');updateSpBtn();return;}const d=await r.json();spUserId=d.id;}catch(e){}
-}
-
-function updateSpBtn(){
-  const b=document.getElementById('spBtn'),t=document.getElementById('spBtnTxt');
-  if(spToken){b.classList.add('conn');t.textContent='✓ Connected';}
-  else{b.classList.remove('conn');t.textContent='Connect Spotify';}
-}
-
-function handleSpotifyConnect(){
-  if(spToken){if(!confirm('Disconnect Spotify?'))return;spToken=null;spUserId=null;['sp_token','sp_refresh','sp_expiry','sp_redirect','pkce_v'].forEach(k=>localStorage.removeItem(k));updateSpBtn();}
-  else{document.getElementById('spModal').classList.add('vis');const s=localStorage.getItem('sp_redirect');if(s)document.getElementById('redirInp').value=s;}
-}
-
-function closeModal(e){if(e.target===document.getElementById('spModal'))document.getElementById('spModal').classList.remove('vis');}
-
-async function doSpotifyAuth(){
-  const redir=document.getElementById('redirInp').value.trim();if(!redir){alert('Please enter your Netlify URL.');return;}
-  localStorage.setItem('sp_redirect',redir);
-  const v=genVerifier(),ch=await genChallenge(v);localStorage.setItem('pkce_v',v);
-  const u=new URL('https://accounts.spotify.com/authorize');
-  u.searchParams.set('client_id',SPOTIFY_CLIENT_ID);u.searchParams.set('response_type','code');u.searchParams.set('redirect_uri',redir);
-  u.searchParams.set('scope','playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing');
-  u.searchParams.set('code_challenge_method','S256');u.searchParams.set('code_challenge',ch);
-  window.location.href=u.toString();
-}
-
-// ─── SPOTIFY PLAYLIST ─────────────────────────────────────────────────
-async function ensureUserId(){if(spUserId)return true;await fetchSpUser();return!!spUserId;}
-
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── GOOGLE HEALTH API ──────────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-// NOTE: GH config + state (GH_CLIENT_ID, GH_REDIRECT, ghToken, …) are declared
-// ABOVE the init IIFE to avoid a temporal-dead-zone error, since initGoogleHealth()
-// runs synchronously inside that IIFE before this point in the file is reached.
-
-// Persistent OAuth diagnostic — survives navigation so we can see where the flow breaks.
-// Self-healing: if localStorage is full, trims itself and retries so it never fails silently.
-function _ghLog(msg) {
-  for (var keep = 5; keep >= 1; keep--) {
-    try {
-      var arr = JSON.parse(localStorage.getItem('gh_diag') || '[]');
-      arr.unshift({ msg: msg, t: Date.now() });
-      localStorage.setItem('gh_diag', JSON.stringify(arr.slice(0, keep)));
-      return;
-    } catch(e) { try { localStorage.removeItem('gh_diag'); } catch(_) {} }
-  }
-}
-
-// Bytes used by localStorage, with a per-key breakdown (for the storage readout)
-function _lsReport() {
-  var total = 0, rows = [];
-  try {
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      var v = localStorage.getItem(k) || '';
-      var bytes = (k.length + v.length) * 2; // UTF-16 ≈ 2 bytes/char
-      total += bytes;
-      rows.push({ key: k, bytes: bytes });
-    }
-  } catch(e) {}
-  rows.sort(function(a,b){ return b.bytes - a.bytes; });
-  return { total: total, rows: rows };
-}
-
-// Critical keys that must never be evicted to make room
-var GH_PROTECTED_KEYS = ['gh_token','gh_token_expiry','anthropic_key','sp_token','sp_refresh','sp_expiry','iron_prs'];
-
-// Store the GH token resiliently — on quota error, evict non-critical data and retry.
-function storeGhTokenResilient(token, expiry) {
-  function attempt() {
-    localStorage.setItem('gh_token', token);
-    localStorage.setItem('gh_token_expiry', String(expiry));
-  }
-  try { attempt(); _ghLog('token stored OK'); return true; }
-  catch(e) {
-    _ghLog('quota hit — freeing space');
-    // Evict in order of least importance until the write succeeds
-    var evictOrder = ['gh_diag','ia_next_session','ia_session','pkce_v','sp_redirect'];
-    for (var i = 0; i < evictOrder.length; i++) {
-      try { localStorage.removeItem(evictOrder[i]); } catch(_) {}
-      try { attempt(); _ghLog('token stored after evicting ' + evictOrder[i]); return true; } catch(_) {}
-    }
-    // Last resort: trim oldest history entries
-    try {
-      var h = JSON.parse(localStorage.getItem('iron_history') || '[]');
-      while (h.length > 5) {
-        h.pop();
-        try { localStorage.setItem('iron_history', JSON.stringify(h)); attempt();
-              _ghLog('token stored after trimming history to ' + h.length); return true; } catch(_) {}
-      }
-    } catch(_) {}
-    _ghLog('token store FAILED — storage full');
-    return false;
-  }
-}
-
-function initGoogleHealth() {
-  // Handle OAuth callback — implicit flow returns token in URL fragment (#)
-  if (window.location.hash.startsWith('#') && window.location.hash.length > 1) {
-    const frag  = new URLSearchParams(window.location.hash.slice(1));
-    const token = frag.get('access_token');
-    const oauthErr = frag.get('error');
-    if (oauthErr) _ghLog('callback ERROR: ' + oauthErr);
-    else if (!token) _ghLog('callback: hash present, NO token');
-    if (token) {
-      _ghLog('callback: token received');
-      const returnedState = frag.get('state');
-      // Use localStorage (not sessionStorage) — survives iOS PWA external navigation
-      const stored        = JSON.parse(localStorage.getItem('gh_state_pkg') || 'null');
-      const expectedState = stored && (Date.now() < stored.exp) ? stored.state : null;
-      localStorage.removeItem('gh_state_pkg'); // consume once
-
-      const stateOk = returnedState && returnedState === expectedState;
-      _ghLog(stateOk ? 'state OK' : 'state mismatch (accepting anyway)');
-      // Accept token regardless (state mismatch just gets logged, not thrown away silently)
-      ghToken       = token;
-      ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
-      storeGhTokenResilient(ghToken, ghTokenExpiry); // quota-safe write
-      history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar
-    }
-  }
-  // Restore persisted token
-  const saved = localStorage.getItem('gh_token');
-  const exp   = parseInt(localStorage.getItem('gh_token_expiry') || '0', 10);
-  if (saved && exp > Date.now() + 60000) {
-    ghToken = saved; ghTokenExpiry = exp;
-  } else if (saved) {
-    localStorage.removeItem('gh_token');
-    localStorage.removeItem('gh_token_expiry');
-  }
-  // Deferred: consts declared later in the file (BACKUP_NAME etc.) are in the
-  // temporal dead zone during this initial evaluation — same TDZ class that
-  // once broke GH OAuth. setTimeout(0) runs it after the script fully loads.
-  setTimeout(maybeRunPendingBackup, 0); // V18.2.1: finish the backup the user reconnected for
-  // If we have a live token now (fresh from callback or restored), flush any workouts
-  // that couldn't sync earlier (e.g. token died mid-workout, or app was offline).
-  if (ghToken && ghTokenExpiry > Date.now()) {
-    localStorage.setItem('gh_ever', '1');
-    flushUnsyncedWorkouts();
-  }
-}
-
-// True if the user has ever successfully connected Google Health
-function ghEverConnected() { return !!localStorage.getItem('gh_ever'); }
-
-// Show the reconnect banner only when they've connected before AND the token is
-// dead or nearly dead (<10 min). A fresh ~60-min token won't trip it.
-function updateGhReconnectBanner() {
-  const banner = document.getElementById('ghReconnectBanner');
-  if (!banner) return;
-  const msLeft = ghToken ? (ghTokenExpiry - Date.now()) : 0;
-  const stale  = ghEverConnected() && msLeft < 10 * 60 * 1000;
-  banner.style.display = (stale && banner.dataset.dismissed !== '1') ? 'flex' : 'none';
-}
-function dismissGhBanner() {
-  const banner = document.getElementById('ghReconnectBanner');
-  if (banner) { banner.dataset.dismissed = '1'; banner.style.display = 'none'; }
-}
-
-// Push every locally-saved workout that hasn't synced yet. Sequential to avoid
-// clobbering the history read-modify-write; dedup-safe via the deterministic id.
-async function flushUnsyncedWorkouts() {
-  if (!ghToken || ghTokenExpiry <= Date.now()) return;
-  let hist;
-  try { hist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) { return; }
-  for (let i = 0; i < hist.length; i++) {
-    if (hist[i] && hist[i].workoutStart && !hist[i].ghSynced) {
-      await pushWorkoutToGoogleHealth(i);
-    }
-  }
-}
-
-function handleGhConnect() {
-  if (ghToken && ghTokenExpiry > Date.now()) {
-    if (!confirm('Disconnect Google Health?')) return;
-    ghToken = null; ghTokenExpiry = 0;
-    localStorage.removeItem('gh_token');
-    localStorage.removeItem('gh_token_expiry');
-    localStorage.removeItem('gh_state_pkg');
-    localStorage.removeItem('gh_ever'); // intentional disconnect — stop the reconnect banner
-    updateGhBtn();
-    updateGhReconnectBanner();
-    return;
-  }
-  const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-    .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-  // localStorage survives iOS PWA navigation to external origin; TTL = 5 min
-  try { localStorage.setItem('gh_state_pkg', JSON.stringify({ state: state, exp: Date.now() + 300000 })); } catch(e) {}
-  var standalone = (window.navigator.standalone === true) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-  _ghLog('connect tapped (' + (standalone ? 'standalone PWA' : 'browser') + ') -> redirecting');
-  const url = new URL(GH_AUTH_URL);
-  url.searchParams.set('client_id',              GH_CLIENT_ID);
-  url.searchParams.set('redirect_uri',           GH_REDIRECT);
-  url.searchParams.set('response_type',          'token');
-  url.searchParams.set('scope',                  GH_SCOPE);
-  url.searchParams.set('state',                  state);
-  url.searchParams.set('include_granted_scopes', 'true');
-  window.location.assign(url.toString());
-}
-
-function updateGhBtn() {
-  const btn    = document.getElementById('ghBtn');
-  const status = document.getElementById('ghStatus');
-  if (!btn) return;
-  const connected = !!(ghToken && ghTokenExpiry > Date.now());
-  btn.textContent = connected ? 'Disconnect Google Health' : 'Connect Google Health';
-  btn.className   = 'gh-connect-btn' + (connected ? ' connected' : '');
-  if (status) {
-    status.className = 'settings-status ' + (connected ? 'active' : 'inactive');
-    const expStr = connected
-      ? ' · expires ' + new Date(ghTokenExpiry).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-      : '';
-    status.textContent = (connected ? '● Google Health: Connected' : '○ Google Health: Not connected') + expStr;
-  }
-  // Diagnostic readout — shows the last OAuth events so connection issues are visible
-  const diagEl = document.getElementById('ghDiag');
-  if (diagEl) {
-    let arr = [];
-    try { arr = JSON.parse(localStorage.getItem('gh_diag') || '[]'); } catch(e) {}
-    if (!arr.length) {
-      diagEl.style.display = 'none';
-    } else {
-      diagEl.style.display = 'block';
-      const rep = _lsReport();
-      const totalKB = (rep.total / 1024).toFixed(0);
-      const top = rep.rows.slice(0, 3).map(function(r){
-        return r.key + ' (' + (r.bytes/1024).toFixed(1) + 'k)';
-      }).join(', ');
-      diagEl.innerHTML = '<div class="gh-diag-title">OAuth log (newest first)</div>' +
-        arr.map(function(e) {
-          const t = new Date(e.t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-          return '<div class="gh-diag-row">' + t + ' — ' + escHtml(e.msg) + '</div>';
-        }).join('') +
-        '<div class="gh-diag-row" style="margin-top:6px;color:var(--muted)">Storage: ' + totalKB + ' KB · top: ' + escHtml(top) + '</div>';
-    }
-  }
-}
-
-// ── GH LIVE SESSION (V16, experimental) ────────────────────────────────
-// Opens the strength session in Google Health the moment the workout starts,
-// with a provisional end time (planned duration). Finalized with the real
-// end time inside pushWorkoutToGoogleHealth(). Silent no-op if disconnected.
-async function ghStartLiveSession() {
-  try {
-    if (!ghToken || ghTokenExpiry <= Date.now()) { _ghLog('live: no token, skipped'); return; }
-    var startMs    = Date.now();
-    var plannedEnd = startMs + (dur || 30) * 60000;
-    var liveDpId   = 'ia-' + Math.floor(startMs / 1000);
-    var offset     = ghUtcOffsetSeconds() + 's';
-    var body = {
-      name: 'users/me/dataTypes/exercise/dataPoints/' + liveDpId,
-      exercise: {
-        interval: {
-          startTime: ghRfc3339(startMs),    startUtcOffset: offset,
-          endTime:   ghRfc3339(plannedEnd), endUtcOffset:   offset
-        },
-        exerciseType: 'STRENGTH_TRAINING',
-        displayName: 'Workout — Iron Audio (in progress)',
-        activeDuration: Math.round((plannedEnd - startMs) / 1000) + 's',
-        metricsSummary: {}
-      }
-    };
-    var res = await fetch(GH_API_BASE + '/dataTypes/exercise/dataPoints', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (res.ok || res.status === 409) {
-      localStorage.setItem('ia_gh_live', JSON.stringify({ dpId: liveDpId, start: startMs }));
-      _ghLog('live: session opened ' + liveDpId + ' (' + res.status + ')');
-    } else {
-      _ghLog('live: start failed ' + res.status + ' — end-push fallback only');
-    }
-  } catch(e) { _ghLog('live: err ' + (e && e.message)); }
-}
-
-// Called from endWorkout() when the modal opens
-async function startHrSync(workoutStart, workoutEnd) {
-  const section = document.getElementById('ewHrSection');
-  const body    = document.getElementById('ewHrBody');
-  if (!section || !body) return;
-
-  if (!ghToken || ghTokenExpiry <= Date.now()) {
-    section.style.display = 'none';
-    return;
-  }
-
-  section.style.display = 'block';
-  body.innerHTML = '<div class="ew-hr-syncing">⟳ Syncing from Fitbit…</div>';
-
-  // 60s hard timeout — Fitbit may not have synced yet. Data will land in history once it does.
-  if (_ghSyncTimer) clearTimeout(_ghSyncTimer);
-  _ghSyncTimer = setTimeout(function() {
-    _ghSyncTimer = null;
-    const b = document.getElementById('ewHrBody');
-    if (b) b.innerHTML = '<div class="ew-hr-syncing">Sync timed out — HR will appear in history once Fitbit syncs</div>';
-  }, 60000);
-
-  try {
-    // Fetch raw HR samples and daily zone data in parallel
-    const [hrRes, zoneRes] = await Promise.all([
-      fetch(GH_API_BASE + '/dataTypes/heart-rate/dataPoints?page_size=500', {
-        headers: { Authorization: 'Bearer ' + ghToken }
-      }),
-      fetch(GH_API_BASE + '/dataTypes/daily-heart-rate-zones/dataPoints?page_size=2', {
-        headers: { Authorization: 'Bearer ' + ghToken }
-      })
-    ]);
-
-    if (_ghSyncTimer) { clearTimeout(_ghSyncTimer); _ghSyncTimer = null; }
-
-    if (!hrRes.ok) {
-      const b = document.getElementById('ewHrBody');
-      if (b) b.innerHTML = '<div class="ew-hr-syncing" style="color:#f87171">HR fetch failed (status ' + hrRes.status + ')</div>';
-      return;
-    }
-
-    const hrJson   = await hrRes.json();
-    const zoneJson = zoneRes.ok ? await zoneRes.json() : null;
-
-    // Filter samples to workout window
-    const samples = (hrJson.dataPoints || [])
-      .filter(function(dp) {
-        const t = dp.heartRate && dp.heartRate.sampleTime && dp.heartRate.sampleTime.physicalTime;
-        if (!t) return false;
-        const ts = new Date(t).getTime();
-        return ts >= workoutStart && ts <= workoutEnd;
-      })
-      .map(function(dp) { return parseInt(dp.heartRate.bpm, 10); })
-      .filter(Boolean);
-
-    const b = document.getElementById('ewHrBody');
-    if (!b) return;
-
-    if (samples.length === 0) {
-      b.innerHTML = '<div class="ew-hr-syncing" style="color:var(--muted)">No HR data in this window yet · Fitbit may still be syncing</div>';
-      patchLatestHistoryHr({ pending: true, workoutStart: workoutStart, workoutEnd: workoutEnd });
-      return;
-    }
-
-    const avg  = Math.round(samples.reduce(function(a,c){return a+c;},0) / samples.length);
-    const peak = Math.max.apply(null, samples);
-    const min  = Math.min.apply(null, samples);
-
-    // Zone breakdown: try Fitbit's daily data first, fall back to computed from samples
-    let zones = computeZonesFromSamples(samples);
-    if (zoneJson && zoneJson.dataPoints && zoneJson.dataPoints.length) {
-      const todayZone = zoneJson.dataPoints[0];
-      if (todayZone.dailyHeartRateZones) {
-        zones = parseFitbitZones(todayZone.dailyHeartRateZones);
-      }
-    }
-
-    const hrEntry = { avg: avg, peak: peak, min: min, samples: samples.length, zones: zones };
-    patchLatestHistoryHr(hrEntry);
-    renderHrData(b, hrEntry);
-
-  } catch(e) {
-    if (_ghSyncTimer) { clearTimeout(_ghSyncTimer); _ghSyncTimer = null; }
-    const b = document.getElementById('ewHrBody');
-    if (b) b.innerHTML = '<div class="ew-hr-syncing" style="color:#f87171">Sync error: ' + (e.message || 'unknown') + '</div>';
-  }
-}
-
-// Called on lazy fetch from history (pending entries)
-// ─── WRITE: push completed workout to Google Health as an Exercise ────────
-function ghUtcOffsetSeconds() {
-  // getTimezoneOffset() returns minutes BEHIND UTC (EDT → 240). Offset secs = -(min*60).
-  return -(new Date().getTimezoneOffset() * 60);
-}
-function ghRfc3339(ms) {
-  return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z'); // 2026-06-06T17:31:00Z
-}
-
-// Fire-and-forget: writes hist[histIndex] to Google Health. Idempotent (deterministic
-// data-point id + local ghSynced flag), so retries/re-presses never double-log.
-async function pushWorkoutToGoogleHealth(histIndex) {
-  const el = document.getElementById('ghPushStatus');
-  function setStatus(html, cls) {
-    if (!el) return;
-    el.style.display = 'block';
-    el.className = 'gh-push-status ' + (cls || '');
-    el.innerHTML = html;
-    el.onclick = null;
-  }
-  function retryable(html, cls) {
-    setStatus(html, cls);
-    if (el) el.onclick = function(){ pushWorkoutToGoogleHealth(histIndex); };
-  }
-
-  if (!ghToken || ghTokenExpiry <= Date.now()) {
-    // Token dead — workout is saved locally and will auto-flush on next reconnect.
-    if (ghEverConnected()) setStatus('⏳ Saved · will sync to Google Health when you reconnect', 'warn');
-    else if (el) el.style.display = 'none'; // never connected — stay quiet
-    return;
-  }
-
-  let hist;
-  try { hist = JSON.parse(localStorage.getItem('iron_history') || '[]'); } catch(e) { return; }
-  const entry = hist[histIndex];
-  if (!entry || !entry.workoutStart) return;
-  if (entry.ghSynced) { setStatus('✓ Synced to Google Health', 'ok'); return; } // local dedup
-
-  const start = entry.workoutStart, end = entry.workoutEnd || Date.now();
-  const muscleStr = (entry.muscles || []).map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(', ');
-  const exCount   = (entry.exercises || []).length;
-  const volStr    = entry.totalVolume ? Math.round(entry.totalVolume).toLocaleString() + ' lbs' : null;
-  const notes     = [muscleStr, exCount + ' exercises', volStr].filter(Boolean).join(' · ');
-  const offset    = ghUtcOffsetSeconds() + 's';
-  let dpId         = 'ia-' + Math.floor(start / 1000);
-
-  const metricsSummary = {};
-  if (entry.hr && entry.hr.avg) metricsSummary.averageHeartRateBeatsPerMinute = String(entry.hr.avg);
-
-  function payload(includeName) {
-    const p = {
-      exercise: {
-        interval: {
-          startTime: ghRfc3339(start), startUtcOffset: offset,
-          endTime:   ghRfc3339(end),   endUtcOffset:   offset
-        },
-        exerciseType: 'STRENGTH_TRAINING',     // Iron Audio only generates resistance sessions
-        displayName: (muscleStr || 'Workout') + ' — Iron Audio',
-        activeDuration: Math.round((end - start) / 1000) + 's',
-        notes: notes,
-        metricsSummary: metricsSummary          // required object; HR included only if synced
-      }
-    };
-    if (includeName) p.name = 'users/me/dataTypes/exercise/dataPoints/' + dpId;
-    return p;
-  }
-
-  async function post(includeName) {
-    return fetch(GH_API_BASE + '/dataTypes/exercise/dataPoints', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload(includeName))
-    });
-  }
-
-  setStatus('⟳ Syncing to Google Health…', '');
-  _ghLog('push: starting');
-
-  // V16 experimental: if a live session was opened at workout start, try to
-  // finalize it in place (PATCH with real end time). If PATCH isn't granted,
-  // delete the provisional record so the normal end-push below wins; if even
-  // delete fails, reuse the live id so the create 409s instead of duplicating.
-  let live = null;
-  try { live = JSON.parse(localStorage.getItem('ia_gh_live') || 'null'); } catch(e) {}
-  if (live && live.dpId && Math.abs(live.start - start) < 10 * 60000) {
-    const liveName = 'users/me/dataTypes/exercise/dataPoints/' + live.dpId;
-    try {
-      const pb = payload(false); pb.name = liveName;
-      const pr = await fetch(GH_API_BASE + '/dataTypes/exercise/dataPoints/' + live.dpId, {
-        method: 'PATCH',
-        headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify(pb)
-      });
-      if (pr.ok) {
-        entry.ghSynced = true;
-        try { hist[histIndex] = entry; localStorage.setItem('iron_history', JSON.stringify(hist)); } catch(e){}
-        localStorage.removeItem('ia_gh_live');
-        setStatus('✓ Synced to Google Health', 'ok');
-        _ghLog('live: finalized via PATCH');
-        return;
-      }
-      _ghLog('live: PATCH ' + pr.status + ' — trying delete');
-      const dr = await fetch(GH_API_BASE + '/dataTypes/exercise/dataPoints:batchDelete', {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ names: [liveName] })
-      });
-      _ghLog('live: batchDelete ' + dr.status);
-      if (!dr.ok) dpId = live.dpId; // dedupe via 409 rather than double-log
-    } catch(e) { _ghLog('live: finalize err ' + (e && e.message)); }
-    localStorage.removeItem('ia_gh_live');
-  }
-
-  try {
-    let res = await post(true);
-    // If the client-provided name is rejected (400), retry without it; local flag handles dedup.
-    if (res.status === 400) { _ghLog('push: 400 w/ name, retrying w/o'); res = await post(false); }
-
-    if (res.ok || res.status === 409) {          // 409 = already exists = already synced
-      entry.ghSynced = true;
-      try { hist[histIndex] = entry; localStorage.setItem('iron_history', JSON.stringify(hist)); } catch(e){}
-      setStatus('✓ Synced to Google Health', 'ok');
-      _ghLog('push: OK (' + res.status + ')');
-    } else if (res.status === 403) {
-      retryable('⚠ Reconnect Google Health to grant workout sync', 'warn');
-      _ghLog('push: 403 missing write scope');
-    } else {
-      const txt = await res.text().catch(function(){ return ''; });
-      retryable('✕ Sync failed (' + res.status + ') · tap to retry', 'err');
-      _ghLog('push: fail ' + res.status + ' ' + txt.slice(0,80));
-    }
-  } catch(e) {
-    retryable('✕ Sync failed (offline?) · tap to retry', 'err');
-    _ghLog('push: exception ' + e.message);
-  }
-}
-
-async function fetchHistoryHr(index, workoutStart, workoutEnd) {
-  if (!ghToken || ghTokenExpiry <= Date.now()) {
-    alert('Google Health token expired. Reconnect in Settings.');
-    return;
-  }
-  try {
-    const hrRes = await fetch(GH_API_BASE + '/dataTypes/heart-rate/dataPoints?page_size=1000', {
-      headers: { Authorization: 'Bearer ' + ghToken }
-    });
-    if (!hrRes.ok) return;
-    const hrJson = await hrRes.json();
-    const samples = (hrJson.dataPoints || [])
-      .filter(function(dp) {
-        const t = dp.heartRate && dp.heartRate.sampleTime && dp.heartRate.sampleTime.physicalTime;
-        if (!t) return false;
-        const ts = new Date(t).getTime();
-        return ts >= workoutStart && ts <= workoutEnd;
-      })
-      .map(function(dp){ return parseInt(dp.heartRate.bpm, 10); })
-      .filter(Boolean);
-    if (!samples.length) { alert('Still no HR data for this workout window. Try again after Fitbit syncs.'); return; }
-    const avg  = Math.round(samples.reduce(function(a,c){return a+c;},0) / samples.length);
-    const peak = Math.max.apply(null, samples);
-    const min  = Math.min.apply(null, samples);
-    const zones = computeZonesFromSamples(samples);
-    const hrEntry = { avg: avg, peak: peak, min: min, samples: samples.length, zones: zones };
-    // Patch this specific history entry
-    try {
-      var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
-      if (hist[index]) { hist[index].hr = hrEntry; localStorage.setItem('iron_history', JSON.stringify(hist)); }
-    } catch(e){}
-    renderHistoryList();
-  } catch(e) { alert('Fetch failed: ' + (e.message || 'unknown error')); }
-}
-
-function computeZonesFromSamples(samples) {
-  // Fitbit 4-zone model (approximate thresholds for general adult, ~185 max HR)
-  var out = 0, fat = 0, car = 0, peak = 0;
-  samples.forEach(function(bpm) {
-    if      (bpm <  93) out++;
-    else if (bpm < 130) fat++;
-    else if (bpm < 157) car++;
-    else                peak++;
-  });
-  var n = samples.length;
-  return {
-    computed:        true,
-    outOfRangePct:   Math.round(out  / n * 100),
-    fatBurnPct:      Math.round(fat  / n * 100),
-    cardioPct:       Math.round(car  / n * 100),
-    peakPct:         Math.round(peak / n * 100),
-    outOfRangeMin:   Math.round(out  / n * (n / 12)),
-    fatBurnMin:      Math.round(fat  / n * (n / 12)),
-    cardioMin:       Math.round(car  / n * (n / 12)),
-    peakMin:         Math.round(peak / n * (n / 12)),
-  };
-}
-
-function parseFitbitZones(z) {
-  // Normalize Fitbit's daily zone object into our zone schema
-  var fat  = parseInt(z.fatBurnActiveMinutes  || z.fatBurnMinutes  || 0, 10);
-  var car  = parseInt(z.cardioActiveMinutes   || z.cardioMinutes   || 0, 10);
-  var pk   = parseInt(z.peakActiveMinutes     || z.peakMinutes     || 0, 10);
-  var out  = parseInt(z.outOfRangeMinutes || 0, 10);
-  var total = fat + car + pk + out || 1;
-  return {
-    computed:        false,
-    fatBurnPct:      Math.round(fat / total * 100),
-    cardioPct:       Math.round(car / total * 100),
-    peakPct:         Math.round(pk  / total * 100),
-    outOfRangePct:   Math.round(out / total * 100),
-    fatBurnMin:      fat,
-    cardioMin:       car,
-    peakMin:         pk,
-    outOfRangeMin:   out,
-  };
-}
-
-function renderHrData(container, hr) {
-  var z = hr.zones || {};
-  var hasZones = (z.fatBurnPct || 0) + (z.cardioPct || 0) + (z.peakPct || 0) > 0;
-  // Only numeric values go into innerHTML — no unsanitized API strings
-  var avg  = parseInt(hr.avg,  10) || 0;
-  var peak = parseInt(hr.peak, 10) || 0;
-  var min  = parseInt(hr.min,  10) || 0;
-  var fb   = parseInt(z.fatBurnPct,    10) || 0;
-  var ca   = parseInt(z.cardioPct,     10) || 0;
-  var pk   = parseInt(z.peakPct,       10) || 0;
-  var oor  = parseInt(z.outOfRangePct, 10) || 0;
-  var fbm  = parseInt(z.fatBurnMin, 10) || 0;
-  var cam  = parseInt(z.cardioMin,  10) || 0;
-  var pkm  = parseInt(z.peakMin,    10) || 0;
-
-  var html = '<div class="ew-hr-stats-row">'
-    + '<div class="ew-hr-stat"><div class="ew-hr-val">'  + avg  + '</div><div class="ew-hr-lbl">Avg bpm</div></div>'
-    + '<div class="ew-hr-stat"><div class="ew-hr-val red">' + peak + '</div><div class="ew-hr-lbl">Peak bpm</div></div>'
-    + '<div class="ew-hr-stat"><div class="ew-hr-val blue">' + min + '</div><div class="ew-hr-lbl">Min bpm</div></div>'
-    + '</div>';
-
-  if (hasZones) {
-    html += '<div class="ew-hr-zone-bar">'
-      + (oor > 0 ? '<div class="ew-zone-seg ew-zone-rest"  style="flex:' + oor + '"></div>' : '')
-      + (fb  > 0 ? '<div class="ew-zone-seg ew-zone-fatburn" style="flex:' + fb  + '"></div>' : '')
-      + (ca  > 0 ? '<div class="ew-zone-seg ew-zone-cardio"  style="flex:' + ca  + '"></div>' : '')
-      + (pk  > 0 ? '<div class="ew-zone-seg ew-zone-peak"    style="flex:' + pk  + '"></div>' : '')
-      + '</div>'
-      + '<div class="ew-hr-zone-legend">'
-      + (fb > 0  ? '<span class="ew-zone-dot fb">● Fat Burn ' + fb  + '% (' + fbm + 'm)</span>' : '')
-      + (ca > 0  ? '<span class="ew-zone-dot ca">● Cardio '   + ca  + '% (' + cam + 'm)</span>' : '')
-      + (pk > 0  ? '<span class="ew-zone-dot pk">● Peak '     + pk  + '% (' + pkm + 'm)</span>' : '')
-      + '</div>'
-      + (z.computed ? '<div class="ew-hr-zone-note">Estimated zones · Fitbit\'s own calc loads once daily zones sync</div>' : '');
-  }
-
-  html += '<div class="ew-hr-samples">' + parseInt(hr.samples, 10) + ' samples</div>';
-  container.innerHTML = html;
-}
-
-function patchLatestHistoryHr(hrEntry) {
-  try {
-    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
-    if (hist.length) {
-      hist[0].hr = hrEntry;
-      localStorage.setItem('iron_history', JSON.stringify(hist));
-    }
-  } catch(e) {}
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── SETTINGS / API KEY ─────────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-function openSettings() { updateStorageCounts();
-  var key = localStorage.getItem('anthropic_key') || '';
-  var inp = document.getElementById('anthropicKeyInput');
-  if (inp) inp.value = key ? '••••••••••••••••' : '';
-  updateSettingsStatus();
-  updateCostDisplay();
-  updateGhBtn();
-  document.getElementById('settingsOverlay').classList.add('open');
-  try { updateBackupStatus(); } catch(e) {}
-  try { updateGifCacheStatus(); } catch(e) {}
-  document.getElementById('settingsPanel').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeSettings() {
-  document.getElementById('settingsOverlay').classList.remove('open');
-  document.getElementById('settingsPanel').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function saveAnthropicKey() {
-  var inp = document.getElementById('anthropicKeyInput');
-  var val = inp.value.trim();
-  if (val && !val.startsWith('•')) {
-    localStorage.setItem('anthropic_key', val);
-    inp.value = '••••••••••••••••';
-    alert('✅ API key saved!');
-  } else if (!val) {
-    localStorage.removeItem('anthropic_key');
-    alert('Key cleared.');
-  }
-  updateSettingsStatus();
-}
-function updateSettingsStatus() {
-  var el = document.getElementById('settingsStatus');
-  if (!el) return;
-  var hasKey = !!localStorage.getItem('anthropic_key');
-  el.className = 'settings-status ' + (hasKey ? 'active' : 'inactive');
-  el.textContent = hasKey ? '● Claude DJ: Active' : '○ Claude DJ: Not configured';
-}
-
-// Cost tracker — ~$0.001 per playlist (Haiku input+output estimate)
-var COST_PER_CALL    = 0.001;
-var STARTING_BALANCE = 3.94; // actual balance as of last check
-
-function getCostData() {
-  try { return JSON.parse(localStorage.getItem('ia_cost') || '{"calls":0,"cost":0}'); }
-  catch(e) { return {calls:0, cost:0}; }
-}
-function saveCostData(d) {
-  localStorage.setItem('ia_cost', JSON.stringify(d));
-}
-function recordCostCall() {
-  var d = getCostData();
-  d.calls++;
-  d.cost = Math.round((d.cost + COST_PER_CALL) * 10000) / 10000;
-  saveCostData(d);
-  updateCostDisplay();
-}
-function updateCostDisplay() {
-  var d = getCostData();
-  var callsLeft = Math.max(0, Math.floor((STARTING_BALANCE - d.cost) / COST_PER_CALL));
-  var el = document.getElementById('costPlaylists');
-  var el2 = document.getElementById('costTotal');
-  var el4 = document.getElementById('costCallsLeft');
-  if (el)  el.textContent = d.calls;
-  if (el2) { el2.textContent = '$' + d.cost.toFixed(4); el2.className = 'settings-cost-val accent'; }
-  if (el4) { el4.textContent = callsLeft.toLocaleString(); el4.className = 'settings-cost-val' + (callsLeft < 100 ? ' warn' : ''); }
-}
-function resetCostTracker() {
-  if (!confirm('Reset usage counter?')) return;
-  saveCostData({calls:0, cost:0});
-  updateCostDisplay();
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── ARTIST BLOCKLIST & PER-GENRE SONG HISTORY ──────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-const BLOCKED_ARTISTS = ['pitbull']; // lowercase; add more anytime
-const HISTORY_SESSIONS_TO_KEEP = 3; // songs won't repeat until 4th session
-const IA_HISTORY_KEY = 'ia_song_history_v2'; // per-genre, keyed by genre
-
-function getPlayHistory(genre) {
-  try {
-    var all = JSON.parse(localStorage.getItem(IA_HISTORY_KEY) || '{}');
-    return Array.isArray(all[genre]) ? all[genre] : [];
-  } catch(e) { return []; }
-}
-function savePlayHistory(genre, sessions) {
-  try {
-    var all = JSON.parse(localStorage.getItem(IA_HISTORY_KEY) || '{}');
-    all[genre] = sessions.slice(0, HISTORY_SESSIONS_TO_KEEP);
-    localStorage.setItem(IA_HISTORY_KEY, JSON.stringify(all));
-  } catch(e) {}
-}
-function recordSessionHistory(genre, tracks) {
-  if (!tracks || !tracks.length) return;
-  var sessions = getPlayHistory(genre);
-  sessions.unshift({
-    ts: Date.now(),
-    songs: tracks.map(function(t) {
-      return (t.artists?.[0]?.name || '').toLowerCase().trim() + '|' + (t.name || '').toLowerCase().trim();
-    })
-  });
-  savePlayHistory(genre, sessions);
-}
-function getRecentSongSet(genre) {
-  var set = new Set();
-  getPlayHistory(genre).forEach(function(s) { s.songs.forEach(function(k) { set.add(k); }); });
-  return set;
-}
-function getRecentArtistSet(genre) {
-  var set = new Set();
-  getPlayHistory(genre).forEach(function(s) {
-    s.songs.forEach(function(k) { set.add(k.split('|')[0]); });
-  });
-  return set;
-}
-function isBlockedArtist(name) {
-  var lower = (name || '').toLowerCase();
-  return BLOCKED_ARTISTS.some(function(b) { return lower.includes(b); });
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── CLAUDE DJ PLAYLIST GENERATOR ───────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-async function claudeDJSearch(g, count) {
-  var apiKey = localStorage.getItem('anthropic_key');
-  if (!apiKey) return null;
-
-  // Genre-specific prompt additions
-  var genreNotes = {
-    'Hip-Hop': 'Include a healthy mix spanning different decades — legends from the 80s and 90s (Nas, Biggie, Jay-Z, Rakim, LL Cool J, DMX, Big Pun, Big L) alongside current artists (Drake, Kendrick Lamar, Travis Scott, Post Malone). Do NOT include any of the following as a primary artist: Cardi B, Nicki Minaj, Lizzo, Megan Thee Stallion, Sexyy Red, GloRilla, Ice Spice, Latto, Flo Milli, JT, Anycia, 2Pac. They may appear as featured artists only.',
-    'Rock':    'Include a mix of classic rock legends (Led Zeppelin, AC/DC, Black Sabbath, Pink Floyd, The Rolling Stones) and modern rock (Foo Fighters, Linkin Park, Muse, System of a Down). Prioritize high-energy anthems.',
-    'EDM':     'Mix iconic tracks from the golden era of EDM (Avicii, Deadmau5, Daft Punk) with current underground and mainstage artists. Prioritize big drops and relentless energy.',
-    '80s':     'Strictly 1980s artists and songs only. Mix pop, rock, new wave and synth-pop. Focus on tracks with driving, upbeat rhythms.',
-    'Pop':     'Mix chart-topping current pop with iconic pop hits from the 2000s and 2010s. High energy, anthemic tracks only.',
-    'Latin':   'STRICT GENRE RESTRICTION: Select ONLY Merengue, Salsa, and Bachata songs. No reggaeton, Latin pop, or other sub-genres. Mix across all three: include classic salsa legends (Celia Cruz, Héctor Lavoe, Willie Colón, Rubén Blades, Marc Anthony), bachata artists (Romeo Santos, Aventura, Prince Royce, Juan Luis Guerra), and merengue artists (Elvis Crespo, Olga Tañón, Juan Luis Guerra, Fernando Villalona). Span different decades from the 1970s through today.',
-    'R&B':     'Mix classic soul/R&B legends (Marvin Gaye, Stevie Wonder, Luther Vandross) with modern R&B (The Weeknd, Frank Ocean, SZA, Usher). Focus on tracks with strong groove and energy.',
-    'Reggae':  'Mix classic roots reggae (Bob Marley, Jimmy Cliff, Burning Spear) with modern dancehall and reggae fusion. Keep the energy upbeat and positive.',
-    'Reggaeton': 'Mix classic reggaeton (Daddy Yankee, Don Omar, Wisin & Yandel) with current artists (Bad Bunny, J Balvin, Rauw Alejandro). Maximum energy and rhythm.',
-    'Anime':   'Select iconic opening and ending themes from well-known anime series. Prioritize high-energy tracks from shows like Attack on Titan, Demon Slayer, Naruto, Dragon Ball, My Hero Academia.',
-    'Mix':     'Select one song from each of these genres: Hip-Hop, Rock, EDM, 80s, Pop, Latin, R&B, Reggaeton. Mix eras and styles for maximum variety.',
-    'Random':  'Select from across all genres and decades. Maximum variety — no two songs should feel like they belong to the same genre.'
-  };
-
-  var genreNote = genreNotes[g] || '';
-
-  // Build exclusion context from per-genre history and global blocklist
-  var recentArtists = Array.from(getRecentArtistSet(g)).slice(0, 30);
-  var blockedNames  = BLOCKED_ARTISTS.map(function(a) { return a.charAt(0).toUpperCase() + a.slice(1); });
-  var blockedLine   = blockedNames.length ? '\n\nNEVER include these artists under any circumstances, not even as featured: ' + blockedNames.join(', ') + '.' : '';
-  var historyLine   = recentArtists.length ? '\n\nDo NOT include these artists (recently played — need variety): ' + recentArtists.map(function(a) { return a.replace(/\b\w/g, function(c) { return c.toUpperCase(); }); }).join(', ') + '.' : '';
-
-  var systemPrompt = "You are an expert Fitness DJ and Workout Programmer. Your specialty is selecting high-energy, chart-topping hits that keep athletes motivated and moving.\n\nCore Constraints:\n- Popularity Only: Select only well-known, A-List tracks and stadium-fillers. No obscure deep cuts.\n- Strict Diversity: Zero artist repetition. Each song must be by a completely different primary artist.\n- High-Tempo: Every track must have a fast, driving rhythm suitable for lifting or cardio.\n- No Slow Starts: Avoid songs with long quiet introductions.\n- Era Mix: Include artists spanning different decades of the genre, not just current artists.\n\nEnergy Profile: Focus on tracks with Aggressive, Triumphant, or Relentless emotional tones.\n\nRespond ONLY in this exact compact format — one song per line, Artist|Title, nothing else:\nArtist Name|Song Title\nArtist Name|Song Title";
-
-  var userPrompt = 'Generate a ' + count + ' song playlist for a high-intensity workout. Genre: ' + g + '. Prioritize established classics and well-known hits — avoid songs released in the last 6 months.'
-    + (genreNote ? '\n\nAdditional instructions: ' + genreNote : '')
-    + blockedLine
-    + historyLine
-    + '\n\nReturn ONLY the compact Artist|Title format, one per line, no other text.';
-
-  try {
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
-
-    if (!resp.ok) {
-      var err = await resp.json();
-      console.warn('Claude DJ error:', err.error?.message || resp.status);
-      return null;
-    }
-
-    var data = await resp.json();
-    var text = (data.content?.[0]?.text || '').trim();
-
-    // Parse compact pipe-delimited format: "Artist|Title" one per line
-    // Falls back to JSON if Claude returns that instead
-    var songs = [];
-    if (text.includes('|') && !text.startsWith('[')) {
-      // Compact format
-      songs = text.split('\n')
-        .map(function(line) { return line.trim(); })
-        .filter(function(line) { return line.includes('|'); })
-        .map(function(line) {
-          var parts = line.split('|');
-          return { artist: parts[0].trim(), title: parts[1].trim() };
-        })
-        .filter(function(s) { return s.artist && s.title; });
-    } else {
-      // JSON fallback
-      try {
-        text = text.replace(/```json|```/g, '').trim();
-        var match = text.match(/\[[\s\S]*\]/);
-        if (match) songs = JSON.parse(match[0]);
-      } catch(e) {}
-    }
-    if (!Array.isArray(songs) || !songs.length) return null;
-
-    recordCostCall();
-
-    // Spotify lookup for each song
-    var tracks = [];
-    var seenArtists = new Set();
-
-    for (var i = 0; i < songs.length; i++) {
-      var song = songs[i];
-      if (!song.artist || !song.title) continue;
-
-      var artistFirst = song.artist.split(' ')[0];
-      var found = null;
-
-      // Tier 1: plain text "Song Title Artist Name" — most reliable, no flaky operators
-      try {
-        var q1 = song.title + ' ' + song.artist;
-        var r1 = await fetch(
-          'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q1) + '&type=track&limit=5&market=US',
-          { headers: { Authorization: 'Bearer ' + spToken } }
-        );
-        if (r1.ok) {
-          var d1 = await r1.json();
-          var items1 = d1.tracks?.items || [];
-          // Score each result: prefer exact artist + title match
-          found = scoreSpotifyResults(items1, song.artist, song.title);
-        }
-      } catch(e) {}
-
-      // Tier 2: track: operator with first name only (avoids fuzzy full-name mismatch)
-      if (!found) {
-        try {
-          var q2 = 'track:' + song.title + ' artist:' + artistFirst;
-          var r2 = await fetch(
-            'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q2) + '&type=track&limit=5&market=US',
-            { headers: { Authorization: 'Bearer ' + spToken } }
-          );
-          if (r2.ok) {
-            var d2 = await r2.json();
-            found = scoreSpotifyResults(d2.tracks?.items || [], song.artist, song.title);
-          }
-        } catch(e) {}
-      }
-
-      // Tier 3: just the song title — last resort, accept anything with matching artist first word
-      if (!found) {
-        try {
-          var r3 = await fetch(
-            'https://api.spotify.com/v1/search?q=' + encodeURIComponent(song.title) + '&type=track&limit=10&market=US',
-            { headers: { Authorization: 'Bearer ' + spToken } }
-          );
-          if (r3.ok) {
-            var d3 = await r3.json();
-            var items3 = d3.tracks?.items || [];
-            found = items3.find(function(t) {
-              return t.artists && t.artists.some(function(a) {
-                return a.name.toLowerCase().includes(artistFirst.toLowerCase());
-              });
-            }) || null;
-          }
-        } catch(e) {}
-      }
-
-      if (found && found.uri) {
-        var aKey = (found.artists?.[0]?.name || '').toLowerCase();
-        if (isBlockedArtist(aKey)) continue; // global blocklist
-        if (!seenArtists.has(aKey)) {
-          seenArtists.add(aKey);
-          tracks.push(found);
-        }
-      }
-    }
-
-    return tracks.length >= Math.floor(count * 0.6) ? tracks.slice(0, count) : null;
-
-  } catch(e) {
-    console.warn('Claude DJ failed:', e);
-    return null;
-  }
-}
-
-// Score Spotify search results — prefer exact artist + title match
-function scoreSpotifyResults(items, wantArtist, wantTitle) {
-  if (!items || !items.length) return null;
-  var wantArtistLower = wantArtist.toLowerCase();
-  var wantTitleLower  = wantTitle.toLowerCase();
-  var wantFirst       = wantArtist.split(' ')[0].toLowerCase();
-
-  var scored = items.map(function(t) {
-    if (!t || !t.uri) return { track: t, score: -1 };
-    var tArtist = (t.artists?.[0]?.name || '').toLowerCase();
-    var tTitle  = t.name.toLowerCase();
-    var score   = 0;
-    if (tArtist === wantArtistLower)                         score += 4;
-    else if (tArtist.includes(wantFirst))                    score += 2;
-    else if (wantArtistLower.includes(tArtist))              score += 1;
-    if (tTitle === wantTitleLower)                           score += 4;
-    else if (tTitle.includes(wantTitleLower))                score += 2;
-    else if (wantTitleLower.includes(tTitle))                score += 1;
-    return { track: t, score: score };
-  });
-
-  scored.sort(function(a, b) { return b.score - a.score; });
-  return scored[0].score >= 2 ? scored[0].track : null;
-}
-
-
-
-
-// ═══════════════════════════════════════════════════════════════════════
-// PLAYLIST ENGINE v4 — Search-only (all deprecated endpoints removed Feb 2026)
-// Working endpoints: /v1/search, /me/playlists, /me/top/tracks
-// Gone: /recommendations, /artists/{id}/top-tracks, popularity field
-// ═══════════════════════════════════════════════════════════════════════
-
-// Track name patterns that indicate non-song content
-const BAD_TRACK_KEYWORDS = [
-  /\bintro\b/i, /\boutro\b/i, /\bskit\b/i, /\binterlude\b/i,
-  /\binstrumental\b/i, /\bacappella\b/i, /\ba cappella\b/i,
-  /\breprise\b/i, /\bbonus track\b/i, /\bcommentary\b/i,
-  /\(live\)/i, /\[live\]/i, /- live$/i,
-  /\(remix\)/i, /\[remix\]/i, /- remix$/i,
-  /\(acoustic\)/i, /\[acoustic\]/i, /- acoustic$/i,
-  /\(demo\)/i, /\[demo\]/i
-];
-
-function isCleanTrack(t) {
-  if (!t || !t.uri) return false;
-  var name = t.name || '';
-  return !BAD_TRACK_KEYWORDS.some(function(rx) { return rx.test(name); });
-}
-
-// Hardcoded song pools — specific Artist|Title pairs confirmed as major hits.
-// Used as fallback when Claude DJ is unavailable. These are searched via
-// Spotify's /search endpoint (the only working discovery endpoint as of 2026).
-const SONG_POOLS = {
-  'Hip-Hop': [
-    'Kendrick Lamar|HUMBLE.','Drake|God\'s Plan','Eminem|Lose Yourself',
-    'Travis Scott|SICKO MODE','Kanye West|POWER','Jay-Z|99 Problems',
-    'Post Malone|Rockstar','50 Cent|In Da Club','Lil Wayne|A Milli',
-    'J. Cole|Middle Child','21 Savage|Rockstar','Nas|NY State of Mind',
-    'Notorious B.I.G.|Hypnotize','DMX|X Gon Give It to Ya',
-    'Snoop Dogg|Drop It Like It\'s Hot','Ice Cube|Check Yo Self',
-    'Ludacris|Move Bitch','Busta Rhymes|Break Ya Neck',
-    'Meek Mill|Dreams and Nightmares','Rick Ross|BMF',
-    'Future|Mask Off','A$AP Rocky|F**kin\' Problems',
-    'Tyler the Creator|EARFQUAKE','Childish Gambino|This Is America',
-    'Method Man|Bring the Pain','LL Cool J|Mama Said Knock You Out'
-  ],
-  'Rock': [
-    'Survivor|Eye of the Tiger','AC/DC|Thunderstruck','Metallica|Enter Sandman',
-    'Guns N Roses|Welcome to the Jungle','Foo Fighters|All My Life',
-    'Linkin Park|In the End','Nirvana|Smells Like Teen Spirit',
-    'Rage Against the Machine|Killing in the Name','Queen|We Will Rock You',
-    'Led Zeppelin|Immigrant Song','Black Sabbath|Iron Man',
-    'System of a Down|Chop Suey!','Audioslave|Cochise',
-    'Red Hot Chili Peppers|Can\'t Stop','Green Day|Boulevard of Broken Dreams',
-    'Disturbed|Down with the Sickness','Muse|Uprising',
-    'Breaking Benjamin|I Will Not Bow','Pearl Jam|Even Flow',
-    'Soundgarden|Black Hole Sun','Alice in Chains|Would?',
-    'Pantera|Cowboys from Hell','Slipknot|Duality',
-    'Nine Inch Nails|Head Like a Hole','Iron Maiden|The Trooper'
-  ],
-  'EDM': [
-    'Avicii|Wake Me Up','Calvin Harris|Summer','Martin Garrix|Animals',
-    'David Guetta|Titanium','Skrillex|Bangarang','Daft Punk|One More Time',
-    'The Chainsmokers|Closer','Marshmello|Alone','Tiesto|Red Lights',
-    'Zedd|Clarity','Swedish House Mafia|Don\'t You Worry Child',
-    'Deadmau5|Ghosts N Stuff','Kygo|Firestone','Alan Walker|Faded',
-    'Alesso|Heroes','Armin van Buuren|Blah Blah Blah',
-    'Diplo|Revolution','Flume|Never Be Like You',
-    'Illenium|Losing Patience','Porter Robinson|Language',
-    'Odesza|Say My Name','Above & Beyond|We\'re All We Need',
-    'Disclosure|Latch','Duke Dumont|Need U'
-  ],
-  '80s': [
-    'Survivor|Eye of the Tiger','Michael Jackson|Beat It',
-    'AC/DC|Back in Black','Bon Jovi|Livin\' on a Prayer',
-    'Queen|Don\'t Stop Me Now','Journey|Don\'t Stop Believin\'',
-    'Foreigner|Juke Box Hero','REO Speedwagon|Keep On Loving You',
-    'Cyndi Lauper|Girls Just Want to Have Fun','Madonna|Like a Prayer',
-    'Prince|Let\'s Go Crazy','Tina Turner|What\'s Love Got to Do with It',
-    'David Bowie|Let\'s Dance','Billy Joel|It\'s Still Rock and Roll to Me',
-    'Duran Duran|Hungry Like the Wolf','Depeche Mode|Just Can\'t Get Enough',
-    'The Police|Roxanne','Pat Benatar|Hit Me with Your Best Shot',
-    'Hall & Oates|Maneater','A-ha|Take On Me',
-    'Tears for Fears|Everybody Wants to Rule the World',
-    'INXS|Need You Tonight','Eurythmics|Sweet Dreams',
-    'New Order|Blue Monday','Heart|Barracuda'
-  ],
-  'Pop': [
-    'The Weeknd|Blinding Lights','Bruno Mars|Uptown Funk',
-    'Ed Sheeran|Shape of You','Taylor Swift|Shake It Off',
-    'Dua Lipa|Levitating','Ariana Grande|7 Rings',
-    'Justin Timberlake|Can\'t Stop the Feeling!','Beyonce|Crazy in Love',
-    'Rihanna|We Found Love','Lady Gaga|Bad Romance',
-    'Katy Perry|Roar','Maroon 5|Moves Like Jagger',
-    'Adele|Rolling in the Deep','Justin Bieber|Sorry',
-    'Billie Eilish|bad guy','Harry Styles|As It Was',
-    'Olivia Rodrigo|good 4 u','Miley Cyrus|Flowers',
-    'Doja Cat|Say So','Sam Smith|Stay with Me',
-    'Charlie Puth|Attention','Selena Gomez|Come & Get It',
-    'Kelly Clarkson|Since U Been Gone','Christina Aguilera|Fighter',
-    'Pink|Raise Your Glass'
-  ],
-  'Latin': [
-    // Salsa
-    'Marc Anthony|Vivir Mi Vida','Marc Anthony|Valió la Pena',
-    'Celia Cruz|La Vida Es Un Carnaval','Héctor Lavoe|El Cantante',
-    'Willie Colón|El Gran Varón','Rubén Blades|Pedro Navaja',
-    'Eddie Santiago|Tú Me Quemas','Jerry Rivera|Cara de Niño',
-    'Gilberto Santa Rosa|Que Manera de Quererte',
-    'La India|Ese Hombre','Victor Manuelle|Un Siglo Sin Ti',
-    // Bachata
-    'Romeo Santos|Propuesta Indecente','Aventura|Obsesión',
-    'Prince Royce|Stand By Me','Prince Royce|Corazón Sin Cara',
-    'Juan Luis Guerra|Bachata Rosa','Xtreme|Te Extraño',
-    'Frank Reyes|Princesa','Toby Love|Lento',
-    'Romeo Santos|Yo También','Grupo Extra|Amor Real',
-    // Merengue
-    'Juan Luis Guerra|Ojalá Que Llueva Café','Juan Luis Guerra|La Bilirrubina',
-    'Elvis Crespo|Suavemente','Olga Tañón|Que El Ritmo No Pare',
-    'Fulanito|El Hombre Más Famoso De La Tierra',
-    'Fernando Villalona|Qué Pasa','Los Hermanos Rosario|La Dueña Del Swing'
-  ],
-  'R&B': [
-    'The Weeknd|Starboy','Usher|Yeah!','Beyonce|Irreplaceable',
-    'Bruno Mars|That\'s What I Like','Alicia Keys|No One',
-    'SZA|Kill Bill','Frank Ocean|Thinkin Bout You',
-    'Chris Brown|Look at Me Now','Ne-Yo|So Sick',
-    'Mary J. Blige|Family Affair','John Legend|All of Me',
-    'Janet Jackson|Nasty','Stevie Wonder|Superstition',
-    'Marvin Gaye|Let\'s Get It On','Boyz II Men|End of the Road',
-    'Lauryn Hill|Doo Wop','TLC|No Scrubs','Aaliyah|Try Again',
-    'Maxwell|Fortunate','Erykah Badu|On & On',
-    'Bryson Tiller|Exchange','Khalid|Talk',
-    'Summer Walker|Playing Games','Giveon|Heartbreak Anniversary'
-  ],
-  'Reggae': [
-    'Bob Marley|One Love','Sean Paul|Temperature',
-    'Shaggy|It Wasn\'t Me','Bob Marley|Could You Be Loved',
-    'Jimmy Cliff|The Harder They Come','Bob Marley|Buffalo Soldier',
-    'Damian Marley|Welcome to Jamrock','UB40|Red Red Wine',
-    'Inner Circle|Bad Boys','Toots and the Maytals|Pressure Drop',
-    'Chronixx|Smile Jamaica','Bob Marley|Jamming',
-    'Bob Marley|No Woman No Cry','Stephen Marley|Rock Stone',
-    'Ziggy Marley|Love Is My Religion'
-  ],
-  'Reggaeton': [
-    'Daddy Yankee|Gasolina','Bad Bunny|La Corriente',
-    'J Balvin|Mi Gente','Don Omar|Danza Kuduro',
-    'Wisin & Yandel|Zun Tata','Ozuna|Taki Taki',
-    'Nicky Jam|El Perdón','Maluma|Felices los 4',
-    'Karol G|MAMIII','Rauw Alejandro|Todo de Ti',
-    'Anuel AA|Secreto','Farruko|Pepas','Arcangel|Bebe',
-    'Myke Towers|La Playa','Jhay Cortez|No Me Conoce',
-    'Tego Calderon|Pa\' Que Retozen','Sech|Otro Trago',
-    'Eladio Carrion|Tata'
-  ],
-  'Anime': [
-    'LiSA|Gurenge','Linked Horizon|Guren no Yumiya',
-    'FLOW|GO!','LiSA|Homura',
-    'Hiroyuki Sawano|Vogel im Kafig','Aimer|Ref:rain',
-    'One Ok Rock|The Beginning','Kenshi Yonezu|Kick Back',
-    'Ado|Usseewa','Man With a Mission|Database',
-    'SiM|The Rumbling','Yoasobi|Idol',
-    'Eve|Kaikai Kitan','JAM Project|Skill'
-  ],
-  'Mix': [
-    'Kendrick Lamar|HUMBLE.','AC/DC|Thunderstruck','Avicii|Wake Me Up',
-    'Michael Jackson|Beat It','The Weeknd|Blinding Lights',
-    'Daddy Yankee|Gasolina','Usher|Yeah!','Bob Marley|One Love',
-    'Bad Bunny|Tití Me Preguntó','Foo Fighters|All My Life',
-    'Bruno Mars|Uptown Funk','Eminem|Lose Yourself',
-    'Calvin Harris|Summer','Drake|God\'s Plan',
-    'Beyonce|Crazy in Love','Martin Garrix|Animals',
-    'Rage Against the Machine|Killing in the Name','J Balvin|Mi Gente',
-    'Dua Lipa|Levitating','Travis Scott|SICKO MODE',
-    'Queen|We Will Rock You','SZA|Kill Bill',
-    'Daft Punk|One More Time','Taylor Swift|Shake It Off',
-    'Kanye West|POWER'
-  ],
-  'Random': [
-    'Michael Jackson|Beat It','Eminem|Lose Yourself',
-    'The Weeknd|Blinding Lights','Beyonce|Crazy in Love',
-    'AC/DC|Thunderstruck','Drake|God\'s Plan',
-    'Kendrick Lamar|HUMBLE.','Bad Bunny|Tití Me Preguntó',
-    'Bruno Mars|Uptown Funk','Queen|We Will Rock You',
-    'Avicii|Wake Me Up','Taylor Swift|Shake It Off',
-    'Dua Lipa|Levitating','Kanye West|POWER',
-    'Post Malone|Rockstar','Lady Gaga|Bad Romance',
-    'Foo Fighters|All My Life','Daddy Yankee|Gasolina',
-    'Usher|Yeah!','Travis Scott|SICKO MODE',
-    'Calvin Harris|Summer','SZA|Kill Bill',
-    'Led Zeppelin|Immigrant Song','Daft Punk|One More Time',
-    'Rihanna|We Found Love'
-  ]
-};
-
-// Search Spotify for one specific "Artist|Title" pair.
-// Uses only /v1/search which is confirmed working.
-async function searchOneSong(artistName, songTitle) {
-  var seenUri = null;
-
-  // Tier 1: exact phrase search — most reliable
-  try {
-    var q1 = '"' + songTitle + '" "' + artistName.split(' ')[0] + '"';
-    var r1 = await fetch(
-      'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q1) +
-      '&type=track&limit=5&market=US',
-      { headers: { Authorization: 'Bearer ' + spToken } }
-    );
-    if (r1.ok) {
-      var d1 = await r1.json();
-      var found = scoreSpotifyResults(d1.tracks && d1.tracks.items || [], artistName, songTitle);
-      if (found && isCleanTrack(found)) return found;
-    }
-  } catch(e) {}
-
-  // Tier 2: plain combined search
-  try {
-    var q2 = songTitle + ' ' + artistName;
-    var r2 = await fetch(
-      'https://api.spotify.com/v1/search?q=' + encodeURIComponent(q2) +
-      '&type=track&limit=5&market=US',
-      { headers: { Authorization: 'Bearer ' + spToken } }
-    );
-    if (r2.ok) {
-      var d2 = await r2.json();
-      var found2 = scoreSpotifyResults(d2.tracks && d2.tracks.items || [], artistName, songTitle);
-      if (found2 && isCleanTrack(found2)) return found2;
-    }
-  } catch(e) {}
-
-  return null;
-}
-
-// Build playlist from a list of "Artist|Title" strings
-async function searchFromSongList(songs, count, genre) {
-  var recentSongs = getRecentSongSet(genre || '');
-
-  function notRecentOrBlocked(entry) {
-    var parts = entry.split('|');
-    var artist = (parts[0] || '').toLowerCase().trim();
-    var title  = (parts[1] || '').toLowerCase().trim();
-    if (isBlockedArtist(artist)) return false;
-    if (recentSongs.has(artist + '|' + title)) return false;
-    return true;
-  }
-
-  var filtered = songs.filter(notRecentOrBlocked);
-  // Safety: if history filtering leaves too few candidates, fall back to blocklist-only
-  if (filtered.length < count + 4) {
-    filtered = songs.filter(function(e) {
-      return !isBlockedArtist((e.split('|')[0] || '').toLowerCase());
-    });
-  }
-
-  var shuffled = shuffle(filtered.slice()).slice(0, count + 8);
-  var tracks = [];
-  var seenArtists = new Set();
-  var seenUris = new Set();
-
-  // Process in batches of 5 for speed without hammering rate limits
-  var BATCH = 5;
-  for (var i = 0; i < shuffled.length && tracks.length < count; i += BATCH) {
-    var batch = shuffled.slice(i, i + BATCH);
-    var results = await Promise.allSettled(batch.map(function(entry) {
-      var parts = entry.split('|');
-      var artist = (parts[0] || '').trim();
-      var title = (parts[1] || '').trim();
-      return searchOneSong(artist, title);
-    }));
-
-    results.forEach(function(r, bi) {
-      if (r.status !== 'fulfilled' || !r.value) return;
-      var track = r.value;
-      var artistName = (track.artists?.[0]?.name || '').toLowerCase();
-      if (isBlockedArtist(artistName)) return; // double-check Spotify result
-      var parts = shuffled[i + bi].split('|');
-      var artistKey = (parts[0] || '').toLowerCase().trim();
-      if (seenArtists.has(artistKey)) return;
-      if (seenUris.has(track.uri)) return;
-      seenArtists.add(artistKey);
-      seenUris.add(track.uri);
-      tracks.push(track);
-    });
-  }
-  return tracks.slice(0, count);
-}
-
-// ── Unified search ─────────────────────────────────────────────────────
-async function searchTracks(g, count) {
-  // Primary: Claude DJ (uses Anthropic API + Spotify search for resolution)
-  if (localStorage.getItem('anthropic_key')) {
-    try {
-      var djTracks = await claudeDJSearch(g, count);
-      if (djTracks && djTracks.length >= Math.floor(count * 0.6)) {
-        window._lastPlSource = 'CLAUDE DJ';
-        recordSessionHistory(g, djTracks);
-        return djTracks.slice(0, count);
-      }
-    } catch(e) { console.warn('Claude DJ failed:', e.message); }
-  }
-
-  // Fallback: hardcoded song pool searched via /v1/search
-  var pool = SONG_POOLS[g] || SONG_POOLS['Random'];
-  try {
-    var tracks = await searchFromSongList(pool, count, g);
-    if (tracks.length > 0) {
-      window._lastPlSource = 'CURATED LIST';
-      recordSessionHistory(g, tracks);
-      return tracks;
-    }
-  } catch(e) { console.warn('Song pool search failed:', e.message); }
-
-  throw new Error('Unable to build playlist. Try reconnecting Spotify.');
-}
-
-
-
-
-// ── V18.3: GENRE RADIO ────────────────────────────────────────────────
-// Zero-AI music: search the catalog by genre tag and push straight to the
-// playback queue. Spotify's AI DJ is NOT reachable from any public API
-// (it lives only inside Spotify's own app), so this is the closest
-// equivalent that costs no LLM tokens.
-// V18.4: RADIO SEEDS ARE ARTISTS, NOT SEARCH PHRASES.
-// The old approach fed free text ("hip hop workout") to /search, which matches
-// track/album/artist NAMES — hence the junk results. We now start an ARTIST
-// CONTEXT via PUT /me/player/play {context_uri}, which lets Spotify's own
-// autoplay extend the session indefinitely. /recommendations is permanently
-// gone (403 for apps created after 2024-11-27), so this is the only remaining
-// route to real radio behaviour.
-//
-// Names, not IDs: Spotify artist IDs are opaque 22-char strings and must never
-// be guessed. They're resolved once via /search?type=artist and cached.
-const RADIO_ARTISTS = {
-  'Hip-Hop':   ['Kendrick Lamar','DMX','Eminem','Jay-Z','Nas','Busta Rhymes','Ludacris','50 Cent','Ice Cube','Method Man','Travis Scott','J. Cole','Meek Mill','Notorious B.I.G.','Snoop Dogg'],
-  'Rock':      ['Metallica','AC/DC','Rage Against the Machine','Foo Fighters','Guns N Roses','Led Zeppelin','Black Sabbath','System of a Down','Pantera','Audioslave','Soundgarden','Disturbed','Pearl Jam','Queens of the Stone Age','Alice in Chains'],
-  'EDM':       ['Avicii','Calvin Harris','Martin Garrix','Deadmau5','Skrillex','Daft Punk','Zedd','Swedish House Mafia','Tiesto','Above & Beyond','Porter Robinson','Illenium','Odesza','Alesso','Knife Party'],
-  '80s':       ['Survivor','Bon Jovi','Journey','Foreigner','Van Halen','Def Leppard','Pat Benatar','Duran Duran','The Police','Tears for Fears','INXS','Heart','Billy Idol','Scorpions','Twisted Sister'],
-  'Pop':       ['The Weeknd','Bruno Mars','Dua Lipa','Lady Gaga','Katy Perry','Justin Timberlake','Rihanna','Ariana Grande','Maroon 5','Pink','Kelly Clarkson','Doja Cat','Harry Styles','Olivia Rodrigo','Charlie Puth'],
-  'Latin':     ['Marc Anthony','Celia Cruz','Hector Lavoe','Willie Colon','Ruben Blades','Gilberto Santa Rosa','Victor Manuelle','Romeo Santos','Aventura','Prince Royce','Juan Luis Guerra','Elvis Crespo','Olga Tanon','Eddie Santiago','Jerry Rivera'],
-  'R&B':       ['Usher','Beyonce','Stevie Wonder','Marvin Gaye','Alicia Keys','SZA','Frank Ocean','Mary J. Blige','TLC','Janet Jackson','Aaliyah','Erykah Badu','Khalid','Bryson Tiller','Ne-Yo'],
-  'Reggae':    ['Bob Marley','Sean Paul','Jimmy Cliff','Damian Marley','Toots and the Maytals','Shaggy','Burning Spear','Chronixx','Steel Pulse','Peter Tosh','Ziggy Marley','Stephen Marley','Inner Circle','Barrington Levy','Beres Hammond'],
-  'Reggaeton': ['Daddy Yankee','Bad Bunny','J Balvin','Don Omar','Wisin & Yandel','Ozuna','Nicky Jam','Karol G','Rauw Alejandro','Farruko','Anuel AA','Maluma','Tego Calderon','Myke Towers','Arcangel'],
-  'Anime':     ['LiSA','One Ok Rock','Kenshi Yonezu','FLOW','Yoasobi','Linked Horizon','Hiroyuki Sawano','Man With a Mission','JAM Project','Aimer','Ado','SiM','Eve','Asian Kung-Fu Generation','Granrodeo'],
-  'Mix':       ['Kendrick Lamar','AC/DC','Avicii','The Weeknd','Daddy Yankee','Usher','Bob Marley','Metallica','Bruno Mars','Eminem','Calvin Harris','Bad Bunny','Foo Fighters','Beyonce','Dua Lipa'],
-  'Random':    ['Michael Jackson','Eminem','AC/DC','The Weeknd','Queen','Daft Punk','Beyonce','Metallica','Bruno Mars','Bob Marley','Avicii','Kendrick Lamar','Rihanna','Foo Fighters','Daddy Yankee']
-};
-
-// V18.4: was a bare fetch — every failure vanished into a caller's empty catch{}.
-// Now: refresh-and-retry on 401, Retry-After backoff on transient 429, and a hard
-// stop on quota exhaustion (Spotify returns {error:{reason:"QUOTA_EXCEEDED"}}).
-var _spQuotaBlockedUntil = 0;
-
-function spLastError(){ return window._spLastError || ''; }
-
-async function spFetch(path, opts, _depth) {
-  _depth = _depth || 0;
-  if (Date.now() < _spQuotaBlockedUntil && _depth === 0) {
-    window._spLastError = 'Spotify daily limit reached — try again later.';
-    return new Response(null, { status: 429 });
-  }
-  var res;
-  try {
-    res = await fetch('https://api.spotify.com/v1' + path, Object.assign({
-      headers: { Authorization: 'Bearer ' + spToken, 'Content-Type': 'application/json' }
-    }, opts || {}));
-  } catch (e) {
-    window._spLastError = 'Network error: ' + (e.message || 'offline');
-    throw e;
-  }
-
-  if (res.ok || res.status === 204) { window._spLastError = ''; return res; }
-
-  // 401 — token died mid-session. Refresh once, then retry once.
-  if (res.status === 401 && _depth === 0) {
-    await refreshTok();
-    if (!spToken) { window._spLastError = 'Spotify sign-in expired.'; return res; }
-    return spFetch(path, opts, _depth + 1);
-  }
-
-  if (res.status === 429) {
-    var reason = '', retryAfter = parseInt(res.headers.get('Retry-After') || '0', 10);
-    try { var b = await res.clone().json(); reason = (b && b.error && b.error.reason) || ''; } catch (e) {}
-    if (reason === 'QUOTA_EXCEEDED') {
-      // Backoff is useless here — quota does not clear in seconds. Stop trying.
-      _spQuotaBlockedUntil = Date.now() + 15 * 60 * 1000;
-      window._spLastError = 'Spotify daily request limit reached.';
-      return res;
-    }
-    if (_depth < 3) {
-      var waitMs = retryAfter > 0 ? retryAfter * 1000 : Math.pow(2, _depth) * 1000;
-      if (waitMs > 30000) { window._spLastError = 'Rate limited (retry in ' + retryAfter + 's).'; return res; }
-      await new Promise(function (r) { setTimeout(r, waitMs); });
-      return spFetch(path, opts, _depth + 1);
-    }
-    window._spLastError = 'Spotify rate limit — too many requests.';
-    return res;
-  }
-
-  try { var j = await res.clone().json(); window._spLastError = (j && j.error && j.error.message) || ('HTTP ' + res.status); }
-  catch (e) { window._spLastError = 'HTTP ' + res.status; }
-  return res;
-}
-
-// Build a shuffled track pool for a genre using /search (limit max is 10
-// since Spotify's Feb-2026 changes, so we page a few seeds).
-// Resolve an artist NAME to a Spotify artist URI. Cached — IDs never change.
-async function resolveArtistUri(name) {
-  var cache = {};
-  try { cache = JSON.parse(localStorage.getItem('ia_artist_uris') || '{}'); } catch(e) {}
-  var key = name.toLowerCase();
-  if (cache[key]) return cache[key];
-  var r = await spFetch('/search?q=' + encodeURIComponent('artist:"' + name + '"') + '&type=artist&limit=1');
-  if (!r.ok) throw new Error(spLastError() || 'artist lookup failed');
-  var j = await r.json();
-  var a = j && j.artists && j.artists.items && j.artists.items[0];
-  if (!a || !a.uri) throw new Error('Artist not found: ' + name);
-  cache[key] = a.uri;
-  try { localStorage.setItem('ia_artist_uris', JSON.stringify(cache)); } catch(e) {}
-  return a.uri;
-}
-
-// Rotate through the roster so the same artist doesn't open every session.
-// (offset is unavailable on artist contexts, so a context always starts at the
-// same track — variety has to come from picking a different artist.)
-function pickRadioArtist(g) {
-  var roster = RADIO_ARTISTS[g] || RADIO_ARTISTS['Mix'];
-  var recent = [];
-  try { recent = JSON.parse(localStorage.getItem('ia_radio_recent') || '[]'); } catch(e) {}
-  var fresh = roster.filter(function(n){ return recent.indexOf(n.toLowerCase()) === -1; });
-  if (fresh.length < 3) { fresh = roster.slice(); recent = []; }
-  var pick = fresh[Math.floor(Math.random() * fresh.length)];
-  recent.unshift(pick.toLowerCase());
-  try { localStorage.setItem('ia_radio_recent', JSON.stringify(recent.slice(0, 8))); } catch(e) {}
-  return pick;
-}
-
-async function startGenreRadio(g, container) {
-  try {
-    var dev = await spFetch('/me/player/devices');
-    if (!dev.ok) throw new Error(spLastError() || 'device lookup failed');
-    var devices = (await dev.json()).devices || [];
-    // is_restricted === true means the device accepts no Web API commands at all.
-    var active = devices.filter(function(d){ return !d.is_restricted && d.id; });
-    active = active.filter(function(d){ return d.is_active; })[0] || active[0];
-    if (!active) {
-      if (container) container.innerHTML = '<div class="msg msg-info">\ud83c\udfa7 Open Spotify on your phone and press play once, then tap Start Radio again.</div>';
-      return false;
-    }
-
-    var artist = pickRadioArtist(g);
-    var artistUri = await resolveArtistUri(artist);
-
-    // context_uri (not uris[]) — a bare track array is NOT a context, so Spotify
-    // autoplay can never engage and playback hard-stops when the list runs out.
-    var res = await spFetch('/me/player/play?device_id=' + encodeURIComponent(active.id), {
-      method: 'PUT', body: JSON.stringify({ context_uri: artistUri })
-    });
-    if (res.status === 403) {
-      if (container) container.innerHTML = '<div class="msg msg-info">Playback control needs Spotify Premium. Playlist mode still works.</div>';
-      return false;
-    }
-    if (!res.ok && res.status !== 204) throw new Error(spLastError() || ('play ' + res.status));
-
-    window._activeGenre = g;
-    window._radioArtist = artist;
-    if (container) container.innerHTML =
-      '<div class="msg msg-ok">\ud83d\udcfb ' + escHtml(g) + ' radio \u2014 starting with ' +
-      escHtml(artist) + ' on ' + escHtml(active.name) + '.</div>' +
-      '<div id="radioQueueNote" style="font-size:10px;color:var(--muted);padding:6px 0"></div>';
-
-    // Player writes settle asynchronously ("order of execution is not guaranteed"),
-    // so give it a beat, then report queue depth. This is how we learn whether
-    // Spotify autoplay is extending the context or the station will run dry.
-    setTimeout(function(){ reportRadioQueue(); }, 2500);
-    startMiniPlayer();
-    return true;
-  } catch(e) {
-    if (container) container.innerHTML =
-      '<div class="msg msg-err">Radio failed: ' + escHtml(e.message || spLastError() || 'unknown') + '</div>';
-    return false;
-  }
-}
-
-// One-shot diagnostic: how deep is the queue after the context starts?
-async function reportRadioQueue() {
-  var note = document.getElementById('radioQueueNote');
-  if (!note) return;
-  try {
-    var r = await spFetch('/me/player/queue');
-    if (!r.ok) { note.textContent = ''; return; }
-    var j = await r.json();
-    var n = (j && j.queue && j.queue.length) || 0;
-    note.textContent = n
-      ? ('\u25b6 ' + n + ' tracks queued \u00b7 autoplay will extend this if enabled in Spotify settings')
-      : 'Queue empty \u2014 turn on Autoplay in Spotify \u2192 Settings \u2192 Playback to keep the music going.';
-  } catch(e) { note.textContent = ''; }
-}
-
-// ── V18.3: MINI PLAYER ────────────────────────────────────────────────
-// Remote-controls the Spotify app already running on the phone via the
-// Player API (these endpoints survived the Feb-2026 cull). Requires Premium.
-var _mpTimer = null, _mpBusy = false;
-
-function startMiniPlayer() {
-  if (!spToken) return;
-  var bar = document.getElementById('miniPlayer');
-  if (bar) bar.style.display = '';
-  pollMiniPlayer();
-  if (_mpTimer) clearInterval(_mpTimer);
-  _mpTimer = setInterval(function() {
-    if (document.hidden) return;           // don't poll in the background
-    if (!document.getElementById('results').classList.contains('vis')) return;
-    pollMiniPlayer();
-  }, 5000);
-}
-
-function stopMiniPlayer() {
-  if (_mpTimer) { clearInterval(_mpTimer); _mpTimer = null; }
-  var bar = document.getElementById('miniPlayer');
-  if (bar) bar.style.display = 'none';
-}
-
-async function pollMiniPlayer() {
-  if (_mpBusy || !spToken) return;
-  _mpBusy = true;
-  try {
-    var r = await spFetch('/me/player/currently-playing');
-    if (r.status === 204 || !r.ok) { _mpBusy = false; return; }
-    var j = await r.json();
-    var t = j && j.item;
-    if (!t) { _mpBusy = false; return; }
-    window._mpPlaying = !!j.is_playing;
-    // Ads have no useful metadata and can't be skipped — show a placeholder.
-    if (j.currently_playing_type === 'ad' || t.type === 'ad') {
-      var ta = document.getElementById('mpTitle');
-      var aa = document.getElementById('mpArtist');
-      if (ta) ta.textContent = 'Advertisement';
-      if (aa) aa.textContent = '';
-      _mpBusy = false; return;
-    }
-    var art = (t.album && t.album.images && t.album.images.length) ? t.album.images[t.album.images.length - 1].url : '';
-    var el = function(id) { return document.getElementById(id); };
-    if (el('mpArt')) el('mpArt').style.backgroundImage = art ? 'url(' + art + ')' : '';
-    if (el('mpTitle')) el('mpTitle').textContent = t.name || '';
-    if (el('mpArtist')) el('mpArtist').textContent = (t.artists || []).map(function(a){ return a.name; }).join(', ');
-    if (el('mpPlay')) el('mpPlay').textContent = j.is_playing ? '⏸' : '▶';
-  } catch(e) {}
-  _mpBusy = false;
-}
-
-async function mpControl(action) {
-  if (!spToken) return;
-  try {
-    if (navigator.vibrate) navigator.vibrate(10);
-    if (action === 'next')      await spFetch('/me/player/next', { method: 'POST' });
-    else if (action === 'prev') await spFetch('/me/player/previous', { method: 'POST' });
-    else {
-      // V18.4: reuse is_playing from the last poll instead of re-reading /me/player.
-      // Halves the request cost of a play/pause tap.
-      var playing = !!window._mpPlaying;
-      await spFetch('/me/player/' + (playing ? 'pause' : 'play'), { method: 'PUT' });
-      window._mpPlaying = !playing;
-      var pb = document.getElementById('mpPlay');
-      if (pb) pb.textContent = window._mpPlaying ? '\u23f8' : '\u25b6'; // optimistic
-    }
-    // Spotify does not guarantee ordering between Player endpoints; 400ms was
-    // reading pre-skip state and briefly showing the previous track.
-    setTimeout(pollMiniPlayer, 1000);
-  } catch(e) { console.warn('Player control failed:', spLastError() || e.message); }
-}
-
-async function createPlaylist(name, uris){
-  const ok=await ensureUserId();
-  if(!ok) throw new Error('Could not get Spotify user ID. Try reconnecting.');
-
-  // Create the playlist
-  const cr=await fetch('https://api.spotify.com/v1/me/playlists',{
-    method:'POST',
-    headers:{Authorization:'Bearer '+spToken,'Content-Type':'application/json'},
-    body:JSON.stringify({name,description:`Generated by IRON AUDIO · ${new Date().toLocaleDateString()}`,public:false})
-  });
-  if(!cr.ok){const e=await cr.json();throw new Error(`Create playlist ${cr.status}: ${e.error?.message||JSON.stringify(e)}`);}
-  const pl=await cr.json();
-
-  // Add tracks using new /items endpoint (Spotify Feb 2026 migration — /tracks is deprecated)
-  const ar=await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{
-    method:'POST',
-    headers:{Authorization:'Bearer '+spToken,'Content-Type':'application/json'},
-    body:JSON.stringify({uris:uris.slice(0,100)})
-  });
-  if(!ar.ok){const e=await ar.json();throw new Error(`Add tracks ${ar.status}: ${e.error?.message||JSON.stringify(e)}`);}
-  return pl;
-}
-
 // ─── UI CONTROLS ──────────────────────────────────────────────────────
-function setMusicMode(m) {
-  musicMode = m;
-  var r = document.getElementById('mmRadio'), a = document.getElementById('mmAi');
-  if (r) r.classList.toggle('on', m === 'radio');
-  if (a) a.classList.toggle('on', m === 'ai');
-  if (navigator.vibrate) navigator.vibrate(10);
-}
-
-function togglePlaylist(el) {
-  playlistEnabled = !playlistEnabled;
-  el.classList.toggle('on', playlistEnabled);
-  el.querySelector('.pl-toggle-txt').textContent = playlistEnabled ? 'ON' : 'OFF';
-  // Show/hide genre row
-  var genreRow = document.getElementById('genreRow');
-  if (genreRow) genreRow.style.opacity = playlistEnabled ? '1' : '0.35';
-  var genreRow2 = document.getElementById('genreRow');
-  if (genreRow) genreRow.style.pointerEvents = playlistEnabled ? '' : 'none';
-  var mmRow = document.getElementById('musicModeRow');
-  if (mmRow) { mmRow.style.opacity = playlistEnabled ? '1' : '0.35'; mmRow.style.pointerEvents = playlistEnabled ? '' : 'none'; }
-  if (!playlistEnabled) stopMiniPlayer();
-}
-
 function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}function setExCount(n,el){perMuscleCount=n;document.querySelectorAll('.ex-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
 function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];renderArnold();}
-function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
-function showCfg(){stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
+function showCfg(){stopSpeech();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
 
 // ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
 function renderExerciseCard(ex, index) {
@@ -3481,7 +1632,6 @@ async function loadExerciseGif(ex, index) {
 // ─── GENERATE ─────────────────────────────────────────────────────────
 async function generate() {
   if (!muscles.length) { alert('Select at least one muscle group!'); return; }
-  if (playlistEnabled && !genre) { alert('Select a playlist genre!'); return; }
 
   const ov = document.getElementById('ov');
   ov.classList.add('vis');
@@ -3630,7 +1780,6 @@ async function generate() {
   document.getElementById('cfgView').style.display = 'none';
   document.getElementById('results').classList.add('vis');
   startElapsedOnGenerate();
-  ghStartLiveSession(); // V16 experimental: open the GH session at workout start
   window._setLogs = {}; // reset set logs for new workout
   window._shockSpoken = {};
   if (arnold.on && arnold.shock) primeSpeech(); // gesture-scoped TTS unlock
@@ -3644,14 +1793,12 @@ async function generate() {
       perMuscleCount: perMuscleCount,
       dur: dur,
       muscles: muscles,
-      genre: genre,
       equipment: equipmentMode,
       arnold: { ...arnold },
       ts: Date.now()
     }));
   } catch(e) {}
   document.getElementById('app').scrollTo({top:0, behavior:'smooth'});
-  if (spToken && playlistEnabled) startMiniPlayer(); // V18.3: player bar during the workout
 
   // Load GIFs asynchronously — stagger requests to avoid rate limits
   for (let i = 0; i < exercises.length; i++) {
@@ -3659,19 +1806,6 @@ async function generate() {
     await new Promise(r => setTimeout(r, 150)); // 150ms between requests
   }
 
-  // Build playlist — auto if enabled, else show button
-  var plCreate = document.getElementById('plCreateBtn');
-  var plDisabled = document.getElementById('plDisabledMsg');
-  var plBadge = document.getElementById('plSourceBadge');
-  if (plBadge) plBadge.textContent = '';
-  if (playlistEnabled && spToken) {
-    if (plCreate) plCreate.style.display = 'none';
-    if (plDisabled) plDisabled.style.display = 'none';
-    buildPlaylist();
-  } else {
-    if (plDisabled) plDisabled.style.display = playlistEnabled ? 'none' : 'block';
-    if (plCreate) plCreate.style.display = 'inline-block';
-  }
 }
 
 // ── Lightweight session refresh — call after any workout state change ──
@@ -3684,116 +1818,6 @@ function updateSession() {
     session.ts = Date.now(); // refresh TTL so 20min break doesn't expire it
     localStorage.setItem('ia_session', JSON.stringify(session));
   } catch(e) {}
-}
-
-// ─── PLAYLIST ─────────────────────────────────────────────────────────
-function triggerPlaylist() {
-  var btn = document.getElementById('plCreateBtn');
-  var disabled = document.getElementById('plDisabledMsg');
-  if (btn) btn.style.display = 'none';
-  if (disabled) disabled.style.display = 'none';
-  buildPlaylist();
-}
-
-async function buildPlaylist() {
-  const container = document.getElementById('plContainer');
-  const emojiMap = {'Hip-Hop':'🎤','Rock':'🎸','EDM':'🎛️','80s':'📼','Pop':'🌟','Latin':'🎺','R&B':'🎷','Drum and Bass':'🥁','Reggaeton':'🌴','House':'🏠','Anime':'🎌','Mix':'🎲','Random':'🎲'};
-  const emoji = emojiMap[genre] || '🎵';
-  const trackCount = 25; // Always 25 — API call costs the same regardless of workout duration
-  const plName = `IRON AUDIO · ${genre}`;
-  window._activeGenre = genre;
-  window._playlistCount = trackCount;
-
-  // ── SPOTIFY PATH ───────────────────────────────────────────────────
-  if (!spToken) { renderOffline(container, emoji, plName, trackCount); return; }
-
-  // V18.3: Radio mode plays straight from the catalog — no AI, no tokens.
-  if (musicMode === 'radio') {
-    container.innerHTML = '<div class="msg msg-info">📻 Starting ' + escHtml(genre) + ' radio…</div>';
-    await startGenreRadio(genre, container);
-    return;
-  }
-
-  container.innerHTML = `<div class="msg msg-info">⏳ Creating your ${genre} playlist on Spotify...</div>`;
-
-  try {
-    const tracks = await searchTracks(genre, trackCount);
-    if (!tracks.length) throw new Error('No tracks found. Try a different genre.');
-    const pl = await createPlaylist(plName, tracks.map(t=>t.uri));
-    const totalMin = Math.round(tracks.reduce((s,t)=>s+t.duration_ms,0) / 60000);
-
-    // Set source badge
-  (function(){
-    var badge = document.getElementById('plSourceBadge');
-    if (badge) badge.textContent = window._lastPlSource || '';
-  })();
-  container.innerHTML = `
-      <div class="msg msg-ok">✅ Playlist created in your Spotify library!</div>
-      <div class="pl-card">
-        <div class="pl-hdr">
-          <div class="pl-art">${emoji}</div>
-          <div class="pl-info">
-            <div class="pl-name">${plName}</div>
-            <div class="pl-meta">${tracks.length} tracks · ~${totalMin} min</div>
-          </div>
-          <button class="pl-open" onclick="window.open('${pl.external_urls?.spotify||'https://open.spotify.com'}','_blank')">OPEN ↗</button>
-        </div>
-        <div class="track-list">
-          ${tracks.map((t,i) => `
-            <div class="track">
-              <div class="track-n">${i+1}</div>
-              <div class="track-info">
-                <div class="track-name">${escHtml(t.name)}</div>
-                <div class="track-artist">${escHtml(t.artists?.map(a=>a.name).join(', '))}</div>
-              </div>
-              <div class="track-dur">${Math.floor(t.duration_ms/60000)}:${String(Math.floor((t.duration_ms%60000)/1000)).padStart(2,'0')}</div>
-            </div>`).join('')}
-        </div>
-      </div>`;
-  } catch(err) {
-    console.error('Playlist error:', err);
-    container.innerHTML = `<div class="msg msg-err">❌ ${escHtml(err.message)}<br><small style="opacity:.7;display:block;margin-top:4px">Try a different genre or check your Spotify connection.</small></div>`;
-    var retryBtn = document.getElementById('plCreateBtn');
-    if (retryBtn) { retryBtn.textContent = 'RETRY'; retryBtn.style.display = 'inline-block'; }
-  }
-}
-
-function renderOffline(container, emoji, name, count, append=false) {
-  const pools = {
-    'Hip-Hop':[['HUMBLE.','Kendrick Lamar','3:02'],["God's Plan",'Drake','3:18'],['Sicko Mode','Travis Scott','5:12'],['Congratulations','Post Malone','3:39'],['Rockstar','Post Malone','3:39'],['XO TOUR Llif3','Lil Uzi Vert','3:08'],['Bad and Boujee','Migos','5:43'],['POWER','Kanye West','4:52'],["Lose Yourself",'Eminem','5:26'],["Can't Hold Us",'Macklemore','4:18'],['Stronger','Kanye West','5:11'],['DNA.','Kendrick Lamar','3:05'],['Alright','Kendrick Lamar','3:39'],['Going Bad','Meek Mill','2:50'],['Jumpman','Drake','3:07']],
-    'Rock':[['Eye of the Tiger','Survivor','4:02'],['Welcome to the Jungle',"Guns N' Roses",'4:33'],['Back in Black','AC/DC','4:15'],['Enter Sandman','Metallica','5:31'],['Smells Like Teen Spirit','Nirvana','5:01'],['Seven Nation Army','White Stripes','3:51'],['Thunderstruck','AC/DC','4:52'],['Run to the Hills','Iron Maiden','3:54'],['Bulls on Parade','RATM','3:50'],['Walk','Pantera','5:00'],['Best of You','Foo Fighters','4:16'],['Learn to Fly','Foo Fighters','3:57'],['All the Small Things','Blink-182','2:51'],['Everlong','Foo Fighters','4:10'],['My Hero','Foo Fighters','4:19']],
-    'EDM':[['Animals','Martin Garrix','3:26'],['Titanium','David Guetta','4:05'],['Wake Me Up','Avicii','4:07'],['One More Time','Daft Punk','5:20'],["Don't You Worry Child",'SHM','3:45'],['Levels','Avicii','3:18'],['Clarity','Zedd','4:28'],['Bangarang','Skrillex','3:34'],['Turn Down for What','DJ Snake','3:32'],['Lean On','Major Lazer','2:57'],['Summer','Calvin Harris','3:44'],['Beautiful Now','Zedd','3:31'],['Alone','Alan Walker','2:39'],['Faded','Alan Walker','3:32'],['Spectre','Alan Walker','3:35']],
-    '80s':[['Eye of the Tiger','Survivor','4:02'],['Physical','Olivia Newton-John','3:38'],['Push It','Salt-N-Pepa','3:19'],['Jump','Van Halen','4:03'],["Don't Stop Me Now",'Queen','3:29'],['Living on a Prayer','Bon Jovi','4:10'],['Take On Me','a-ha','3:46'],['Final Countdown','Europe','5:09'],['Here I Go Again','Whitesnake','4:39'],['We Will Rock You','Queen','2:02'],['Girls Just Wanna Have Fun','Cyndi Lauper','3:58'],["Sweet Child O' Mine","Guns N' Roses",'5:55'],['Pour Some Sugar on Me','Def Leppard','4:26'],['I Love Rock and Roll','Joan Jett','2:55'],['Like a Prayer','Madonna','5:41']],
-    'Metal':[['Enter Sandman','Metallica','5:31'],['Master of Puppets','Metallica','8:35'],['Raining Blood','Slayer','4:17'],['Chop Suey!','System of a Down','3:30'],['B.Y.O.B.','System of a Down','4:14'],['Down with the Sickness','Disturbed','4:39'],['Bat Country','Avenged Sevenfold','5:12'],['Paranoid','Black Sabbath','2:48'],['The Beautiful People','Marilyn Manson','3:37'],['Killing in the Name','RATM','5:13'],['Walk','Pantera','5:00'],['Cowboys from Hell','Pantera','4:08'],['Toxicity','System of a Down','3:38'],['Before I Forget','Slipknot','4:14'],['The Trooper','Iron Maiden','4:09']],
-    'Pop':[['Blinding Lights','The Weeknd','3:20'],['Levitating','Dua Lipa','3:23'],['Save Your Tears','The Weeknd','3:35'],['Watermelon Sugar','Harry Styles','2:54'],["Don't Start Now",'Dua Lipa','3:03'],['Uptown Funk','Bruno Mars','4:30'],['24K Magic','Bruno Mars','3:46'],['Shake It Off','Taylor Swift','3:39'],['Roar','Katy Perry','3:43'],['Firework','Katy Perry','3:47'],["Can't Stop the Feeling",'Justin Timberlake','3:56'],['Happy','Pharrell','3:53'],['As It Was','Harry Styles','2:37'],['Anti-Hero','Taylor Swift','3:20'],['Flowers','Miley Cyrus','3:21']],
-    'Latin':[['Vivir Mi Vida','Marc Anthony','4:02'],['La Vida Es Un Carnaval','Celia Cruz','3:45'],['El Cantante','Héctor Lavoe','4:10'],['Suavemente','Elvis Crespo','3:28'],['La Bilirrubina','Juan Luis Guerra','3:51'],['Ojalá Que Llueva Café','Juan Luis Guerra','4:15'],['Propuesta Indecente','Romeo Santos','3:58'],['Obsesión','Aventura','4:14'],['Stand By Me','Prince Royce','3:37'],['Bachata Rosa','Juan Luis Guerra','4:02'],['Te Extraño','Xtreme','3:52'],['Lento','Toby Love','4:12'],['Que El Ritmo No Pare','Olga Tañón','3:47'],['El Hombre Más Famoso De La Tierra','Fulanito','3:50'],['Tú Me Quemas','Eddie Santiago','3:55']],
-    'Random':[['Eye of the Tiger','Survivor','4:02'],["Lose Yourself",'Eminem','5:26'],['Titanium','David Guetta','4:05'],['Enter Sandman','Metallica','5:31'],['Blinding Lights','The Weeknd','3:20'],["God's Plan",'Drake','3:18'],['Animals','Martin Garrix','3:26'],['Despacito','Luis Fonsi','3:49'],['Roar','Katy Perry','3:43'],['Seven Nation Army','White Stripes','3:51'],['B.Y.O.B.','System of a Down','4:14'],['Happy','Pharrell','3:53'],['Uptown Funk','Bruno Mars','4:30'],['Wake Me Up','Avicii','4:07'],['Stronger','Kanye West','5:11']]
-  };
-  const pool = shuffle([...(pools[genre]||pools['Random'])]).slice(0, count); // count=25
-  const html = `
-    ${!append ? '<div class="msg msg-info">💡 Connect Spotify to auto-create this playlist in your library!</div>' : ''}
-    <div class="pl-card">
-      <div class="pl-hdr">
-        <div class="pl-art">${emoji}</div>
-        <div class="pl-info">
-          <div class="pl-name">${name}</div>
-          <div class="pl-meta">${pool.length} tracks · ~${dur} min · ${genre}</div>
-        </div>
-      </div>
-      <div class="track-list">
-        ${pool.map((t,i) => `
-          <div class="track">
-            <div class="track-n">${i+1}</div>
-            <div class="track-info">
-              <div class="track-name">${t[0]}</div>
-              <div class="track-artist">${t[1]}</div>
-            </div>
-            <div class="track-dur">${t[2]}</div>
-          </div>`).join('')}
-      </div>
-    </div>`;
-  if (append) container.innerHTML += html;
-  else container.innerHTML = html;
 }
 
 // ── EXERCISE MODAL ─────────────────────────────────────────────────
@@ -3870,13 +1894,12 @@ function setDifficulty(d) {
 }
 // ═══════════════════════════════════════════════════════════════════════
 // ── V19: GOLDEN ERA (ARNOLD) LAYER ─────────────────────────────────────
-// Opt-in per row. None of these alter the muscle picker's PPL structure —
-// they layer Arnold.txt principles onto whatever selection is active.
+// Opt-in per row. None of these alter the muscle picker's structure — they
+// layer Arnold.txt principles onto whatever selection is active.
 // ═══════════════════════════════════════════════════════════════════════
 const ARN_KEY = 'ia_arnold';
 let arnold = { on:false, pyramid:false, superset:false, shock:false };
 
-// Hoisted from generate() so the UI guard and the pairing engine agree.
 const ARN_ANT = { chest:'back', back:'chest', biceps:'triceps', triceps:'biceps' };
 const ARN_COMPOUND_PATS = ['hpress','ipress','vpull','hrow','hinge','knee','hip','press','full'];
 const ARN_SELF_PAIRED = ['legs','fullbody']; // internal knee↔hip antagonism
@@ -3910,7 +1933,6 @@ function toggleArnOpt(k) {
   saveArnold(); renderArnold();
 }
 
-// True only when the current selection can actually produce opposing pairs.
 function hasAntagonistPair() {
   if (muscles.some(function(m){ return ARN_SELF_PAIRED.indexOf(m) !== -1; })) return true;
   return muscles.some(function(m){ return ARN_ANT[m] && muscles.indexOf(ARN_ANT[m]) !== -1; });
@@ -3931,7 +1953,11 @@ function renderArnold() {
     var el = document.getElementById('arnSw' + k.charAt(0).toUpperCase() + k.slice(1));
     if (el) el.classList.toggle('on', !!arnold[k]);
   });
-  // Superset row self-disables with a reason rather than generating fake pairs.
+  // iOS: speech only survives while the app is foregrounded — say so, once,
+  // instead of letting a silent cue read as a broken feature.
+  var sn = document.getElementById('arnShockNote');
+  if (sn) sn.style.display = (arnold.shock && IOS.isIOS) ? '' : 'none';
+
   var ss = document.getElementById('arnSwSuperset'), w = document.getElementById('arnSsWarn');
   var ok = hasAntagonistPair();
   if (ss) ss.classList.toggle('dis', !ok);
@@ -3953,24 +1979,31 @@ function renderArnold() {
 const ARN_SPLITS = { chestback:['chest','back'], deltsarms:['shoulders','biceps','triceps'], legs:['legs'] };
 function applyArnoldSplit(key) {
   var want = ARN_SPLITS[key] || [];
-  muscles = [];
   document.querySelectorAll('.mg-chip').forEach(function(c) {
     var on = want.some(function(m){ return (c.getAttribute('onclick') || '').indexOf("'" + m + "'") !== -1; });
     c.classList.toggle('on', on);
   });
   muscles = want.slice();
   renderArnold();
-  if (navigator.vibrate) navigator.vibrate(25);
+  haptic(25);
 }
 
-// Speech. Chrome Android needs a prior gesture — generate() primes it.
+// ── Speech ────────────────────────────────────────────────────────────
+// iOS gates speechSynthesis behind a user gesture and kills it the moment the
+// app backgrounds or the screen locks. The ⚡ banner on the final set row is
+// the primary carrier of the cue; speech is a bonus while the app is awake.
 let _ttsReady = false;
 function primeSpeech() {
   if (_ttsReady || !('speechSynthesis' in window)) return;
-  try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); _ttsReady = true; } catch(e) {}
+  try {
+    var u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    window.speechSynthesis.speak(u);
+    _ttsReady = true;
+  } catch(e) {}
 }
 function arnSpeak(text) {
-  if (!('speechSynthesis' in window)) return;
+  if (!('speechSynthesis' in window) || document.hidden) return;
   try {
     window.speechSynthesis.cancel(); // never let utterances queue up
     var u = new SpeechSynthesisUtterance(text);
@@ -4040,7 +2073,6 @@ function releaseWakeLock() {
     // Restore state variables
     if (session.dur)            dur            = session.dur;
     if (session.muscles)        muscles        = session.muscles;
-    if (session.genre)          genre          = session.genre;
     if (session.equipment)      equipmentMode  = session.equipment;
     if (session.perMuscleCount) perMuscleCount = session.perMuscleCount;
     // V19: restore the Golden Era layer BEFORE any card renders — shockBanner()
@@ -4432,7 +2464,7 @@ function endWorkout() {
       localStorage.setItem('iron_history', JSON.stringify(hist));
     }
   } catch(e){}
-  runEndWorkoutBackup(); // V18.2.1: visible on the recap; one-tap recover if token expired
+  runEndWorkoutBackupReminder(); // local-only build: nudge a file export every N workouts
   // Stop the game clock and end the session — can't resume anyway.
   if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
   elapsedRunning = false;
@@ -4444,7 +2476,7 @@ function endWorkout() {
   document.getElementById('ewOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Kick off Google Health HR sync for this workout window
+  // Record the workout window on the history entry (used by the share card).
   var wEnd   = Date.now();
   // True start = end minus total elapsed (handles pause/resume correctly), not the
   // last-resume timestamp. Falls back to generation time if the clock never ran.
@@ -4462,10 +2494,7 @@ function endWorkout() {
       var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
       if (hist.length) { hist[0].workoutStart = wStart; hist[0].workoutEnd = wEnd; localStorage.setItem('iron_history', JSON.stringify(hist)); }
     } catch(e){}
-    startHrSync(wStart, wEnd);
   }
-  // Push the completed workout to Google Health (fire-and-forget; no-op if not connected)
-  pushWorkoutToGoogleHealth(0);
 }
 
 function applyNextSession() {
@@ -4490,10 +2519,112 @@ function confirmEndWorkout() {
 }
 
 
+// ═══════════════════════════════════════════════════════════════════════
+// ── iOS PLATFORM CAPABILITIES ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// Single source of truth for what this device can actually do, so feature
+// code never has to re-derive it (and never ships a dead code path).
+var IOS = {
+  standalone: (window.navigator.standalone === true) ||
+              (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches),
+  isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+};
+
+// iOS only exposes Notification inside an installed PWA (16.4+). Calling
+// requestPermission() in Safari proper throws, so gate on both.
+function canNotify(forPrompt) {
+  if (!('Notification' in window)) return false;
+  if (!('serviceWorker' in navigator)) return false;
+  if (IOS.isIOS && !IOS.standalone) return false;
+  return forPrompt ? true : Notification.permission === 'granted';
+}
+
+// iOS has no Vibration API. Centralised so call sites stay honest about it and
+// so there is one place to add a visual substitute.
+function haptic(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
+}
+
+// Visual stand-in for the haptic confirmation iOS cannot give. One reused node,
+// removed on animationend, so repeated calls cannot leak DOM.
+function flashScreen() {
+  try {
+    var el = document.getElementById('iaFlash');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'iaFlash';
+      el.className = 'ia-flash';
+      document.body.appendChild(el);
+    }
+    el.classList.remove('on');
+    void el.offsetWidth; // force reflow so the animation restarts
+    el.classList.add('on');
+  } catch(e) {}
+}
+
+// ── Storage durability ────────────────────────────────────────────────
+// History is local-only in this build, so Safari's 7-day eviction of unused
+// site data is the single point of failure. Installed PWAs are exempt in
+// practice, and persist() makes it explicit where supported.
+function requestPersistentStorage() {
+  try {
+    if (!navigator.storage || !navigator.storage.persist) return;
+    navigator.storage.persisted().then(function(already) {
+      if (already) { updatePersistStatus(true); return; }
+      navigator.storage.persist().then(updatePersistStatus).catch(function(){});
+    }).catch(function(){});
+  } catch(e) {}
+}
+function updatePersistStatus(ok) {
+  var el = document.getElementById('persistStatus');
+  if (el) el.textContent = ok ? 'Persistent ✓' : (IOS.standalone ? 'Installed' : 'Best effort');
+}
+
+// ── Add to Home Screen nudge ──────────────────────────────────────────
+// iOS has no beforeinstallprompt; the only route is Share → Add to Home Screen.
+function maybeShowInstallBanner() {
+  if (IOS.standalone) return;
+  if (!IOS.isIOS) return;
+  try { if (localStorage.getItem('ia_install_dismissed') === '1') return; } catch(e) {}
+  var el = document.getElementById('iosInstallBanner');
+  if (el) el.style.display = 'block';
+}
+function dismissInstallBanner() {
+  try { localStorage.setItem('ia_install_dismissed', '1'); } catch(e) {}
+  var el = document.getElementById('iosInstallBanner');
+  if (el) el.style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── SETTINGS ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+function openSettings() {
+  updateStorageCounts();
+  updateInstallStatus();
+  updatePersistStatus(false);
+  try { updateBackupStatus(); } catch(e) {}
+  try { updateGifCacheStatus(); } catch(e) {}
+  document.getElementById('settingsOverlay').classList.add('open');
+  document.getElementById('settingsPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+  document.getElementById('settingsPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function updateInstallStatus() {
+  var el = document.getElementById('installStatus');
+  if (!el) return;
+  el.textContent = IOS.standalone ? '✓ Installed to Home Screen' : '○ Running in Safari';
+  el.className = 'settings-status ' + (IOS.standalone ? 'active' : 'inactive');
+}
+
 // ── STORAGE MANAGEMENT ─────────────────────────────────────────────────
-// ── V18.2: DATA BACKUP (Google Drive appDataFolder + file export) ─────
-// The app's data lives ONLY in localStorage; these functions give it an
-// off-device copy. Restore MERGES (never clobbers): histories union by id,
+// ── DATA BACKUP (local JSON file only — no cloud in this build) ───────
+// The app's data lives ONLY in localStorage. Export writes a JSON file the user
+// keeps in Files/iCloud; Import MERGES (never clobbers): histories union by id,
 // records keep the better mark.
 const BACKUP_NAME = 'iron-audio-backup.json';
 
@@ -4533,65 +2664,9 @@ function mergeBackupIntoLocal(data) {
   return { entries: merged.length, added: merged.length - localHist.length };
 }
 
-function driveHeaders() { return { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'application/json' }; }
-
-async function driveFindBackup() {
-  var res = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id,modifiedTime)&q=' +
-    encodeURIComponent("name='" + BACKUP_NAME + "'"), { headers: driveHeaders() });
-  if (!res.ok) throw new Error('drive list ' + res.status);
-  var j = await res.json();
-  return (j.files && j.files[0]) || null;
-}
-
-async function driveBackup(silent) {
-  try {
-    if (!ghToken || ghTokenExpiry <= Date.now()) {
-      if (!silent) alert('Connect Google first (Settings → Google Health) — same sign-in covers backup.');
-      _ghLog('backup: no token, skipped');
-      return false;
-    }
-    var body = JSON.stringify(buildBackupSnapshot());
-    var existing = await driveFindBackup();
-    var res;
-    if (existing) {
-      res = await fetch('https://www.googleapis.com/upload/drive/v3/files/' + existing.id + '?uploadType=media',
-        { method: 'PATCH', headers: driveHeaders(), body: body });
-    } else {
-      var boundary = 'ia' + Date.now();
-      var multi = '--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
-        JSON.stringify({ name: BACKUP_NAME, parents: ['appDataFolder'] }) +
-        '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + body + '\r\n--' + boundary + '--';
-      res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + ghToken, 'Content-Type': 'multipart/related; boundary=' + boundary },
-        body: multi });
-    }
-    if (!res.ok) { _ghLog('backup: upload ' + res.status); if (!silent) alert('Backup failed (' + res.status + '). Reconnect Google and retry.'); return false; }
-    localStorage.setItem('ia_last_backup', String(Date.now()));
-    _ghLog('backup: ok');
-    updateBackupStatus();
-    if (!silent) alert('✓ Backed up to Google Drive');
-    return true;
-  } catch(e) { _ghLog('backup: err ' + (e && e.message)); if (!silent) alert('Backup failed: ' + (e && e.message)); return false; }
-}
-
-async function driveRestore() {
-  try {
-    if (!ghToken || ghTokenExpiry <= Date.now()) { alert('Connect Google first (Settings → Google Health).'); return; }
-    var f = await driveFindBackup();
-    if (!f) { alert('No backup found in Drive yet. Run a backup first.'); return; }
-    if (!confirm('Restore from Drive backup? Your local data is MERGED with the backup — nothing gets deleted.')) return;
-    var res = await fetch('https://www.googleapis.com/drive/v3/files/' + f.id + '?alt=media', { headers: driveHeaders() });
-    if (!res.ok) { alert('Restore failed (' + res.status + ')'); return; }
-    var data = await res.json();
-    var r = mergeBackupIntoLocal(data);
-    alert('✓ Restored. ' + r.entries + ' workouts total (' + Math.max(0, r.added) + ' added).');
-    try { renderHistoryList(); } catch(e) {}
-    updateBackupStatus();
-  } catch(e) { alert('Restore failed: ' + (e && e.message)); }
-}
-
 function exportBackupFile() {
+  try { localStorage.setItem('ia_last_export', String(Date.now())); } catch(e) {}
+  try { updateBackupStatus(); } catch(e) {}
   var blob = new Blob([JSON.stringify(buildBackupSnapshot(), null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -4616,61 +2691,35 @@ function importBackupFile(input) {
   input.value = '';
 }
 
-// V18.2.1: backup surfaced on the recap. Valid token → back up and show the
-// result. Expired token → one-tap "Reconnect & Back Up": the flag below makes
-// the post-sign-in code finish the backup automatically. The workout itself
-// is already saved locally before any of this, so the redirect risks nothing.
-function runEndWorkoutBackup() {
-  var el = document.getElementById('ewBackup');
-  if (!el) return driveBackup(true);
-  el.style.display = '';
-  if (ghToken && ghTokenExpiry > Date.now()) {
-    el.textContent = '☁ Backing up to Drive…';
-    el.className = 'settings-status inactive';
-    driveBackup(true).then(function(ok) {
-      el.textContent = ok ? '☁ Backed up to Drive ✓' : '⚠ Backup failed — use Settings → Back Up Now';
-      el.className = 'settings-status ' + (ok ? 'active' : 'inactive');
-    });
-  } else {
-    el.className = 'settings-status inactive';
-    el.innerHTML = '⚠ Not backed up — Google sign-in expired &nbsp;' +
-      '<button class="gh-rc-btn" onclick="reconnectAndBackup()">Reconnect &amp; Back Up</button>';
-  }
-}
-
-function reconnectAndBackup() {
-  try { localStorage.setItem('ia_pending_backup', '1'); } catch(e) {}
-  handleGhConnect(); // full OAuth redirect; workout is already saved locally
-}
-
-var _pendingBackupRunning = false;
-function maybeRunPendingBackup() {
-  try {
-    if (_pendingBackupRunning) return;
-    if (localStorage.getItem('ia_pending_backup') !== '1') return;
-    if (!ghToken || ghTokenExpiry <= Date.now()) return;
-    _pendingBackupRunning = true;
-    driveBackup(true).then(function(ok) {
-      _pendingBackupRunning = false;
-      // Only consume the flag on success — a failed attempt retries on the
-      // next token event instead of silently losing the backup.
-      if (ok) localStorage.removeItem('ia_pending_backup');
-      _ghLog('pending backup after reconnect: ' + (ok ? 'ok' : 'failed'));
-      var el = document.getElementById('ewBackup');
-      if (el && el.style.display !== 'none') {
-        el.textContent = ok ? '☁ Backed up to Drive ✓' : '⚠ Backup failed — use Settings → Back Up Now';
-        el.className = 'settings-status ' + (ok ? 'active' : 'inactive');
-      }
-    });
-  } catch(e) {}
-}
+// Local-only build: there is no cloud copy, so the recap nudges an export
+// every EXPORT_REMINDER_EVERY finished workouts instead of syncing silently.
+var EXPORT_REMINDER_EVERY = 8;
 
 function updateBackupStatus() {
   var el = document.getElementById('backupStatus');
   if (!el) return;
-  var t = parseInt(localStorage.getItem('ia_last_backup') || '0', 10);
-  el.textContent = t ? ('✓ Last Drive backup: ' + new Date(t).toLocaleString()) : '○ No Drive backup yet';
+  var t = parseInt(localStorage.getItem('ia_last_export') || '0', 10);
+  el.textContent = t ? ('✓ Last export: ' + new Date(t).toLocaleDateString()) : '○ Never exported';
   el.className = 'settings-status ' + (t ? 'active' : 'inactive');
+}
+
+function runEndWorkoutBackupReminder() {
+  var el = document.getElementById('ewBackup');
+  if (!el) return;
+  var count = 0, last = 0;
+  try {
+    count = JSON.parse(localStorage.getItem('iron_history') || '[]').length;
+    last  = parseInt(localStorage.getItem('ia_last_export') || '0', 10);
+  } catch(e) {}
+  var stale = !last || (Date.now() - last) > 30 * 864e5;
+  if (!stale || count < EXPORT_REMINDER_EVERY || count % EXPORT_REMINDER_EVERY !== 0) {
+    el.style.display = 'none';
+    return;
+  }
+  el.style.display = '';
+  el.className = 'settings-status inactive';
+  el.innerHTML = '💾 ' + count + ' workouts saved on this phone only &nbsp;' +
+    '<button class="inline-btn" onclick="exportBackupFile()">Export a backup</button>';
 }
 
 function clearStorage(type) {
@@ -4678,27 +2727,17 @@ function clearStorage(type) {
     'history': 'Clear all workout history?',
     'prs':     'Clear all personal records?',
     'session': 'Clear the saved session?',
-    'all':     'Reset EVERYTHING? This clears history, PRs, session and API key.'
+    'all':     'Reset EVERYTHING? This clears history, PRs and the saved session.'
   };
   if (!confirm(messages[type] || 'Are you sure?')) return;
   if (type === 'history' || type === 'all') localStorage.removeItem('iron_history');
   if (type === 'prs'     || type === 'all') { localStorage.removeItem('iron_prs'); localStorage.removeItem('iron_rep_prs'); }
   if (type === 'session' || type === 'all') localStorage.removeItem('ia_session');
   if (type === 'all') {
-    localStorage.removeItem('ia_cost');
     localStorage.removeItem('ia_elapsed_start');
     localStorage.removeItem('ia_elapsed_paused');
     localStorage.removeItem('ia_elapsed_running');
-    localStorage.removeItem('ia_gh_live');
-    localStorage.removeItem('anthropic_key');
-    localStorage.removeItem('gh_token');
-    localStorage.removeItem('gh_token_expiry');
-    localStorage.removeItem('gh_ever');
-    localStorage.removeItem('gh_state_pkg');
-    localStorage.removeItem('gh_diag');
-    ghToken = null; ghTokenExpiry = 0;
-    updateGhBtn();
-    updateGhReconnectBanner();
+    localStorage.removeItem('ia_last_export');
   }
   updateStorageCounts();
   alert('Done ✓');
@@ -4717,6 +2756,8 @@ function updateStorageCounts() {
 
 // App-shortcut deep link (long-press home icon -> History)
 window.addEventListener('DOMContentLoaded', function() {
+  requestPersistentStorage();
+  setTimeout(maybeShowInstallBanner, 1200);
   try {
     if (new URLSearchParams(location.search).get('view') === 'history') {
       history.replaceState(null, '', location.pathname); // clean URL so reload != history view
@@ -4725,7 +2766,6 @@ window.addEventListener('DOMContentLoaded', function() {
   } catch(e) {}
 });
 
-// Android: SW required for notifications (new Notification() throws on Chrome Android)
 // ── V18.3: SERVICE WORKER LIFECYCLE ───────────────────────────────────
 // The worker no longer self-activates; the page offers the update instead, so
 // a deploy can never swap the app mid-workout. Also the fix for "am I actually
@@ -4804,15 +2844,17 @@ function updateGifCacheStatus() {
   el.className = 'settings-status ' + (n ? 'active' : 'inactive');
 }
 
+// iOS only allows notifications from a home-screen-installed PWA on 16.4+, and a
+// suspended PWA will not run the timer that calls this. Treated as a bonus, never
+// as the primary alert — see the audio path in startRestTimer().
 function notifyRestDone(exName) {
-  if (!document.hidden) return; // only when app is backgrounded (e.g. user in Spotify)
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  if (!('serviceWorker' in navigator)) return;
+  if (!document.hidden) return;
+  if (!canNotify()) return;
   navigator.serviceWorker.getRegistration().then(function(reg) {
     if (reg) reg.showNotification('\u23F1 Rest complete', {
       body: (exName || 'Next set') + ' \u2014 back to work',
-      tag: 'ia-rest', renotify: true, vibrate: [100, 50, 100, 50, 300],
-      icon: 'icon-192.png', badge: 'icon-192.png',
+      tag: 'ia-rest', renotify: true,
+      icon: '../icon-192.png', badge: '../icon-192.png',
       actions: [ // V18.3: act without unlocking the phone
         { action: 'add30', title: '+30s' },
         { action: 'done',  title: 'Done' }
@@ -4822,6 +2864,29 @@ function notifyRestDone(exName) {
 }
 
 const _ac = (function(){ try { return new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } })();
+
+// iOS starts every AudioContext suspended and only lets resume() succeed inside a
+// user gesture. beep()'s own resume() is already past the gesture (it awaits), so
+// without this one-time unlock the very first rest timer is silent.
+(function unlockAudioOnce() {
+  if (!_ac) return;
+  var done = false;
+  function unlock() {
+    if (done) return;
+    done = true;
+    try {
+      _ac.resume();
+      var b = _ac.createBuffer(1, 1, 22050);
+      var src = _ac.createBufferSource();
+      src.buffer = b; src.connect(_ac.destination); src.start(0);
+    } catch(e) {}
+    primeSpeech(); // same gesture arms speech synthesis
+    document.removeEventListener('touchend', unlock);
+    document.removeEventListener('click', unlock);
+  }
+  document.addEventListener('touchend', unlock, { passive: true });
+  document.addEventListener('click', unlock);
+})();
 
 async function beep(freq = 880, dur = 0.15, vol = 0.4) {
   try {
@@ -4862,7 +2927,8 @@ function startRestTimer(secs, exName) {
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
   acquireWakeLock(); // keep screen on so the end-of-rest alert actually fires
-  if ('Notification' in window && Notification.permission === 'default') {
+  if (canNotify(true) && Notification.permission === 'default') {
+    // Must originate from the tap that started the rest timer.
     try { Notification.requestPermission(); } catch(e) {}
   }
 
@@ -4877,9 +2943,9 @@ function startRestTimer(secs, exName) {
     ringEl.style.strokeDashoffset = circumf * progress;
 
     // Countdown beeps — guard flags prevent re-firing on same second
-    if (remaining === 3 && !lastBeep3) { lastBeep3 = true; beep(880, 0.1, 0.5); if (navigator.vibrate) navigator.vibrate(40); }
-    if (remaining === 2 && !lastBeep2) { lastBeep2 = true; beep(880, 0.1, 0.5); if (navigator.vibrate) navigator.vibrate(40); }
-    if (remaining === 1 && !lastBeep1) { lastBeep1 = true; beep(1047, 0.1, 0.5); if (navigator.vibrate) navigator.vibrate(40); }
+    if (remaining === 3 && !lastBeep3) { lastBeep3 = true; beep(880, 0.1, 0.5); haptic(40); }
+    if (remaining === 2 && !lastBeep2) { lastBeep2 = true; beep(880, 0.1, 0.5); haptic(40); }
+    if (remaining === 1 && !lastBeep1) { lastBeep1 = true; beep(1047, 0.1, 0.5); haptic(40); }
 
     if (remaining <= 0) fireDone();
   }, 250); // 250ms tick — fast enough to never miss a second even with throttling
@@ -4893,11 +2959,12 @@ function startRestTimer(secs, exName) {
     beep(784,  0.15, 0.5);
     setTimeout(() => beep(1047, 0.15, 0.5), 160);
     setTimeout(() => beep(1319, 0.35, 0.6), 320);
+    // iOS has no vibration; the triple-beep above IS the alert. haptic() is a
+    // no-op there and only fires if this build is ever run on Android.
     var vPat = [100, 50, 100, 50, 300];
-    if (navigator.vibrate) {
-      navigator.vibrate(vPat);
-      setTimeout(function(){ navigator.vibrate(vPat); }, 400);
-    }
+    haptic(vPat);
+    setTimeout(function(){ haptic(vPat); }, 400);
+    flashScreen();
     notifyRestDone(exName);
     stopTimer();
   }
@@ -4941,7 +3008,6 @@ function saveWorkoutToHistory(exercises) {
       mode: workoutMode,
       arnold: { ...arnold },
       equipment: equipmentMode,
-      genre,
       muscles: [...muscles],
       exercises: exercises.map(e => ({name:e.name, sets:e.sets, reps:e.reps, muscle:e.muscle}))
     };
@@ -5126,7 +3192,7 @@ function deleteHistoryEntry(i) {
 
   names.forEach(rebuildPRsFor); // must run after the write so it rescans without the entry
   _histEdits = {};              // indices shifted; drop staged edits
-  if (navigator.vibrate) navigator.vibrate(15);
+  haptic(15);
   renderHistoryList();
 }
 
@@ -5139,7 +3205,7 @@ function purgeEmptySessions() {
   if (!confirm('Remove ' + n + ' session' + (n > 1 ? 's' : '') + ' with no logged sets?')) return;
   try { localStorage.setItem('iron_history', JSON.stringify(kept)); } catch(e) { return; }
   _histEdits = {}; // no PR rebuild needed — empty sessions contributed none
-  if (navigator.vibrate) navigator.vibrate(15);
+  haptic(15);
   renderHistoryList();
 }
 
@@ -5161,8 +3227,6 @@ function renderHistoryList() {
     var hrBadge = '';
     if (entry.hr && !entry.hr.pending) {
       hrBadge = '<div class="hist-hr-badge">❤️ ' + entry.hr.avg + ' avg · ' + entry.hr.peak + ' peak bpm</div>';
-    } else if (entry.hr && entry.hr.pending && ghToken && ghTokenExpiry > Date.now()) {
-      hrBadge = '<div class="hist-hr-badge pending" onclick="fetchHistoryHr(' + i + ',' + entry.workoutStart + ',' + entry.workoutEnd + ')">❤️ Tap to sync HR from Fitbit</div>';
     }
     return `
     <div class="hist-item" style="position:relative">
@@ -5244,7 +3308,6 @@ function loadHistoryEntry(index) {
   if (entry.difficulty) setDifficulty(entry.difficulty);
   if (entry.mode)       setMode(entry.mode);
   if (entry.equipment)  setEquipment(entry.equipment);
-  if (entry.genre)      genre = entry.genre;
 
   // Reload the EXACT exercises from this past session (not a fresh random workout).
   const exercises = entry.exercises.map(function(e){
@@ -5481,17 +3544,16 @@ function resetElapsedTimer(force) {
   if (el) el.textContent = '00:00';
 }
 
-// Keep clocks honest across hide/show. Chrome suspends JS timers for hidden
-// PWAs, so: re-arm the display interval, hand the rest alarm to a one-shot
-// timeout while hidden, and fire it immediately if it expired while away.
+// Keep clocks honest across hide/show. iOS suspends JS entirely for a
+// backgrounded PWA, so every clock is wall-clock based and simply recomputed
+// here; a rest timer that expired while away fires the moment we return.
 function resyncOnShow() {
   if (elapsedRunning) {
     if (!elapsedInterval) elapsedInterval = setInterval(updateElapsedDisplay, 500);
     updateElapsedDisplay();
   }
-  updateGhReconnectBanner(); // token may have expired while app was backgrounded
   if (timerInterval) {
-    acquireWakeLock(); // Chrome auto-releases wake lock on hide
+    acquireWakeLock(); // iOS releases the wake lock on hide
     if (timerEndTime && timerEndTime <= Date.now() && window._iaFireRestDone) window._iaFireRestDone();
   }
 }
@@ -5512,7 +3574,7 @@ window.addEventListener('pageshow', resyncOnShow);
 // V17.1: light haptic tick on interactive presses (pwa_architecture_rules)
 document.addEventListener('click', function(e) {
   if (e.target.closest && e.target.closest('button, .mg-chip, .ex-card, .dur-card, .sp-btn')) {
-    try { if (navigator.vibrate) navigator.vibrate(10); } catch(_) {}
+    try { haptic(10); } catch(_) {}
   }
 }, { passive: true });
 
@@ -5885,7 +3947,7 @@ function logSet(exIndex, setIndex, field, value) {
       const hadBadge = refreshRowBadges(exIndex, si) &&
         !document.getElementById('setrow-' + exIndex + '-' + si + '-hadpr');
     });
-    if (refreshRowBadges(exIndex, setIndex) && navigator.vibrate) navigator.vibrate([50, 30, 50]);
+    if (refreshRowBadges(exIndex, setIndex)) { haptic([50, 30, 50]); flashScreen(); }
   }
   updateDoneChips();
   maybeShockCue(exIndex);
@@ -5906,9 +3968,8 @@ function maybeShockCue(exIndex) {
   var done = logs.filter(function(r){ return r && r.reps; }).length;
   if (done !== total - 1) return;
   window._shockSpoken[exIndex] = true;
-  var t = shockFor(ex.name);
-  arnSpeak(t.cue);
-  if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+  arnSpeak(shockFor(ex.name).cue);
+  haptic([40, 60, 40]);
 }
 
 // ── PLATE CALCULATOR ───────────────────────────────────────────────────
@@ -6242,27 +4303,6 @@ function calcORM() {
 
 
 // ═══════════════════════════════════════════════════════════════════════
-// ── FEATURE: BPM / ENERGY SLIDER ──────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-const ENERGY_LEVELS = ['Chill / Recovery', 'Warm-up', 'Moderate', 'High Energy', 'Maximum Intensity'];
-// Maps energy level 1-5 to Spotify audio feature params
-const ENERGY_PARAMS = [
-  { min_energy: 0.0, max_energy: 0.4, min_tempo: 60,  max_tempo: 100 },
-  { min_energy: 0.3, max_energy: 0.6, min_tempo: 90,  max_tempo: 120 },
-  { min_energy: 0.5, max_energy: 0.75,min_tempo: 110, max_tempo: 140 },
-  { min_energy: 0.7, max_energy: 0.92,min_tempo: 125, max_tempo: 160 },
-  { min_energy: 0.85,max_energy: 1.0, min_tempo: 140, max_tempo: 220 },
-];
-
-
-
-
-
-// Patch into searchTracks — called inside the function
-
-
-
-// ═══════════════════════════════════════════════════════════════════════
 // ── IMAGE FALLBACK RETRY ───────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
 const IMG_FALLBACKS = {
@@ -6322,81 +4362,6 @@ function handleImgError(imgEl, exName) {
 }
 
 
-// ═══════════════════════════════════════════════════════════════════════
-// ── ENERGY MODE (2-mode) ───────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-let energyMode = 'workout'; // 'workout' | 'chill'
-
-function setEnergyMode(mode) {
-  energyMode = mode;
-  const w = document.getElementById('energy-workout');
-  const c = document.getElementById('energy-chill');
-  if (w) w.classList.toggle('on', mode === 'workout');
-  if (c) c.classList.toggle('on', mode === 'chill');
-}
-
-function buildEnergyQuery(baseQuery) {
-  // Chill mode: add relaxing qualifier; workout mode: leave clean
-  if (energyMode === 'chill') return baseQuery + ' chill';
-  return baseQuery; // workout mode: just the raw genre query
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── MIX GENRE ──────────────────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-async function searchMixTracks(count) {
-  // Sample 1–2 queries from each active genre, collect popular tracks
-  const activeGenres = ['Hip-Hop','Rock','EDM','House','80s','Pop','Latin','R&B','Drum and Bass','Reggaeton','Anime'];
-  const genreQueries = {
-    'Hip-Hop':      'hip hop hits',
-    'Rock':         'classic rock hits',
-    'EDM':          'electronic dance hits',
-    'House':        'house music hits',
-    '80s':          '80s classics',
-    'Pop':          'top pop hits',
-    'Latin':        'latin hits',
-    'R&B':          'r&b hits',
-    'Drum and Bass':'drum and bass anthems',
-    'Reggaeton':    'reggaeton hits',
-    'Anime':        'anime soundtrack hits',
-  };
-
-  // Pick random subset of genres for variety each session
-  const shuffled = shuffle([...activeGenres]);
-  const picked = shuffled.slice(0, Math.min(6, count)); // 6 genres for up to 60 tracks
-
-  let allTracks = [];
-  for (const g of picked) {
-    const q = genreQueries[g] || g + ' hits';
-    const offset = Math.floor(Math.random() * 3) * 10;
-    try {
-      const r = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=10&offset=${offset}`,
-        {headers:{Authorization:'Bearer '+spToken}}
-      );
-      if (!r.ok) continue;
-      const d = await r.json();
-      const items = (d.tracks?.items||[]).filter(t => {
-        if (!t.uri) return false;
-        const key = (t.name+'|'+(t.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
-        return !allTracks.find(x => {
-          const xk = (x.name+'|'+(x.artists?.[0]?.name||'')).toLowerCase().replace(/[^a-z0-9|]/g,'');
-          return xk === key;
-        });
-      });
-      allTracks = allTracks.concat(items);
-    } catch(e) { /* skip failed genre */ }
-  }
-
-  // Sort by popularity then light shuffle
-  allTracks.sort((a,b) => (b.popularity||0) - (a.popularity||0));
-  const cutoff = Math.ceil(allTracks.length * 0.6);
-  const top = shuffle(allTracks.slice(0, cutoff));
-  const rest = shuffle(allTracks.slice(cutoff));
-  return [...top, ...rest].slice(0, count);
-}
-
 </script>
 
 <!-- ── EXERCISE HOW-TO MODAL ───────────────────────────────────────── -->
@@ -6408,7 +4373,7 @@ async function searchMixTracks(count) {
     <div class="ex-modal-body">
       <div class="ex-modal-num" id="exModalNum">EXERCISE 01</div>
       <div class="ex-modal-name" id="exModalName">Exercise Name</div>
-      <span class="ex-modal-muscle" id="exModalMuscle">Muscle</span><span class="ex-modal-muscle" id="exModalPat" style="display:none;background:rgba(196,206,212,.12);color:var(--accent2)"></span>
+      <span class="ex-modal-muscle" id="exModalMuscle">Muscle</span><span class="ex-modal-muscle" id="exModalPat" style="display:none;background:rgba(0,107,182,.18);color:var(--accent2)"></span>
       <div class="ex-modal-stats" id="exModalStats"></div>
       <div class="ex-modal-cue" id="exModalCue" style="display:none"></div>
       <a class="yt-watch-btn" id="exModalYTBtn" href="#" target="_blank" rel="noopener">
@@ -6535,56 +4500,15 @@ async function searchMixTracks(count) {
     <div class="settings-title">⚙️ SETTINGS</div>
     <button class="settings-close" onclick="closeSettings()">✕</button>
   </div>
-  <div class="settings-section">
-    <label class="settings-label">🤖 Anthropic API Key</label>
-    <input class="settings-input" id="anthropicKeyInput" type="password"
-      placeholder="sk-ant-api03-..." autocomplete="off">
-    <button class="settings-save-btn" onclick="saveAnthropicKey()">Save Key</button>
-    <div class="settings-info">
-      Your key is stored only on this device and sent directly to Anthropic.
-      Get a key at <strong>console.anthropic.com</strong><br><br>
-      When active, Claude acts as a DJ to pick the best songs for your workout.
-      Falls back to Spotify search automatically if unavailable.
-    </div>
-    <div id="settingsStatus" class="settings-status inactive">
-      ○ Claude DJ: Not configured
-    </div>
-  </div>
-  <div class="settings-section">
-    <hr class="settings-divider">
-    <label class="settings-label">💰 Estimated Usage</label>
-    <div class="settings-cost-box">
-      <div class="settings-cost-row">
-        <span class="settings-cost-label">Playlists generated</span>
-        <span class="settings-cost-val" id="costPlaylists">0</span>
-      </div>
-      <div class="settings-cost-row">
-        <span class="settings-cost-label">Estimated cost</span>
-        <span class="settings-cost-val accent" id="costTotal">$0.0000</span>
-      </div>
-      <div class="settings-cost-row">
-        <span class="settings-cost-label">Playlists remaining</span>
-        <span class="settings-cost-val" id="costCallsLeft">3,940</span>
-      </div>
-    </div>
-    <div class="settings-info" style="margin-top:8px">
-      Claude Haiku costs ~$0.001 per playlist. Estimates only — check console.anthropic.com for exact billing.
-    </div>
-    <button onclick="resetCostTracker()" style="width:100%;margin-top:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px">
-      Reset Usage Counter
-    </button>
-  </div>
 
-  <!-- Google Health -->
+  <!-- Install / device -->
   <div class="settings-section">
-    <hr class="settings-divider">
-    <label class="settings-label">❤️ Google Health</label>
-    <button id="ghBtn" class="gh-connect-btn" onclick="handleGhConnect()">Connect Google Health</button>
-    <div id="ghDiag" class="gh-diag" style="display:none"></div>
-    <div id="ghStatus" class="settings-status inactive">○ Google Health: Not connected</div>
+    <label class="settings-label">📱 Install</label>
+    <div id="installStatus" class="settings-status inactive">○ Running in Safari</div>
     <div class="settings-info" style="margin-top:8px">
-      Syncs heart rate data from your Fitbit Air after each workout.<br>
-      Tokens last ~60 min — reconnect when expired.
+      Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>. Installing gives you
+      full-screen mode, a persistent workout timer, and keeps your history from being
+      cleared by Safari.
     </div>
   </div>
 
@@ -6592,30 +4516,27 @@ async function searchMixTracks(count) {
   <div class="settings-section">
     <hr class="settings-divider">
     <label class="settings-label">📶 Offline Exercise GIFs</label>
-    <button class="gh-connect-btn" onclick="precacheGifs()">⬇ Cache GIFs for Offline</button>
+    <button class="action-btn" onclick="precacheGifs()">⬇ Cache GIFs for Offline</button>
     <div id="gifCacheStatus" class="settings-status inactive">○ GIFs not cached for offline use</div>
     <div class="settings-info" style="margin-top:8px">
       Downloads every exercise animation so they load instantly on bad gym wifi. ~20&nbsp;MB, one time.
     </div>
   </div>
 
-  <!-- Data backup -->
+  <!-- Data backup (local file only) -->
   <div class="settings-section">
     <hr class="settings-divider">
-    <label class="settings-label">☁️ Data &amp; Backup</label>
+    <label class="settings-label">💾 Data &amp; Backup</label>
     <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button class="gh-connect-btn" style="flex:1" onclick="driveBackup(false)">⬆ Back Up Now</button>
-      <button class="gh-connect-btn" style="flex:1" onclick="driveRestore()">⬇ Restore</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button class="gh-connect-btn" style="flex:1" onclick="exportBackupFile()">💾 Export File</button>
-      <button class="gh-connect-btn" style="flex:1" onclick="document.getElementById('backupImportInput').click()">📂 Import File</button>
+      <button class="action-btn" style="flex:1" onclick="exportBackupFile()">💾 Export File</button>
+      <button class="action-btn" style="flex:1" onclick="document.getElementById('backupImportInput').click()">📂 Import File</button>
       <input type="file" id="backupImportInput" accept=".json,application/json" style="display:none" onchange="importBackupFile(this)">
     </div>
-    <div id="backupStatus" class="settings-status inactive">○ No Drive backup yet</div>
+    <div id="backupStatus" class="settings-status inactive">○ Never exported</div>
     <div class="settings-info" style="margin-top:8px">
-      Auto-backs up to your Google Drive (hidden app folder) after every finished workout while connected.
-      Restore and Import MERGE with local data — nothing is overwritten or deleted.
+      Everything lives on this device only — nothing is sent anywhere. Export writes a JSON
+      file to Files/iCloud Drive; Import <strong>merges</strong> it back in, so nothing is
+      ever overwritten or deleted. Export every few weeks.
     </div>
   </div>
 
@@ -6632,6 +4553,10 @@ async function searchMixTracks(count) {
         <span class="settings-cost-label">Personal records</span>
         <span class="settings-cost-val" id="prCount">— exercises</span>
       </div>
+      <div class="settings-cost-row">
+        <span class="settings-cost-label">Storage durability</span>
+        <span class="settings-cost-val" id="persistStatus">—</span>
+      </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
       <button class="settings-storage-btn" onclick="clearStorage('history')">Clear Workout History</button>
@@ -6639,6 +4564,15 @@ async function searchMixTracks(count) {
       <button class="settings-storage-btn" onclick="clearStorage('session')">Clear Saved Session</button>
       <button class="settings-storage-btn settings-storage-btn-danger" onclick="clearStorage('all')">Reset Everything</button>
     </div>
+  </div>
+</div>
+
+<!-- iOS add-to-home-screen hint -->
+<div class="ios-install-banner" id="iosInstallBanner" style="display:none">
+  <div class="iib-text">Add Iron Audio to your Home Screen for full-screen mode and safer history storage.</div>
+  <div class="iib-actions">
+    <span class="iib-hint">Share <span aria-hidden="true">&#x2191;</span> → Add to Home Screen</span>
+    <button class="iib-x" onclick="dismissInstallBanner()" aria-label="Dismiss">✕</button>
   </div>
 </div>
 
