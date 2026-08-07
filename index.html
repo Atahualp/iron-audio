@@ -847,7 +847,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v19.1.1 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v19.2.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -1460,7 +1460,31 @@ const PAT_LABELS = {"vpull":"Vertical pull","hrow":"Horizontal pull","hinge":"Hi
 // Weekly working-set landmarks per muscle (RP / Dr. Mike Israetel).
 const RP_LANDMARKS = {"chest":{"MEV":8,"MAVmin":12,"MAVmax":20,"MRV":22,"label":"Chest"},"back":{"MEV":10,"MAVmin":14,"MAVmax":22,"MRV":25,"label":"Back"},"quadriceps":{"MEV":8,"MAVmin":12,"MAVmax":18,"MRV":20,"label":"Quadriceps"},"hamstrings":{"MEV":6,"MAVmin":10,"MAVmax":16,"MRV":20,"label":"Hamstrings"},"glutes":{"MEV":4,"MAVmin":8,"MAVmax":12,"MRV":16,"label":"Glutes"},"calves":{"MEV":8,"MAVmin":12,"MAVmax":16,"MRV":20,"label":"Calves"},"front_delts":{"MEV":0,"MAVmin":6,"MAVmax":8,"MRV":12,"label":"Front Deltoids"},"side_delts":{"MEV":8,"MAVmin":16,"MAVmax":22,"MRV":26,"label":"Side Deltoids"},"rear_delts":{"MEV":6,"MAVmin":12,"MAVmax":18,"MRV":22,"label":"Rear Deltoids"},"biceps":{"MEV":8,"MAVmin":14,"MAVmax":20,"MRV":26,"label":"Biceps"},"triceps":{"MEV":6,"MAVmin":10,"MAVmax":14,"MRV":18,"label":"Triceps"},"trapezius":{"MEV":0,"MAVmin":12,"MAVmax":20,"MRV":26,"label":"Trapezius"},"abdominals":{"MEV":0,"MAVmin":16,"MAVmax":20,"MRV":25,"label":"Abdominals"},"forearms":{"MEV":0,"MAVmin":8,"MAVmax":12,"MRV":16,"label":"Forearms"}};
 // Per-session set targets: weekly midpoint (MEV..MAV_max) ÷ mid frequency.
-const RP_SESSION_SETS = {"chest":5,"back":5,"shoulders":4,"biceps":4,"triceps":3,"legs":6,"traps":2,"core":2,"forearms":2};
+// V19.2: RP weekly volume landmarks (working sets per week), rolled up from
+// DrMike.json to the app's muscle groups. The old RP_SESSION_SETS table was
+// weekly MAV divided by RP's *maximum* training frequency (4-6x/wk), which made
+// every per-session target so small that the 2-set floor swallowed it.
+const RP_WEEKLY = {
+  chest:{MEV:8,MAV:20}, back:{MEV:10,MAV:22}, shoulders:{MEV:8,MAV:22},
+  biceps:{MEV:8,MAV:20}, triceps:{MEV:6,MAV:14},  legs:{MEV:8,MAV:18},
+  traps:{MEV:4,MAV:20},  core:{MEV:6,MAV:20},     forearms:{MEV:4,MAV:12}
+};
+// Sessions per week that hit a given muscle. This is the divisor that decides
+// per-session volume. Default 2 = a standard upper/lower or A/B rotation.
+let weeklyFreq = 2;
+
+// Per-session set target for a muscle group. Aims at the MEV-MAV midpoint and
+// hard-clamps so a full week can never fall under MEV or run past MAV.
+function rpSessionTarget(m, setsM) {
+  const lm = RP_WEEKLY[m];
+  if (!lm) return 0;
+  const f = Math.max(1, weeklyFreq);
+  const weekly = ((lm.MEV + lm.MAV) / 2) * (setsM || 1);
+  return Math.min(
+    Math.floor(lm.MAV / f),
+    Math.max(Math.ceil(lm.MEV / f), Math.round(weekly / f))
+  );
+}
 // App muscle labels → RP landmark groups (for the weekly tracker).
 const MUSCLE_TO_RP = {"Pectorals":"chest","Upper Chest":"chest","Inner Chest":"chest","Outer Chest":"chest","Lower Chest":"chest","Lats":"back","Lower Lats":"back","Upper Back":"back","Mid Back":"back","Lower Back":"back","Erectors":"back","Traps":"trapezius","Delts":"side_delts","Side Delts":"side_delts","Anterior Deltoid":"front_delts","Front Delts":"front_delts","Rear Delts":"rear_delts","Posterior Deltoid":"rear_delts","Biceps":"biceps","Brachialis":"biceps","Triceps":"triceps","Forearms":"forearms","Grip":"forearms","Quads":"quadriceps","Hamstrings":"hamstrings","Glutes":"glutes","Calves":"calves","Abs":"abdominals","Obliques":"abdominals","Core":"abdominals","Hip Flexors":"abdominals","Full Body":"","Cardio":"","Conditioning":""};
 
@@ -3544,17 +3568,20 @@ async function generate() {
 
     let group = picked.map(e => applyDifficulty({...e, muscleGroup: m, pat: patOf(e)}));
 
-    // V17: calibrate total sets toward the RP per-session target (MEV–MAV
-    // derived), distributed across the picked exercises, 2–5 sets each.
-    const tgt = RP_SESSION_SETS[m];
+    // V19.2: distribute the RP per-session target across the picked exercises
+    // using largest-remainder, so the earliest (compound) movements absorb the
+    // extra set. The old loop initialised `left` to max(n*2, tgt), which meant
+    // the 2-set floor always won and the target was never actually honoured.
+    const tgt = rpSessionTarget(m, dm.setsM);
     if (tgt && group.length) {
-      let per = Math.max(2, Math.min(5, Math.round(tgt / group.length)));
-      let left = Math.max(group.length * 2, tgt);
-      group = group.map((ex, i) => {
-        let s = Math.max(2, Math.min(5, i < group.length - 1 ? per : left));
-        left -= s;
-        return { ...ex, sets: String(s) };
-      });
+      const MIN = 2, MAX = 5, n = group.length;
+      const total = Math.min(Math.max(tgt, n * MIN), n * MAX);
+      const base  = Math.floor(total / n);
+      let rem     = total - base * n;
+      group = group.map(ex => ({
+        ...ex,
+        sets: String(Math.min(MAX, base + (rem-- > 0 ? 1 : 0)))
+      }));
     }
     exercises = exercises.concat(group);
   }
@@ -5628,7 +5655,11 @@ function applyDiffToPick(picked, ex, muscleGroup) {
   var _pat = swapPatOf(picked.name, muscleGroup);
   const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
   const dm = diffMap[difficulty] || diffMap.intermediate;
-  const s = Math.max(2, Math.round(parseFloat(picked.sets) * dm.setsM));
+  // V19.2: inherit the calibrated set count from the exercise being replaced.
+  // Previously this reset to the raw DB value x difficulty, silently undoing
+  // the RP volume calibration every time the user swapped an exercise.
+  const s = Math.max(2, parseInt(ex.sets) ||
+            Math.round(parseFloat(picked.sets) * dm.setsM));
   const restSecs = parseRestSecs(picked.rest);
   const newRest = Math.round(restSecs * dm.restM);
   const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';

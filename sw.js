@@ -2,7 +2,7 @@
 // Network-first so a fresh deploy is picked up immediately (version hygiene);
 // cache fallback keeps the app openable offline. Also required so
 // showNotification() works for rest-complete alerts.
-const CACHE     = 'iron-audio-v19-1';
+const CACHE     = 'iron-audio-v19-2';
 const GIF_CACHE = 'iron-audio-gifs'; // version-independent: ~20MB, never re-fetch on a deploy
 
 self.addEventListener('install', (e) => {
