@@ -60,6 +60,21 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 .ex-card .dur-num{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:var(--muted);line-height:1;letter-spacing:-1px}
 .ex-card.on .dur-num{color:var(--accent)}
 .dur-lbl{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
+/* ── WEEKLY FREQUENCY ────────────────────────────────────────────── */
+.freq-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.freq-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 4px;cursor:pointer;text-align:center;transition:all .2s;min-height:64px}
+.freq-card.on{border-color:var(--accent);background:rgba(255,255,255,.04)}
+.freq-card .freq-num{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--muted);line-height:1;letter-spacing:-1px}
+.freq-card.on .freq-num{color:var(--accent)}
+.freq-lbl{font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
+.freq-read{margin-top:11px;font-size:10px;line-height:1.55;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:9px 11px}
+.freq-read b{color:var(--text);font-weight:700}
+.freq-read .fr-hd{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.freq-read .fr-warn{color:#f8a071}
+/* Separates the muscle-group chips from the equipment chips in the ADD sheet —
+   they were one undifferentiated wrapped block with no visual grouping. */
+.swap-chip-sep{flex-basis:100%;height:0;margin:0}
+.swap-chip-lbl{font-size:8px;font-weight:800;letter-spacing:1.5px;color:var(--muted);opacity:.75;align-self:center;margin-right:2px;text-transform:uppercase}
 
 /* ── MUSCLE CHIPS ────────────────────────────────────────────────── */
 .mg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
@@ -470,6 +485,16 @@ html,body{overscroll-behavior-y:none;background:var(--bg);color:var(--text);font
 /* ── END WORKOUT ─────────────────────────────────────────────────────── */
 .end-workout-btn{width:100%;padding:14px;background:transparent;border:1.5px solid var(--accent);border-radius:20px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--accent);cursor:pointer;transition:all .2s;margin-bottom:4px}
 .end-workout-btn:active{background:rgba(255,255,255,.1);transform:scale(.97)}
+/* ── ADD EXERCISE ────────────────────────────────────────────────── */
+.add-ex-btn{width:100%;padding:12px;background:transparent;border:1.5px dashed var(--border);border-radius:20px;font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:2.5px;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:9px;min-height:44px}
+.add-ex-btn:active{border-color:var(--accent);color:var(--accent);border-style:solid;transform:scale(.97)}
+.rm-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px;min-height:28px}
+.rm-btn:active{border-color:#f87171;color:#f87171;transform:scale(.94)}
+.wk-added-badge{display:inline-block;font-size:8px;font-weight:800;letter-spacing:1px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:1px 5px;margin-left:5px;vertical-align:middle;opacity:.85}
+.swap-vol{font-size:10px;line-height:1.45;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:6px 9px;margin-bottom:8px}
+.swap-vol b{color:var(--text);font-weight:700}
+.swap-vol.over{border-color:#f8a071;color:#f8a071}
+.swap-vol.over b{color:#f8a071}
 .ew-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .ew-overlay.open{opacity:1;pointer-events:all}
 .ew-sheet{background:#0C1929;border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:calc(100dvh - max(env(safe-area-inset-top,0px),20px) - 12px);overflow-y:auto;padding:20px 20px calc(env(safe-area-inset-bottom,0px)+20px);transform:translateY(60px);transition:transform .3s cubic-bezier(.32,1.1,.42,1)}
@@ -724,9 +749,23 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
       </div>
     </div>
 
+    <!-- Weekly Frequency -->
+    <div class="sec">
+      <div class="sec-tag">04 — WEEKLY VOLUME</div>
+      <div class="sec-title">SESSIONS PER MUSCLE / WEEK</div>
+      <div style="font-size:10px;color:var(--muted);margin:-4px 0 9px">How often you hit each muscle. Sets per session = RP weekly landmark ÷ this.</div>
+      <div class="freq-row" id="freqRow">
+        <div class="freq-card" data-f="1" onclick="setWeeklyFreq(1)"><div class="freq-num">1</div><div class="freq-lbl">Bro split</div></div>
+        <div class="freq-card" data-f="2" onclick="setWeeklyFreq(2)"><div class="freq-num">2</div><div class="freq-lbl">Upper/Lower</div></div>
+        <div class="freq-card" data-f="3" onclick="setWeeklyFreq(3)"><div class="freq-num">3</div><div class="freq-lbl">PPL / Arnold</div></div>
+        <div class="freq-card" data-f="4" onclick="setWeeklyFreq(4)"><div class="freq-num">4</div><div class="freq-lbl">High freq</div></div>
+      </div>
+      <div class="freq-read" id="freqRead"></div>
+    </div>
+
     <!-- Equipment -->
     <div class="sec">
-      <div class="sec-tag">04 — EQUIPMENT</div>
+      <div class="sec-tag">05 — EQUIPMENT</div>
       <div class="sec-title">WORKOUT TYPE</div>
       <div class="toggle-row">
         <div class="toggle-pill eq-gym on" id="eq-gym" onclick="setEquipment('gym',this)">🏋️ GYM</div>
@@ -736,7 +775,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 
     <!-- Playlist Toggle -->
     <div class="sec" style="padding-bottom:8px">
-      <div class="sec-tag">05 — PLAYLIST</div>
+      <div class="sec-tag">06 — PLAYLIST</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
         <div>
           <div class="sec-title" style="margin-bottom:2px">SPOTIFY PLAYLIST</div>
@@ -754,7 +793,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
 
     <!-- Genre -->
     <div class="sec">
-      <div class="sec-tag">06 — VIBE</div>
+      <div class="sec-tag">07 — VIBE</div>
       <div class="sec-title">PLAYLIST GENRE</div>
       <div class="genre-row">
         <div class="g-pill" onclick="setGenre('80s',this)"><span class="g-pill-ico">📼</span><span class="g-pill-lbl">80's</span></div>
@@ -828,6 +867,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     <div id="quoteCard" style="padding:8px 14px 0;"></div>
     <div class="wk-list" id="wkList"></div>
     <div style="padding:0 14px 4px">
+      <button class="add-ex-btn" id="addExBtn" onclick="openAddExercise()">➕ ADD EXERCISE</button>
       <button class="end-workout-btn" onclick="endWorkout()">🤖 I'LL BE BACK</button>
     </div>
     <div class="pl-sec" id="plSection">
@@ -847,7 +887,7 @@ button,.mg-chip,.ex-card,.dur-card,.sp-btn,.timer-btn,.hist-item,.set-log-input,
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v19.2.0 · GOLDEN ERA EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v19.5.0 · GOLDEN ERA EDITION · ANDROID</div>
 
 </div>
 
@@ -1454,7 +1494,7 @@ async function fetchExerciseGif(exerciseName) {
 // One-line coaching cues shown on the exercise modal (sourced from
 // exercise_database.json where available, authored for the KB pack).
 const EX_CUES = {"Kettlebell Swing":"Hinge at hips, snap glutes forcefully at full extension, do not squat.","Goblet Squat":"Keep bell tight to chest, elbows inside knees at bottom stretch.","Squat":"Brace core, drive knees out, stay balanced mid-foot.","Bench Press":"Retract scapula, lower bar controlled to mid-chest, drive up.","Romanian Deadlift":"Push hips back, feel deep hamstring stretch below knees, snap forward.","Incline DB Press":"Set bench to 30 degrees, full stretch at bottom, press up and slightly inward.","Lateral Raise":"Slight forward lean, lead with elbows, pause briefly at parallel.","Preacher Curl":"Lock armpits over pad, full eccentric stretch, squeeze hard at top.","Skull Crusher":"Angle upper arms slightly back, lower bar toward hairline, extend fully.","Lat Pulldown":"Drive elbows straight down to ribcage, squeeze lats, control negative.","Seated Cable Row":"Pull handle to lower stomach, pull shoulder blades together.","Leg Extension":"Pause 1 second at top contraction, lower under control for 3 seconds.","Dips":"Lean forward for chest bias, lower to 90-degree elbow bend, drive up.","Hanging Leg Raise":"Curl pelvis upward at top to flex spine, do not swing momentum.","KB Front-Rack Squat":"Elbows tucked, bells at collarbone, sit deep between your heels.","KB Lunge Pass-Through":"Pass the bell under your front thigh at the bottom of every lunge.","KB Clean & Press":"Rack smoothly at shoulder, press overhead without leaning back.","KB Push Press":"Dip shallow, drive with legs, punch the bell to lockout overhead.","KB Snatch":"One fluid pull \u2014 punch through so the bell lands soft on your wrist.","KB Gorilla Row":"Hinge deep, row one bell while the other anchors \u2014 no torso rotation.","KB Sumo High Pull":"Elbows lead \u2014 the bell travels close to your body to chin height.","KB Windmill":"Eyes locked on the bell overhead, hips push sideways as you fold.","KB Floor Press":"Triceps touch the floor lightly each rep \u2014 press and squeeze at lockout."};
-const EX_PATTERNS = {"chest":{"KB Floor Press":"hpress","Bench Press":"hpress","Incline DB Press":"ipress","Cable Fly":"fly","Push-Up":"hpress","Pec Deck":"fly","Decline Bench Press":"hpress","Dumbbell Pullover":"hpress","Incline Cable Fly":"fly","DB Bench Press":"hpress","Chest Dip":"hpress","Landmine Press":"hpress","Floor Press":"hpress","Low Cable Fly":"fly","Machine Chest Press":"hpress","Svend Press":"hpress","Wide Push-Up":"hpress","Cable Chest Press":"hpress","Close-Grip Push-Up":"hpress","Plyo Push-Up":"hpress","Stagger Push-Up":"hpress","One-Arm Push-Up":"hpress","Decline Push-Up":"hpress","Cobra Push-Up":"hpress"},"back":{"KB Gorilla Row":"hrow","Pull-Up":"vpull","Barbell Row":"hrow","Lat Pulldown":"vpull","Seated Cable Row":"hrow","Single-Arm DB Row":"hrow","Deadlift":"hinge","T-Bar Row":"hrow","Chest-Supported Row":"hrow","Cable Straight-Arm Pulldown":"vpull","Chin-Up":"vpull","Close-Grip Lat Pulldown":"vpull","Pendlay Row":"hrow","Meadows Row":"hrow","Inverted Row":"hrow","Seal Row":"hrow","Cable Row to Neck":"hrow","Renegade Row":"hrow","Straight-Arm Pulldown":"vpull","Reverse Grip Row":"hrow","Superman":"hinge","Wide-Grip Pull-Up":"vpull","Stiff-Leg Deadlift":"hinge"},"shoulders":{"KB Clean & Press":"press","KB Push Press":"press","KB Snatch":"press","Overhead Press":"press","Lateral Raise":"lateral","Front Raise":"front","Face Pull":"rear","Arnold Press":"press","Upright Row":"lateral","Rear Delt Fly":"rear","Cable Lateral Raise":"lateral","DB Shoulder Press":"press","Landmine Lateral Raise":"lateral","Cable Front Raise":"front","Plate Front Raise":"front","Machine Shoulder Press":"press","Pike Push-Up":"press","Band Pull-Apart":"rear","Seated DB Lateral Raise":"lateral","Cable Y-Raise":"rear","EZ Bar Underhand Press":"press","Six-Way Shoulder Raise":"lateral","W Raise":"rear","Post Delt Raise":"rear","Cuban Press":"press","Scap Trap Raise":"rear","1,1,2 Military Press":"press"},"biceps":{"Barbell Curl":"curlstd","Hammer Curl":"hammer","Incline DB Curl":"curlstd","Preacher Curl":"peak","Cable Curl":"curlstd","Concentration Curl":"peak","Spider Curl":"peak","Reverse Curl":"hammer","EZ Bar Curl":"curlstd","Cross-Body Hammer Curl":"hammer","Zottman Curl":"hammer","Machine Curl":"curlstd","Seated Alternating Curl":"curlstd","21s":"curlstd","Drag Curl":"curlstd","Wide-Grip Curl":"curlstd","Cable Rope Hammer Curl":"hammer","Curl-Up Hammer-Down":"hammer","In-Out Curl":"curlstd"},"triceps":{"Tricep Pushdown":"ext","Skull Crusher":"ext","Overhead Extension":"ohext","Dips":"press","Close-Grip Bench":"press","Single-Arm Cable Pushdown":"ext","Diamond Push-Up":"press","Tate Press":"press","JM Press":"press","Cable Overhead Extension":"ohext","Tricep Kickback":"ext","Bench Dip":"press","DB Overhead Extension":"ohext","Cable Rope Pushdown":"ext","Board Press":"press","Two-Hand Overhead DB Extension":"ohext","Close-Grip Push-Up":"press","EZ Bar Overhead Extension":"ohext"},"legs":{"KB Front-Rack Squat":"knee","KB Lunge Pass-Through":"knee","Squat":"knee","Romanian Deadlift":"hip","Leg Press":"knee","Walking Lunge":"knee","Leg Extension":"knee","Hip Thrust":"hip","Sumo Deadlift":"hip","Bulgarian Split Squat":"knee","Leg Curl":"curl","Hack Squat":"knee","Front Squat":"knee","Goblet Squat":"knee","Step-Up":"knee","Nordic Curl":"curl","Reverse Lunge":"knee","Box Jump":"knee","Single-Leg Press":"knee","Sissy Squat":"knee","Glute Bridge":"hip","Sumo Squat":"knee","Alt Side Squat":"knee","Front-to-Back Lunge":"knee","Step-Up to Reverse Lunge":"knee","Jump Squat":"knee","Split Squat":"knee","Ins and Outs":"knee","Calf Raise":"calf","Seated Calf Raise":"calf"},"fullbody":{"Deadlift":"full","Power Clean":"full","Thruster":"full","Kettlebell Swing":"full","Clean and Press":"full","Burpee":"full","Bear Complex":"full","Snatch Grip Deadlift":"full","Turkish Get-Up":"full","Man Maker":"full","Devil Press":"full","Hang Clean":"full","Push Press":"full","Barbell Complex":"full","Overhead Squat":"full","Sandbag Carry":"full","Squat to Overhead Press":"full","Squat to Upright Row":"full","Mountain Climber to Row":"full","Plyo Lunge":"full","Weighted Burpee":"full"},"core":{"KB Windmill":"rot","Plank":"anti","Cable Crunch":"flex","Hanging Leg Raise":"flex","Russian Twist":"rot","Ab Rollout":"flex","Dead Bug":"anti","Bicycle Crunch":"flex","Dragon Flag":"flex","Decline Sit-Up":"flex","Toes to Bar":"flex","Pallof Press":"anti","Hollow Body Hold":"anti","L-Sit":"anti","Side Plank":"rot","Windshield Wiper":"rot","V-Up":"flex","Weighted Sit-Up":"flex","Landmine Rotation":"rot","Figure 4 Crunch":"flex","Cricket Crunch":"flex","Plank Twist-Twist":"rot","EZ Bar Crunch":"flex","Tuck and Roll":"flex","In-Out Abs":"flex"},"traps":{"KB Sumo High Pull":"shrug","Barbell Shrug":"shrug","Dumbbell Shrug":"shrug","Rack Pull":"shrug","Face Pull":"shrug","Upright Row":"shrug","Farmer Carry":"shrug","Cable Shrug":"shrug","Hex Bar Shrug":"shrug","Behind-the-Back Shrug":"shrug","DB Upright Row":"shrug","Snatch-Grip Shrug":"shrug","Clean Pull":"shrug","Overhead Carry":"shrug","Incline Shrug":"shrug","Yoke Carry":"shrug"},"forearms":{"Wrist Curl":"grip","Reverse Curl":"grip","Farmer Carry":"grip","Hammer Curl":"grip","Behind-Back Wrist Curl":"grip","Plate Pinch":"grip","Wrist Roller":"grip","Reverse Wrist Curl":"grip","Towel Pull-Up":"grip","Pinch Grip Hold":"grip","Barbell Finger Roll":"grip","DB Wrist Rotation":"grip","Grip Squeeze":"grip","Rice Bucket":"grip","Barbell Hold":"grip"}};
+const EX_PATTERNS = {"chest":{"KB Floor Press":"hpress","Bench Press":"hpress","Incline DB Press":"ipress","Incline Bench Press":"ipress","Cable Fly":"fly","Push-Up":"hpress","Pec Deck":"fly","Decline Bench Press":"hpress","Dumbbell Pullover":"hpress","Incline Cable Fly":"fly","DB Bench Press":"hpress","Chest Dip":"hpress","Landmine Press":"hpress","Floor Press":"hpress","Low Cable Fly":"fly","Machine Chest Press":"hpress","Svend Press":"hpress","Wide Push-Up":"hpress","Cable Chest Press":"hpress","Close-Grip Push-Up":"hpress","Plyo Push-Up":"hpress","Stagger Push-Up":"hpress","One-Arm Push-Up":"hpress","Decline Push-Up":"hpress","Cobra Push-Up":"hpress"},"back":{"KB Gorilla Row":"hrow","Pull-Up":"vpull","Barbell Row":"hrow","Lat Pulldown":"vpull","Seated Cable Row":"hrow","Single-Arm DB Row":"hrow","Deadlift":"hinge","T-Bar Row":"hrow","Chest-Supported Row":"hrow","Cable Straight-Arm Pulldown":"vpull","Chin-Up":"vpull","Close-Grip Lat Pulldown":"vpull","Pendlay Row":"hrow","Meadows Row":"hrow","Inverted Row":"hrow","Seal Row":"hrow","Cable Row to Neck":"hrow","Renegade Row":"hrow","Straight-Arm Pulldown":"vpull","Reverse Grip Row":"hrow","Superman":"hinge","Wide-Grip Pull-Up":"vpull","Stiff-Leg Deadlift":"hinge"},"shoulders":{"KB Clean & Press":"press","KB Push Press":"press","KB Snatch":"press","Overhead Press":"press","Lateral Raise":"lateral","Front Raise":"front","Face Pull":"rear","Arnold Press":"press","Upright Row":"lateral","Rear Delt Fly":"rear","Cable Lateral Raise":"lateral","DB Shoulder Press":"press","Landmine Lateral Raise":"lateral","Cable Front Raise":"front","Plate Front Raise":"front","Machine Shoulder Press":"press","Pike Push-Up":"press","Band Pull-Apart":"rear","Seated DB Lateral Raise":"lateral","Cable Y-Raise":"rear","EZ Bar Underhand Press":"press","Six-Way Shoulder Raise":"lateral","W Raise":"rear","Post Delt Raise":"rear","Cuban Press":"press","Scap Trap Raise":"rear","1,1,2 Military Press":"press"},"biceps":{"Barbell Curl":"curlstd","Hammer Curl":"hammer","Incline DB Curl":"curlstd","Preacher Curl":"peak","Cable Curl":"curlstd","Concentration Curl":"peak","Spider Curl":"peak","Reverse Curl":"hammer","EZ Bar Curl":"curlstd","Cross-Body Hammer Curl":"hammer","Zottman Curl":"hammer","Machine Curl":"curlstd","Seated Alternating Curl":"curlstd","21s":"curlstd","Drag Curl":"curlstd","Wide-Grip Curl":"curlstd","Cable Rope Hammer Curl":"hammer","Curl-Up Hammer-Down":"hammer","In-Out Curl":"curlstd"},"triceps":{"Tricep Pushdown":"ext","Skull Crusher":"ext","Overhead Extension":"ohext","Dips":"press","Close-Grip Bench":"press","Single-Arm Cable Pushdown":"ext","Diamond Push-Up":"press","Tate Press":"press","JM Press":"press","Cable Overhead Extension":"ohext","Tricep Kickback":"ext","Bench Dip":"press","DB Overhead Extension":"ohext","Cable Rope Pushdown":"ext","Board Press":"press","Two-Hand Overhead DB Extension":"ohext","Close-Grip Push-Up":"press","EZ Bar Overhead Extension":"ohext"},"legs":{"KB Front-Rack Squat":"knee","KB Lunge Pass-Through":"knee","Squat":"knee","Romanian Deadlift":"hip","Leg Press":"knee","Walking Lunge":"knee","Leg Extension":"knee","Hip Thrust":"hip","Sumo Deadlift":"hip","Bulgarian Split Squat":"knee","Leg Curl":"curl","Hack Squat":"knee","Front Squat":"knee","Goblet Squat":"knee","Step-Up":"knee","Nordic Curl":"curl","Reverse Lunge":"knee","Box Jump":"knee","Single-Leg Press":"knee","Sissy Squat":"knee","Glute Bridge":"hip","Sumo Squat":"knee","Alt Side Squat":"knee","Front-to-Back Lunge":"knee","Step-Up to Reverse Lunge":"knee","Jump Squat":"knee","Split Squat":"knee","Ins and Outs":"knee","Calf Raise":"calf","Seated Calf Raise":"calf"},"fullbody":{"Deadlift":"full","Power Clean":"full","Thruster":"full","Kettlebell Swing":"full","Clean and Press":"full","Burpee":"full","Bear Complex":"full","Snatch Grip Deadlift":"full","Turkish Get-Up":"full","Man Maker":"full","Devil Press":"full","Hang Clean":"full","Push Press":"full","Barbell Complex":"full","Overhead Squat":"full","Sandbag Carry":"full","Squat to Overhead Press":"full","Squat to Upright Row":"full","Mountain Climber to Row":"full","Plyo Lunge":"full","Weighted Burpee":"full"},"core":{"KB Windmill":"rot","Plank":"anti","Cable Crunch":"flex","Hanging Leg Raise":"flex","Russian Twist":"rot","Ab Rollout":"flex","Dead Bug":"anti","Bicycle Crunch":"flex","Dragon Flag":"flex","Decline Sit-Up":"flex","Toes to Bar":"flex","Pallof Press":"anti","Hollow Body Hold":"anti","L-Sit":"anti","Side Plank":"rot","Windshield Wiper":"rot","V-Up":"flex","Weighted Sit-Up":"flex","Landmine Rotation":"rot","Figure 4 Crunch":"flex","Cricket Crunch":"flex","Plank Twist-Twist":"rot","EZ Bar Crunch":"flex","Tuck and Roll":"flex","In-Out Abs":"flex"},"traps":{"KB Sumo High Pull":"shrug","Barbell Shrug":"shrug","Dumbbell Shrug":"shrug","Rack Pull":"shrug","Face Pull":"shrug","Upright Row":"shrug","Farmer Carry":"shrug","Cable Shrug":"shrug","Hex Bar Shrug":"shrug","Behind-the-Back Shrug":"shrug","DB Upright Row":"shrug","Snatch-Grip Shrug":"shrug","Clean Pull":"shrug","Overhead Carry":"shrug","Incline Shrug":"shrug","Yoke Carry":"shrug"},"forearms":{"Wrist Curl":"grip","Reverse Curl":"grip","Farmer Carry":"grip","Hammer Curl":"grip","Behind-Back Wrist Curl":"grip","Plate Pinch":"grip","Wrist Roller":"grip","Reverse Wrist Curl":"grip","Towel Pull-Up":"grip","Pinch Grip Hold":"grip","Barbell Finger Roll":"grip","DB Wrist Rotation":"grip","Grip Squeeze":"grip","Rice Bucket":"grip","Barbell Hold":"grip"}};
 const PAT_REQUIRED = {"back":["vpull","hrow","hinge"],"chest":["hpress","fly","ipress"],"shoulders":["press","lateral","rear"],"legs":["knee","hip","curl"],"triceps":["ohext","ext","press"],"biceps":["curlstd","peak","hammer"],"core":["flex","anti","rot"]};
 const PAT_LABELS = {"vpull":"Vertical pull","hrow":"Horizontal pull","hinge":"Hip hinge","hpress":"Press","ipress":"Incline press","fly":"Fly","press":"Press","lateral":"Lateral","rear":"Rear delt","front":"Front delt","knee":"Knee-dominant","hip":"Hip-dominant","curl":"Knee flexion","calf":"Calves","ohext":"Overhead ext","ext":"Extension","curlstd":"Curl","peak":"Peak curl","hammer":"Hammer","flex":"Flexion","rot":"Rotation","anti":"Anti-extension","shrug":"Shrug","grip":"Grip","full":"Full body","other":""};
 // Weekly working-set landmarks per muscle (RP / Dr. Mike Israetel).
@@ -1470,8 +1510,17 @@ const RP_WEEKLY = {
   traps:{MEV:4,MAV:20},  core:{MEV:6,MAV:20},     forearms:{MEV:4,MAV:12}
 };
 // Sessions per week that hit a given muscle. This is the divisor that decides
-// per-session volume. Default 2 = a standard upper/lower or A/B rotation.
-let weeklyFreq = 2;
+// per-session volume — every RP number in the app is derived from it.
+// Restored from localStorage at declaration time so the very first
+// rpSessionTarget() call (which can run before DOMContentLoaded) already sees
+// the user's real setting rather than briefly generating at the default.
+const WEEKLY_FREQ_KEY = 'ia_weekly_freq';
+let weeklyFreq = (function(){
+  try {
+    var v = parseInt(localStorage.getItem(WEEKLY_FREQ_KEY), 10);
+    return (v >= 1 && v <= 4) ? v : 2;   // clamp — a bad value would divide MAV by junk
+  } catch(e) { return 2; }
+})();
 
 // Per-session set target for a muscle group. Aims at the MEV-MAV midpoint and
 // hard-clamps so a full week can never fall under MEV or run past MAV.
@@ -1496,6 +1545,7 @@ const DB = {
     {name:'Cable Fly',sets:'3',reps:'12–15',rest:'60s',desc:'Cable crossover · chest isolation',muscle:'Pectorals',howto:['Set cables to chest height, one handle each side.','Stand in the centre, step forward slightly for stability.','With soft elbows, arc both handles together in front of you.','Squeeze the chest hard at the peak of the movement.','Slowly return arms out, feeling the stretch across your chest.']},
     {name:'Push-Up',sets:'3',reps:'15–20',rest:'60s',desc:'Bodyweight chest & tricep press',muscle:'Pectorals',howto:['Start in a high plank with hands just outside shoulder-width.','Keep body in a straight line from head to heels.','Lower your chest to just above the floor, elbows at ~45°.','Push forcefully back up to full arm extension.','Squeeze the chest at the top of each rep.'],bw:true},
     {name:'Pec Deck',sets:'3',reps:'12–15',rest:'60s',desc:'Machine fly · inner chest',muscle:'Pectorals',howto:['Sit upright with your back fully against the pad.','Place forearms on the pads with elbows at shoulder height.','Bring the pads together in a smooth arc, squeezing the chest.','Hold the contraction for 1 second at the centre.','Return slowly under control — do not let the weight crash.']},
+    {name:'Incline Bench Press',sets:'4',reps:'8–10',rest:'90s',desc:'Barbell incline press · upper chest mass',muscle:'Upper Chest',howto:['Set an adjustable bench to 30 degrees — steeper shifts the work to front delts.','Grip the bar slightly wider than shoulder width, wrists stacked over elbows.','Unrack and lower the bar to just below your collarbone.','Touch lightly, then drive up and slightly back over the shoulders.','Keep shoulder blades pinned down and back through every rep.']},
     {name:'Decline Bench Press',sets:'3',reps:'8–10',rest:'90s',desc:'Lower chest barbell press',muscle:'Lower Chest',howto:['Set bench to a 15–30 degree decline, secure ankles.','Grip bar slightly wider than shoulder-width.','Lower bar to the lower chest under full control.','Press back up in a straight line to full lockout.','Keep lower back pressed into the bench throughout.']},
     {name:'Dumbbell Pullover',sets:'3',reps:'12–15',rest:'60s',desc:'Serratus & pec stretch movement',muscle:'Pectorals',howto:['Lie perpendicular across a flat bench, upper back on the pad.','Hold one dumbbell overhead with both hands, hips dropped slightly.','Lower the dumbbell back behind your head in a wide arc.','Feel the deep stretch across the chest and lats.','Pull back to the starting position using the chest, not arms.']},
     {name:'Incline Cable Fly',sets:'3',reps:'13–15',rest:'60s',desc:'Upper chest cable isolation',muscle:'Upper Chest',howto:['Set pulleys to their lowest position.','Lie back on an incline bench set between the cable stacks.','Arc handles upward and inward toward the ceiling.','Squeeze the upper chest firmly at the top.','Slowly lower, maintaining tension the whole way down.']},
@@ -1953,6 +2003,26 @@ function initGoogleHealth() {
       // Accept token regardless (state mismatch just gets logged, not thrown away silently)
       ghToken       = token;
       ghTokenExpiry = Date.now() + (parseInt(frag.get('expires_in') || '3600', 10) * 1000);
+
+      // Google returns the ACTUALLY granted scopes in the fragment. Health
+      // Connect scopes get granular per-scope checkboxes on the consent screen,
+      // so a partial grant yields a perfectly valid token that 403s later at
+      // push/HR time. Detect it here rather than three screens downstream.
+      const grantedScope = frag.get('scope') || '';
+      localStorage.setItem('gh_granted_scope', grantedScope);
+      const missingScopes = GH_SCOPE.split(' ').filter(function(s){
+        return s && grantedScope.indexOf(s) === -1;
+      });
+      if (missingScopes.length) {
+        localStorage.setItem('gh_scope_incomplete', '1');
+        _ghLog('PARTIAL GRANT — missing: ' + missingScopes.map(function(s){
+          return s.split('/').pop();
+        }).join(', '));
+      } else {
+        localStorage.removeItem('gh_scope_incomplete');
+        _ghLog('all scopes granted');
+      }
+
       storeGhTokenResilient(ghToken, ghTokenExpiry); // quota-safe write
       history.replaceState({}, '', GH_REDIRECT); // strip token from URL bar
     }
@@ -1980,6 +2050,17 @@ function initGoogleHealth() {
 
 // True if the user has ever successfully connected Google Health
 function ghEverConnected() { return !!localStorage.getItem('gh_ever'); }
+
+// Drop an expired/rejected token so the UI stops claiming we are connected.
+// Deliberately keeps gh_ever so the reconnect banner still shows.
+function ghClearDeadToken() {
+  ghToken = null; ghTokenExpiry = 0;
+  try {
+    localStorage.removeItem('gh_token');
+    localStorage.removeItem('gh_token_expiry');
+  } catch(e) {}
+  try { updateGhBtn(); updateGhReconnectBanner(); } catch(e) {}
+}
 
 // Show the reconnect banner only when they've connected before AND the token is
 // dead or nearly dead (<10 min). A fresh ~60-min token won't trip it.
@@ -2016,6 +2097,8 @@ function handleGhConnect() {
     localStorage.removeItem('gh_token_expiry');
     localStorage.removeItem('gh_state_pkg');
     localStorage.removeItem('gh_ever'); // intentional disconnect — stop the reconnect banner
+    localStorage.removeItem('gh_granted_scope');
+    localStorage.removeItem('gh_scope_incomplete');
     updateGhBtn();
     updateGhReconnectBanner();
     return;
@@ -2032,7 +2115,15 @@ function handleGhConnect() {
   url.searchParams.set('response_type',          'token');
   url.searchParams.set('scope',                  GH_SCOPE);
   url.searchParams.set('state',                  state);
-  url.searchParams.set('include_granted_scopes', 'true');
+  // include_granted_scopes lets Google silently re-mint from a PRIOR PARTIAL
+  // consent without re-prompting. If we know scopes are missing, force the full
+  // consent screen so the unchecked boxes can actually be granted.
+  if (localStorage.getItem('gh_scope_incomplete') === '1') {
+    url.searchParams.set('prompt', 'consent');
+    _ghLog('forcing consent — prior grant was incomplete');
+  } else {
+    url.searchParams.set('include_granted_scopes', 'true');
+  }
   window.location.assign(url.toString());
 }
 
@@ -2149,7 +2240,22 @@ async function startHrSync(workoutStart, workoutEnd) {
 
     if (!hrRes.ok) {
       const b = document.getElementById('ewHrBody');
-      if (b) b.innerHTML = '<div class="ew-hr-syncing" style="color:#f87171">HR fetch failed (status ' + hrRes.status + ')</div>';
+      if (!b) return;
+      // A bare status code is not actionable. 401 = dead token, 403 = the read
+      // scope was never granted (or the Health API is not enabled on the project).
+      let hrMsg;
+      if (hrRes.status === 401) {
+        ghClearDeadToken();
+        hrMsg = 'Google Health session expired · reconnect in Settings';
+      } else if (hrRes.status === 403) {
+        hrMsg = localStorage.getItem('gh_scope_incomplete') === '1'
+          ? 'Heart-rate read permission was not granted · reconnect to fix'
+          : 'Google Health denied heart-rate access (403)';
+      } else {
+        hrMsg = 'HR fetch failed (status ' + hrRes.status + ')';
+      }
+      b.innerHTML = '<div class="ew-hr-syncing" style="color:#f87171"></div>';
+      b.firstChild.textContent = hrMsg; // textContent — never interpolate into innerHTML
       return;
     }
 
@@ -2324,9 +2430,18 @@ async function pushWorkoutToGoogleHealth(histIndex) {
       try { hist[histIndex] = entry; localStorage.setItem('iron_history', JSON.stringify(hist)); } catch(e){}
       setStatus('✓ Synced to Google Health', 'ok');
       _ghLog('push: OK (' + res.status + ')');
+    } else if (res.status === 401) {
+      // Expired implicit token. Previously fell into the generic branch, which
+      // left the dead token in storage and never surfaced a reconnect prompt.
+      ghClearDeadToken();
+      retryable('⚠ Google Health session expired · reconnect in Settings', 'warn');
+      _ghLog('push: 401 token expired — cleared');
     } else if (res.status === 403) {
-      retryable('⚠ Reconnect Google Health to grant workout sync', 'warn');
-      _ghLog('push: 403 missing write scope');
+      var scopeMissing = localStorage.getItem('gh_scope_incomplete') === '1';
+      retryable(scopeMissing
+        ? '⚠ Reconnect — workout write permission was not granted'
+        : '⚠ Google Health denied the write (403)', 'warn');
+      _ghLog('push: 403 ' + (scopeMissing ? 'partial grant' : 'scope/API not enabled'));
     } else {
       const txt = await res.text().catch(function(){ return ''; });
       retryable('✕ Sync failed (' + res.status + ') · tap to retry', 'err');
@@ -3401,8 +3516,78 @@ function togglePlaylist(el) {
 }
 
 function setDur(n,el){dur=n;document.querySelectorAll('.dur-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}function setExCount(n,el){perMuscleCount=n;document.querySelectorAll('.ex-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
-function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];renderArnold();}
+function toggleMuscle(m,el){el.classList.toggle('on');muscles=muscles.includes(m)?muscles.filter(x=>x!==m):[...muscles,m];renderArnold();renderFreqRead();}
+
+// ── WEEKLY TRAINING FREQUENCY ─────────────────────────────────────────
+// weeklyFreq is the divisor behind every RP set target in the app. It used to
+// be hard-coded to 2, so anyone running PPL or a bro split was silently
+// programmed against an assumption they never made.
+function setWeeklyFreq(f) {
+  f = parseInt(f, 10);
+  if (!(f >= 1 && f <= 4)) return;
+  weeklyFreq = f;
+  try { localStorage.setItem(WEEKLY_FREQ_KEY, String(f)); } catch(e) {}
+  document.querySelectorAll('#freqRow .freq-card').forEach(function(c){
+    c.classList.toggle('on', parseInt(c.dataset.f, 10) === f);
+  });
+  renderFreqRead();
+}
+
+// Live readout of what the current frequency means for the selected muscles.
+// Built with textContent throughout — no muscle label reaches innerHTML.
+function renderFreqRead() {
+  const el = document.getElementById('freqRead');
+  if (!el) return;
+  el.textContent = '';
+  const hd = document.createElement('span');
+  hd.className = 'fr-hd';
+  hd.textContent = 'Per-session target at ' + weeklyFreq + '\u00d7 / week';
+  el.appendChild(hd);
+
+  // Only muscles with an RP landmark can be targeted; fullbody has none.
+  const targets = (muscles || []).filter(function(m){ return RP_WEEKLY[m]; });
+  if (!targets.length) {
+    const p = document.createElement('span');
+    p.textContent = muscles && muscles.length
+      ? 'Selected groups have no RP landmark — sets come straight from the exercise database.'
+      : 'Select a muscle group above to see its set target.';
+    el.appendChild(p);
+    return;
+  }
+
+  targets.forEach(function(m, i) {
+    const lm = RP_WEEKLY[m];
+    const per = rpSessionTarget(m, 1);
+    const wk  = per * weeklyFreq;
+    const row = document.createElement('div');
+    const nm = document.createElement('b');
+    nm.textContent = m.charAt(0).toUpperCase() + m.slice(1) + ': ';
+    row.appendChild(nm);
+    const val = document.createElement('span');
+    val.textContent = per + ' set' + (per === 1 ? '' : 's') + '/session \u00b7 ' +
+                      wk + '/week (MEV ' + lm.MEV + ' \u2013 MAV ' + lm.MAV + ')';
+    row.appendChild(val);
+    // Frequency too low to reach MEV without blowing past a sane session size.
+    if (wk < lm.MEV) {
+      const wrn = document.createElement('span');
+      wrn.className = 'fr-warn';
+      wrn.textContent = ' \u2014 under MEV';
+      row.appendChild(wrn);
+    }
+    el.appendChild(row);
+  });
+
+  if (weeklyFreq === 1) {
+    const note = document.createElement('div');
+    note.className = 'fr-warn';
+    note.style.marginTop = '5px';
+    note.textContent = 'At 1\u00d7/week a full MAV load lands in one session — expect long workouts.';
+    el.appendChild(note);
+  }
+}
 function setGenre(g,el){genre=g;document.querySelectorAll('.g-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+// Paint the persisted frequency onto the chips once the DOM exists.
+document.addEventListener('DOMContentLoaded', function(){ setWeeklyFreq(weeklyFreq); });
 function showCfg(){stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
 
 // ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
@@ -3415,7 +3600,9 @@ function renderExerciseCard(ex, index) {
     : '';
   const restSecs = parseRestSecs(ex.rest);
   const connector = ex.ssConnector ? '<div class="ss-connector"></div>' : '';
-  const safeName = ex.name.replace(/"/g, '&quot;');
+  // Full escape — the old quote-only replace left & and < intact, so a name
+  // containing them broke the attribute and could inject markup.
+  const safeName = escHtml(ex.name);
 
   return ssLabel +
     '<div class="wk-card" id="card-' + index + '">' +
@@ -3425,12 +3612,13 @@ function renderExerciseCard(ex, index) {
           '<div class="wk-num">EXERCISE ' + String(index+1).padStart(2,'0') + '</div>' +
           '<div class="wk-name" id="exname-' + index + '">' + escHtml(ex.name) + ' <button class="exname-edit" data-idx="' + index + '" onclick="editExerciseName(+this.dataset.idx)" aria-label="Edit exercise name" title="Edit name">✎</button></div>' +
           '<div class="wk-desc">' + escHtml(ex.desc) + '</div>' +
-          '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + ex.muscle + '</span>' +
+          '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + escHtml(ex.muscle) + '</span>' +
+          (ex.userAdded ? '<span class="wk-added-badge">+ ADDED</span>' : '') +
           (ex.pat && PAT_LABELS[ex.pat] ? '<span class="wk-pat-badge">' + escHtml(PAT_LABELS[ex.pat]) + '</span>' : '') +
           '<span class="wk-done-chip" id="doneChip-' + index + '"></span>' +
         '</div>' +
         '<div class="wk-sets-box">' +
-          '<div class="wk-sets">' + ex.sets + '</div>' +
+          '<div class="wk-sets">' + escHtml(ex.sets) + '</div>' +
           '<div class="wk-sets-lbl">Sets</div>' +
         '</div>' +
       '</div>' +
@@ -3443,10 +3631,11 @@ function renderExerciseCard(ex, index) {
         '</div></div>' +
       '</div>' +
       '<div class="wk-foot">' +
-        '<div class="wk-stat">🔁 <strong>' + ex.reps + '</strong> reps</div>' +
-        '<div class="wk-stat">⏱️ <strong>' + ex.rest + '</strong> rest</div>' +
+        '<div class="wk-stat">🔁 <strong>' + escHtml(ex.reps) + '</strong> reps</div>' +
+        '<div class="wk-stat">⏱️ <strong>' + escHtml(ex.rest) + '</strong> rest</div>' +
         '<button class="rest-trigger" data-secs="' + restSecs + '" data-name="' + safeName + '" onclick="startRestTimer(+this.dataset.secs,this.dataset.name)">⏱ Rest</button>' +
         '<button class="swap-btn" data-idx="' + index + '" onclick="swapExercise(+this.dataset.idx)">🔀 Swap</button>' +
+        '<button class="rm-btn" data-idx="' + index + '" onclick="removeExercise(+this.dataset.idx)" aria-label="Remove exercise" title="Remove exercise">🗑 Remove</button>' +
       '</div>' +
       '<div class="set-log-wrap" id="setlog-' + index + '">' +
         '<div class="set-log-title">LOG SETS</div>' +
@@ -4321,6 +4510,25 @@ function endWorkout() {
     if (r.topWeight > bestW) { bestW = r.topWeight; bestR = r.topReps; bestEx = r.name; }
   });
 
+  // ── Finalize the history entry BEFORE any stat block reads it ───────────
+  // Previously this ran at the bottom of endWorkout, so the volume compare,
+  // streak, and week-note blocks all read hist[0] while it was still a
+  // provisional ghost with no totalVolume. curId lets those blocks exclude
+  // the session that was just finished from "have I done this before" checks.
+  var curId = null;
+  try {
+    var histF = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    if (histF.length > 0) {
+      histF[0].provisional    = false; // workout finished — no longer a ghost
+      histF[0].totalVolume    = totalVolume;
+      histF[0].durationMin    = minutes;
+      histF[0].setLogs        = collectSetLogs();        // generation-time snapshot is empty
+      histF[0].performedOrder = computePerformedOrder(); // the order actually trained
+      curId = histF[0].id;
+      localStorage.setItem('iron_history', JSON.stringify(histF));
+    }
+  } catch(e){}
+
   // Volume comparison vs last same-muscle session
   var volCompareHTML = '';
   try {
@@ -4344,22 +4552,38 @@ function endWorkout() {
     }
   } catch(e){}
 
-  // Consistency stats
+  // Consistency stats.
+  // Sessions-this-month and the streak are computed in SEPARATE passes. They
+  // used to share one loop whose `break` (for the streak) also terminated the
+  // month tally, so "sessions this month" silently meant "sessions inside the
+  // current unbroken streak" and plateaued after any rest day.
+  // The streak is measured in distinct calendar DAYS — two workouts in one day
+  // is a 1-day streak, not 2 — and only counts as live if the most recent
+  // training day was today or yesterday.
   var streak = 0, monthCount = 0;
   try {
-    var hist2 = JSON.parse(localStorage.getItem('iron_history') || '[]');
-    var today = new Date(); today.setHours(0,0,0,0);
-    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    var checkDay = new Date(today);
-    var prevDate = null;
+    var hist2      = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    var today      = new Date(); today.setHours(0,0,0,0);
+    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
+    var dayset     = Object.create(null);
+
     for (var j = 0; j < hist2.length; j++) {
-      var d = new Date(hist2[j].id);
-      d.setHours(0,0,0,0);
-      if (d >= monthStart) monthCount++;
-      if (prevDate === null) { prevDate = d; streak = 1; }
-      else {
-        var diff2 = (prevDate - d) / 86400000;
-        if (diff2 <= 1 && diff2 >= 0) { streak++; prevDate = d; }
+      var h2 = hist2[j];
+      if (!h2 || h2.provisional === true) continue;   // abandoned workout, never finished
+      var t = Number(h2.id);
+      if (!isFinite(t) || t <= 0) continue;           // Drive-merged entries may lack an id
+      var d = new Date(t); d.setHours(0,0,0,0);
+      var key = d.getTime();
+      if (isNaN(key)) continue;
+      dayset[key] = true;
+      if (key >= monthStart) monthCount++;            // no break — every session counts
+    }
+
+    var days = Object.keys(dayset).map(Number).sort(function(a, b){ return b - a; });
+    if (days.length && (today.getTime() - days[0]) / 86400000 <= 1) {
+      streak = 1;
+      for (var s = 1; s < days.length; s++) {
+        if ((days[s - 1] - days[s]) / 86400000 === 1) streak++;
         else break;
       }
     }
@@ -4372,6 +4596,9 @@ function endWorkout() {
     var weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay()); weekStart.setHours(0,0,0,0);
     var trainedThisWeek = false;
     for (var k = 0; k < hist3.length; k++) {
+      // Skip the session that was just finished — it always overlaps itself,
+      // which made every workout report "Already trained X this week".
+      if (curId && hist3[k].id === curId) continue;
       var d2 = new Date(hist3[k].id);
       if (d2 >= weekStart && hist3[k].muscles) {
         var hasOverlap = muscles.some(function(m){ return hist3[k].muscles.indexOf(m) !== -1; });
@@ -4408,7 +4635,7 @@ function endWorkout() {
 
   var cTextEl = document.getElementById('ewConsistText');
   var cSubEl  = document.getElementById('ewConsistSub');
-  if (cTextEl) cTextEl.textContent = streak + '-game win streak · ' + monthCount + ' sessions this month';
+  if (cTextEl) cTextEl.textContent = (streak > 0 ? streak + '-day streak · ' : '') + monthCount + ' sessions this month';
   if (cSubEl)  cSubEl.textContent  = weekNote;
 
   // Exercise list
@@ -4447,18 +4674,8 @@ function endWorkout() {
   }
 
   // ── I'll Be Back AUTO-SAVES here (no confirmation gate) ─────────────
-  // Workout is already in history (saved at generation); finalize the totals now.
-  try {
-    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
-    if (hist.length > 0) {
-      hist[0].provisional = false; // workout finished — no longer a ghost
-      hist[0].totalVolume = totalVolume;
-      hist[0].durationMin = minutes;
-      hist[0].setLogs = collectSetLogs(); // finalize logs (generation-time snapshot is empty)
-      hist[0].performedOrder = computePerformedOrder(); // V18: the order you actually trained
-      localStorage.setItem('iron_history', JSON.stringify(hist));
-    }
-  } catch(e){}
+  // The history entry was already finalized near the top of endWorkout, so the
+  // stat blocks could read real totals instead of a provisional ghost.
   runEndWorkoutBackup(); // V18.2.1: visible on the recap; one-tap recover if token expired
   // Stop the game clock and end the session — can't resume anyway.
   if (elapsedInterval) { clearInterval(elapsedInterval); elapsedInterval = null; }
@@ -4507,6 +4724,8 @@ function applyNextSession() {
 function closeEwModal() {
   document.getElementById('ewOverlay').classList.remove('open');
   document.body.style.overflow = '';
+  // The 60s HR sync timeout would otherwise fire into a dismissed modal.
+  if (_ghSyncTimer) { clearTimeout(_ghSyncTimer); _ghSyncTimer = null; }
 }
 
 function confirmEndWorkout() {
@@ -4965,6 +5184,7 @@ function saveWorkoutToHistory(exercises) {
       time: new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}),
       duration: dur,
       difficulty,
+      weeklyFreq,          // the divisor this session's set targets were built on
       mode: workoutMode,
       arnold: { ...arnold },
       equipment: equipmentMode,
@@ -5269,6 +5489,7 @@ function loadHistoryEntry(index) {
   if (entry.duration)   { dur = entry.duration; document.querySelectorAll('.dur-card').forEach(c => c.classList.toggle('on', parseInt(c.querySelector('.dur-num').textContent) === dur)); }
   if (entry.muscles)    { muscles = [...entry.muscles]; document.querySelectorAll('.mg-chip').forEach(c => { const m = c.getAttribute('onclick')?.match(/'([^']+)'/)?.[1]; if(m) c.classList.toggle('on', muscles.includes(m)); }); }
   if (entry.difficulty) setDifficulty(entry.difficulty);
+  if (entry.weeklyFreq) setWeeklyFreq(entry.weeklyFreq);
   if (entry.mode)       setMode(entry.mode);
   if (entry.equipment)  setEquipment(entry.equipment);
   if (entry.genre)      genre = entry.genre;
@@ -5603,18 +5824,26 @@ function commitExerciseName(index, val) {
   // setLogs are preserved (we do NOT clear on rename — same physical exercise).
   var card = document.getElementById('card-' + index);
   if (card) {
-    var tmp = document.createElement('div');
-    tmp.innerHTML = renderExerciseCard(ex, index);
-    if (tmp.firstElementChild) {
-      card.parentNode.replaceChild(tmp.firstElementChild, card);
+    // Take .wk-card specifically: on a superset slot renderExerciseCard emits a
+    // label node first, and firstElementChild used to swap the label in for the
+    // whole card, wiping the set log.
+    var holder = cardNodes(ex, index);
+    var fresh = holder.querySelector('.wk-card') || holder.firstElementChild;
+    if (fresh) {
+      card.parentNode.replaceChild(fresh, card);
       loadExerciseGif(ex, index);
     }
   }
   persistWorkoutState();
 }
 
-// ── SWAP PICKER ────────────────────────────────────────────────────────
+// ── EXERCISE PICKER (shared by SWAP and ADD) ──────────────────────────
+// One engine, two modes. 'swap' replaces workout[_swapIndex]; 'add' appends a
+// new exercise chosen from any muscle group. Sharing the pool/filter/render
+// path means a fix to one mode can't silently skip the other.
 let _swapIndex = 0, _swapEquip = 'all', _swapPatLock = true;
+let _pickerMode = 'swap';   // 'swap' | 'add'
+let _addGroup   = 'chest';  // active DB group while in add mode
 
 // Pattern class of an exercise within its DB group ('' when untagged).
 function swapPatOf(name, muscleGroup) {
@@ -5622,6 +5851,47 @@ function swapPatOf(name, muscleGroup) {
   return t === 'other' ? '' : t;
 }
 const SWAP_EQUIP_CHIPS = ['all','barbell','dumbbell','cable','machine','bodyweight'];
+
+// swapCandidates() is called by both the chip renderer and the list renderer on
+// every keystroke. Recomputing the pool twice per input event was pure waste, so
+// memoize it against the inputs that can change it.
+let _poolCache = null, _poolKey = '';
+function _poolCacheKey() {
+  const w = window._currentWorkout || [];
+  return [_pickerMode, _swapIndex, _addGroup, _swapPatLock, equipmentMode,
+          w.length, (w[_swapIndex] || {}).name || ''].join('|');
+}
+function invalidatePool() { _poolCache = null; _poolKey = ''; }
+
+// Resolve an exercise's DB group. Generated exercises carry .muscleGroup; the
+// fallback lowercases the fine-muscle label, which only coincidentally matches
+// a DB key, so treat it as a last resort rather than a source of truth.
+function groupOf(ex) {
+  if (!ex) return 'chest';
+  if (ex.muscleGroup && DB[ex.muscleGroup]) return ex.muscleGroup;
+  const guess = (ex.muscle || '').toLowerCase();
+  return DB[guess] ? guess : 'chest';
+}
+
+// Active group for whichever mode the sheet is in.
+function pickerGroup() {
+  return _pickerMode === 'add'
+    ? (DB[_addGroup] ? _addGroup : 'chest')
+    : groupOf((window._currentWorkout || [])[_swapIndex]);
+}
+
+// Muscle groups offered in add mode: the ones this session already trains
+// first (most likely intent), then everything else in the DB.
+function addGroupOptions() {
+  const seen = new Set();
+  const out  = [];
+  (window._currentWorkout || []).forEach(function(e) {
+    const g = groupOf(e);
+    if (DB[g] && !seen.has(g)) { seen.add(g); out.push(g); }
+  });
+  Object.keys(DB).forEach(function(g) { if (!seen.has(g)) { seen.add(g); out.push(g); } });
+  return out;
+}
 
 function detectEquip(e) {
   var n = (e.name || '').toLowerCase();
@@ -5634,23 +5904,93 @@ function detectEquip(e) {
 }
 
 function swapCandidates() {
+  const key = _poolCacheKey();
+  if (_poolCache && _poolKey === key) return _poolCache;
+
   const workout = window._currentWorkout || [];
-  const ex = workout[_swapIndex] || {};
-  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
+  const group   = pickerGroup();
+  const isAdd   = _pickerMode === 'add';
+  const ex      = isAdd ? {} : (workout[_swapIndex] || {});
+  // Exclude everything already programmed so the picker can never produce a
+  // duplicate slot — duplicates break PR attribution and double-count volume.
   const currentNames = new Set(workout.map(function(e){ return e.name; }));
-  let pool = (DB[muscleGroup] || []).filter(function(e){ return e.name !== ex.name && !currentNames.has(e.name); });
-  if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw; });
-  // V17.1: preserve the logic the workout was built on — a vertical pull only
-  // swaps for another vertical pull (toggleable via the pattern chip).
-  var pat = ex.pat || swapPatOf(ex.name, muscleGroup);
-  if (_swapPatLock && pat) pool = pool.filter(function(e){ return swapPatOf(e.name, muscleGroup) === pat; });
-  // Exact fine-muscle matches (e.g. Inner Chest → Inner Chest) rank first.
-  pool.sort(function(a, b){
-    return (b.muscle === ex.muscle ? 1 : 0) - (a.muscle === ex.muscle ? 1 : 0);
+
+  let pool = (DB[group] || []).filter(function(e){
+    return e.name !== ex.name && !currentNames.has(e.name);
   });
+  if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw; });
+
+  if (!isAdd) {
+    // V17.1: preserve the logic the workout was built on — a vertical pull only
+    // swaps for another vertical pull (toggleable via the pattern chip).
+    var pat = ex.pat || swapPatOf(ex.name, group);
+    if (_swapPatLock && pat) pool = pool.filter(function(e){ return swapPatOf(e.name, group) === pat; });
+    // Exact fine-muscle matches (e.g. Inner Chest → Inner Chest) rank first.
+    pool = pool.slice().sort(function(a, b){
+      return (b.muscle === ex.muscle ? 1 : 0) - (a.muscle === ex.muscle ? 1 : 0);
+    });
+  } else {
+    // Arnold §2 "Foundation First": compounds surface above isolation work, so
+    // a mid-session addition still leads with the heavy basic when one is left.
+    pool = pool.slice().sort(function(a, b){
+      const ca = ARN_COMPOUND_PATS.indexOf(swapPatOf(a.name, group)) !== -1 ? 1 : 0;
+      const cb = ARN_COMPOUND_PATS.indexOf(swapPatOf(b.name, group)) !== -1 ? 1 : 0;
+      return cb - ca || a.name.localeCompare(b.name);
+    });
+  }
+
+  _poolCache = pool; _poolKey = key;
   return pool;
 }
 
+// ── RP VOLUME GUARD (DrMike.json landmarks) ───────────────────────────
+// Working sets already programmed for a DB group in this session.
+function sessionSetsFor(group) {
+  return (window._currentWorkout || []).reduce(function(sum, e) {
+    return groupOf(e) === group ? sum + (parseInt(e.sets, 10) || 0) : sum;
+  }, 0);
+}
+
+// How many more sets this group can absorb before the week runs past MAV.
+// rpSessionTarget() already divides the weekly landmark by weeklyFreq, so the
+// per-session ceiling is floor(MAV / freq).
+function rpHeadroom(group) {
+  const lm = RP_WEEKLY[group];
+  if (!lm) return { cap: Infinity, used: sessionSetsFor(group), left: Infinity, mev: 0, mav: 0 };
+  const f    = Math.max(1, weeklyFreq);
+  const cap  = Math.floor(lm.MAV / f);
+  const used = sessionSetsFor(group);
+  return { cap: cap, used: used, left: Math.max(0, cap - used), mev: lm.MEV, mav: lm.MAV, freq: f };
+}
+
+function renderSwapVol() {
+  const el = document.getElementById('swapVol');
+  if (!el) return;
+  if (_pickerMode !== 'add') { el.style.display = 'none'; return; }
+  const g  = pickerGroup();
+  const hr = rpHeadroom(g);
+  el.style.display = 'block';
+  if (!isFinite(hr.cap)) {
+    el.className = 'swap-vol';
+    el.textContent = g.toUpperCase() + ' has no RP landmark — sets are not volume-capped.';
+    return;
+  }
+  el.className = 'swap-vol' + (hr.left === 0 ? ' over' : '');
+  // textContent-only assembly: no user or DB string ever reaches innerHTML here.
+  el.textContent = '';
+  const mk = function(t, bold) {
+    const s = document.createElement(bold ? 'b' : 'span');
+    s.textContent = t; el.appendChild(s);
+  };
+  mk(g.toUpperCase() + ' this session: '); mk(hr.used + ' sets', true);
+  mk(' · session cap '); mk(String(hr.cap), true);
+  mk(' (MAV ' + hr.mav + ' ÷ ' + hr.freq + '/wk). ');
+  mk(hr.left === 0
+      ? 'At MAV — added work is junk volume.'
+      : hr.left + ' set' + (hr.left === 1 ? '' : 's') + ' of headroom.', hr.left === 0);
+}
+
+// ── BUILDING THE PICKED EXERCISE ──────────────────────────────────────
 function applyDiffToPick(picked, ex, muscleGroup) {
   var _pat = swapPatOf(picked.name, muscleGroup);
   const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
@@ -5667,21 +6007,77 @@ function applyDiffToPick(picked, ex, muscleGroup) {
   return { ...picked, sets: String(s), rest: swapRest, muscleGroup, pat: _pat, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
 }
 
-function swapExercise(index) {
-  const workout = window._currentWorkout;
-  if (!workout || !workout[index]) return;
-  _swapIndex = index;
-  _swapEquip = 'all';
-  _swapPatLock = true;
-  const ex = workout[index];
-  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
-  document.getElementById('swapMuscle').textContent = muscleGroup.toUpperCase();
+// Added exercises are sized by remaining RP headroom, not by the raw DB value.
+// If the group is already at its session cap the exercise still gets added (the
+// user asked for it) but at the 2-set floor, and the sheet says why.
+function buildAddedExercise(picked, group) {
+  const diffMap = { beginner:{setsM:.75,restM:1.3}, intermediate:{setsM:1,restM:1}, advanced:{setsM:1.25,restM:.75} };
+  const dm  = diffMap[difficulty] || diffMap.intermediate;
+  const hr  = rpHeadroom(group);
+  const raw = Math.round((parseFloat(picked.sets) || 3) * dm.setsM);
+  // Clamp to headroom, floor of 2 — a 1-set slot is not a working exercise.
+  const sets = Math.max(2, isFinite(hr.left) ? Math.min(raw, Math.max(2, hr.left)) : raw);
+  const restSecs = parseRestSecs(picked.rest);
+  const newRest  = Math.round(restSecs * dm.restM);
+  const restStr  = newRest >= 60 ? Math.round(newRest/10)*10 + 's' : newRest + 's';
+  return {
+    ...picked,
+    sets: String(sets),
+    rest: restStr,
+    muscleGroup: group,
+    pat: swapPatOf(picked.name, group),
+    userAdded: true
+    // Deliberately NO ssGroup/ssConnector: an appended exercise has no partner,
+    // and a half-tagged superset renders a connector into empty space.
+  };
+}
+
+// ── OPENING THE SHEET ─────────────────────────────────────────────────
+function openPickerSheet() {
+  invalidatePool();
   const search = document.getElementById('swapSearch');
-  search.value = '';
+  if (search) search.value = '';
   renderSwapChips();
+  renderSwapVol();
   renderSwapList();
   document.getElementById('swapOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function swapExercise(index) {
+  const workout = window._currentWorkout;
+  if (!workout || !workout[index]) return;
+  _pickerMode = 'swap';
+  _swapIndex = index;
+  _swapEquip = 'all';
+  _swapPatLock = true;
+  document.getElementById('swapVerb').textContent = 'SWAP';
+  document.getElementById('swapMuscle').textContent = groupOf(workout[index]).toUpperCase();
+  const rb = document.getElementById('swapRandomBtn');
+  if (rb) rb.textContent = '🔀 Surprise me (random)';
+  openPickerSheet();
+}
+
+function openAddExercise() {
+  const workout = window._currentWorkout || [];
+  if (!workout.length) { alert('Generate a workout first.'); return; }
+  _pickerMode = 'add';
+  _swapEquip = 'all';
+  _swapPatLock = false;
+  // Default to the group with the most remaining RP headroom — the most
+  // defensible place to put an extra exercise.
+  const opts = addGroupOptions();
+  let best = opts[0] || 'chest', bestLeft = -1;
+  opts.slice(0, 6).forEach(function(g) {
+    const l = rpHeadroom(g).left;
+    if (l > bestLeft) { bestLeft = l; best = g; }
+  });
+  _addGroup = best;
+  document.getElementById('swapVerb').textContent = 'ADD';
+  document.getElementById('swapMuscle').textContent = _addGroup.toUpperCase();
+  const rb = document.getElementById('swapRandomBtn');
+  if (rb) rb.textContent = '🔀 Surprise me (random)';
+  openPickerSheet();
 }
 
 function closeSwapPicker() {
@@ -5691,96 +6087,260 @@ function closeSwapPicker() {
 
 function setSwapEquip(eq) { _swapEquip = eq; renderSwapChips(); renderSwapList(); }
 
-function toggleSwapPatLock() { _swapPatLock = !_swapPatLock; renderSwapChips(); renderSwapList(); }
+function toggleSwapPatLock() {
+  _swapPatLock = !_swapPatLock;
+  invalidatePool();
+  renderSwapChips(); renderSwapList();
+}
 
+function setAddGroup(g) {
+  if (!DB[g]) return;
+  _addGroup = g;
+  _swapEquip = 'all';
+  invalidatePool();
+  document.getElementById('swapMuscle').textContent = g.toUpperCase();
+  renderSwapChips(); renderSwapVol(); renderSwapList();
+}
+
+// ── CHIPS ─────────────────────────────────────────────────────────────
 function renderSwapChips() {
-  const pool = swapCandidates();
+  const pool    = swapCandidates();
   const present = new Set(pool.map(detectEquip));
-  const el = document.getElementById('swapChips');
-  const workout = window._currentWorkout || [];
-  const ex = workout[_swapIndex] || {};
-  const mg = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
-  const pat = ex.pat || swapPatOf(ex.name, mg);
-  const patChip = pat
-    ? '<button class="swap-chip' + (_swapPatLock ? ' on' : '') + '" onclick="toggleSwapPatLock()">' +
-      (_swapPatLock ? '\uD83D\uDD12 ' : '') + escHtml((PAT_LABELS[pat] || pat).toUpperCase()) +
-      (_swapPatLock ? '' : ' \u00b7 SHOWING ALL') + '</button>'
-    : '';
-  el.innerHTML = patChip + SWAP_EQUIP_CHIPS
+  const el      = document.getElementById('swapChips');
+  if (!el) return;
+  el.textContent = '';
+
+  const chip = function(label, on, handler) {
+    const b = document.createElement('button');
+    b.className = 'swap-chip' + (on ? ' on' : '');
+    b.textContent = label;              // textContent — never innerHTML
+    b.type = 'button';
+    b.addEventListener('click', handler);
+    el.appendChild(b);
+  };
+
+  const label = function(t) {
+    const s = document.createElement('span');
+    s.className = 'swap-chip-lbl';
+    s.textContent = t;
+    el.appendChild(s);
+  };
+  const rowBreak = function() {
+    const s = document.createElement('span');
+    s.className = 'swap-chip-sep';
+    el.appendChild(s);
+  };
+
+  if (_pickerMode === 'add') {
+    // Muscle-group selector replaces the pattern lock, which has no meaning
+    // without a reference exercise to lock against.
+    label('Muscle');
+    addGroupOptions().forEach(function(g) {
+      chip(g.toUpperCase(), g === _addGroup, function(){ setAddGroup(g); });
+    });
+    rowBreak();          // force equipment onto its own line
+    label('Gear');
+  } else {
+    const ex  = (window._currentWorkout || [])[_swapIndex] || {};
+    const mg  = groupOf(ex);
+    const pat = ex.pat || swapPatOf(ex.name, mg);
+    if (pat) {
+      chip((_swapPatLock ? '\uD83D\uDD12 ' : '') +
+           (PAT_LABELS[pat] || pat).toUpperCase() +
+           (_swapPatLock ? '' : ' \u00b7 SHOWING ALL'),
+           _swapPatLock, toggleSwapPatLock);
+    }
+  }
+
+  SWAP_EQUIP_CHIPS
     .filter(function(c){ return c === 'all' || present.has(c); })
-    .map(function(c){
-      return '<button class="swap-chip' + (_swapEquip === c ? ' on' : '') + '" data-eq="' + c + '"' +
-             ' onclick="setSwapEquip(this.dataset.eq)">' + c.toUpperCase() + '</button>';
-    }).join('');
+    .forEach(function(c) {
+      chip(c.toUpperCase(), _swapEquip === c, function(){ setSwapEquip(c); });
+    });
+}
+
+// ── LIST ──────────────────────────────────────────────────────────────
+function filteredPool() {
+  let pool = swapCandidates();
+  if (_swapEquip !== 'all') pool = pool.filter(function(e){ return detectEquip(e) === _swapEquip; });
+  const q = ((document.getElementById('swapSearch') || {}).value || '').toLowerCase().trim();
+  if (q) pool = pool.filter(function(e){ return e.name.toLowerCase().indexOf(q) !== -1; });
+  return pool;
 }
 
 function renderSwapList() {
-  const workout = window._currentWorkout || [];
-  const ex = workout[_swapIndex] || {};
-  const q = (document.getElementById('swapSearch').value || '').toLowerCase().trim();
-  let pool = swapCandidates();
-  if (_swapEquip !== 'all') pool = pool.filter(function(e){ return detectEquip(e) === _swapEquip; });
-  if (q) pool = pool.filter(function(e){ return e.name.toLowerCase().indexOf(q) !== -1; });
+  const list = document.getElementById('swapList');
+  if (!list) return;
+  const isAdd = _pickerMode === 'add';
+  const ex    = (window._currentWorkout || [])[_swapIndex] || {};
+  const pool  = filteredPool();
 
   document.getElementById('swapCount').textContent = pool.length + ' exercise' + (pool.length === 1 ? '' : 's');
-  const list = document.getElementById('swapList');
-  const curRow = '<div class="swap-row current"><span class="swap-row-name">' + escHtml(ex.name) + '</span><span class="swap-row-cur">CURRENT</span></div>';
+  list.textContent = '';
+
+  if (!isAdd) {
+    const cur = document.createElement('div');
+    cur.className = 'swap-row current';
+    const cn = document.createElement('span'); cn.className = 'swap-row-name'; cn.textContent = ex.name || '';
+    const cl = document.createElement('span'); cl.className = 'swap-row-cur';  cl.textContent = 'CURRENT';
+    cur.appendChild(cn); cur.appendChild(cl);
+    list.appendChild(cur);
+  }
+
   if (!pool.length) {
-    list.innerHTML = curRow + '<div class="swap-empty">No matches — clear the filter or try Surprise me.</div>';
+    const empty = document.createElement('div');
+    empty.className = 'swap-empty';
+    empty.textContent = isAdd
+      ? 'No exercises left in this group — pick another muscle or clear the filter.'
+      : 'No matches — clear the filter or try Surprise me.';
+    list.appendChild(empty);
     return;
   }
-  list.innerHTML = curRow + pool.map(function(e){
-    const i = (DB[ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest')] || []).indexOf(e);
-    return '<button class="swap-row" data-pi="' + i + '" onclick="pickSwap(+this.dataset.pi)">' +
-           '<span class="swap-row-name">' + escHtml(e.name) + '</span>' +
-           '<span class="swap-row-meta">' + escHtml(e.sets) + '\u00d7' + escHtml(e.reps) + ' \u00b7 ' + escHtml(e.rest) + '</span>' +
-           '</button>';
-  }).join('');
+
+  // Build once into a fragment: one reflow instead of one per row, and the
+  // old innerHTML path did an O(n) DB indexOf per row (O(n^2) per keystroke).
+  const frag = document.createDocumentFragment();
+  pool.forEach(function(e) {
+    const b = document.createElement('button');
+    b.className = 'swap-row';
+    b.type = 'button';
+    const nm = document.createElement('span'); nm.className = 'swap-row-name'; nm.textContent = e.name;
+    const mt = document.createElement('span'); mt.className = 'swap-row-meta';
+    mt.textContent = e.sets + '\u00d7' + e.reps + ' \u00b7 ' + e.rest;
+    b.appendChild(nm); b.appendChild(mt);
+    // Closure over the object itself — no index round-trip through the DOM, so
+    // a re-sorted or re-filtered pool can never resolve to the wrong exercise.
+    b.addEventListener('click', function(){ pickFromSheet(e); });
+    frag.appendChild(b);
+  });
+  list.appendChild(frag);
 }
 
-function pickSwap(poolIndex) {
-  const workout = window._currentWorkout;
-  const ex = workout[_swapIndex];
-  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
-  const picked = (DB[muscleGroup] || [])[poolIndex];
+// ── COMMIT ────────────────────────────────────────────────────────────
+function pickFromSheet(picked) {
   if (!picked) return;
+  const group = pickerGroup();
   closeSwapPicker();
-  performSwap(_swapIndex, applyDiffToPick(picked, ex, muscleGroup));
+  if (_pickerMode === 'add') {
+    addExerciseToWorkout(buildAddedExercise(picked, group));
+  } else {
+    const ex = (window._currentWorkout || [])[_swapIndex];
+    if (!ex) return;
+    performSwap(_swapIndex, applyDiffToPick(picked, ex, group));
+  }
 }
 
 function swapRandom() {
-  const workout = window._currentWorkout;
-  const ex = workout[_swapIndex];
-  const muscleGroup = ex.muscleGroup || (ex.muscle ? ex.muscle.toLowerCase() : 'chest');
-  let candidates = swapCandidates();
-  if (_swapEquip !== 'all') {
-    const filtered = candidates.filter(function(e){ return detectEquip(e) === _swapEquip; });
-    if (filtered.length) candidates = filtered; // random respects the active chip when possible
+  const group = pickerGroup();
+  let candidates = filteredPool();
+  if (!candidates.length) candidates = swapCandidates();          // drop the chip filter
+  if (!candidates.length && _pickerMode === 'swap') {              // last resort
+    const ex = (window._currentWorkout || [])[_swapIndex] || {};
+    candidates = (DB[group] || []).filter(function(e){ return e.name !== ex.name; });
   }
-  if (!candidates.length) candidates = (DB[muscleGroup] || []).filter(function(e){ return e.name !== ex.name; });
-  if (!candidates.length) { alert('No other exercises available for this muscle group.'); return; }
-  const picked = candidates[Math.floor(Math.random() * candidates.length)];
-  closeSwapPicker();
-  performSwap(_swapIndex, applyDiffToPick(picked, ex, muscleGroup));
+  if (!candidates.length) {
+    alert(_pickerMode === 'add'
+      ? 'Every exercise in this group is already in the workout.'
+      : 'No other exercises available for this muscle group.');
+    return;
+  }
+  pickFromSheet(candidates[Math.floor(Math.random() * candidates.length)]);
+}
+
+// ── MUTATING THE WORKOUT ──────────────────────────────────────────────
+// renderExerciseCard() can emit up to THREE top-level nodes (superset label,
+// card, connector). The old code took tmp.firstElementChild, which on a
+// superset slot grabbed the LABEL and threw the card away. Return them all.
+function cardNodes(ex, index) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderExerciseCard(ex, index);
+  return tmp;
 }
 
 function performSwap(index, newEx) {
   const workout = window._currentWorkout;
+  if (!workout || !workout[index]) return;
   workout[index] = newEx;
   // Swapped-in exercise starts fresh — drop the old exercise's logged sets for this slot.
   if (window._setLogs) window._setLogs[index] = [];
+  if (window._exerciseGifs) delete window._exerciseGifs[index]; // stale art for the old lift
+  invalidatePool();
   persistWorkoutState(); // survive iOS restore + reflect in share card / history
 
   const card = document.getElementById('card-' + index);
+  if (!card) return;
+  const holder = cardNodes(newEx, index);
+  const newCard = holder.querySelector('.wk-card') || holder.firstElementChild;
+  if (!newCard) return;
+  card.parentNode.replaceChild(newCard, card);
+  loadExerciseGif(newEx, index);
+  updateDoneChips();
+  newCard.style.borderLeftColor = 'var(--blue)';
+  setTimeout(function(){ newCard.style.borderLeftColor = ''; }, 800);
+}
+
+// Append an exercise mid-session. Appending (never inserting) means every
+// existing index is untouched, so _setLogs / _exerciseGifs stay valid without
+// a reindex — the single most bug-prone part of an edit-in-place workout.
+function addExerciseToWorkout(newEx) {
+  const workout = window._currentWorkout;
+  if (!workout || !newEx) return;
+  if (workout.some(function(e){ return e.name === newEx.name; })) return; // belt & braces
+  const index = workout.length;
+  workout.push(newEx);
+  if (!window._setLogs) window._setLogs = {};
+  window._setLogs[index] = [];
+  invalidatePool();
+  persistWorkoutState();
+
+  const list = document.getElementById('wkList');
+  if (!list) return;
+  const holder = cardNodes(newEx, index);
+  const card = holder.querySelector('.wk-card');
+  while (holder.firstChild) list.appendChild(holder.firstChild);
+  loadExerciseGif(newEx, index);
+  updateDoneChips();
   if (card) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = renderExerciseCard(newEx, index);
-    const newCard = tmp.firstElementChild;
-    card.parentNode.replaceChild(newCard, card);
-    loadExerciseGif(newEx, index);
-    newCard.style.borderLeftColor = 'var(--blue)';
-    setTimeout(() => { newCard.style.borderLeftColor = ''; }, 800);
+    card.style.borderLeftColor = 'var(--accent)';
+    setTimeout(function(){ card.style.borderLeftColor = ''; }, 900);
+    // Defer the scroll one frame so layout has settled after the append.
+    requestAnimationFrame(function(){
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
+}
+
+// Remove an exercise. Every index above it shifts, so _setLogs and
+// _exerciseGifs must be rebuilt as dense arrays and the whole list re-rendered
+// — patching single cards here would silently misattribute logged sets.
+function removeExercise(index) {
+  const workout = window._currentWorkout;
+  if (!workout || !workout[index]) return;
+  const logged = (window._setLogs[index] || []).some(function(l){ return l && (l.weight || l.reps); });
+  const name = workout[index].name;
+  if (!confirm(logged
+      ? 'Remove "' + name + '"? Its logged sets will be discarded.'
+      : 'Remove "' + name + '" from this workout?')) return;
+
+  workout.splice(index, 1);
+
+  const logs = {}, gifs = {};
+  for (let i = 0; i < workout.length; i++) {
+    const from = i < index ? i : i + 1;
+    if (window._setLogs && window._setLogs[from] !== undefined) logs[i] = window._setLogs[from];
+    if (window._exerciseGifs && window._exerciseGifs[from] !== undefined) gifs[i] = window._exerciseGifs[from];
+  }
+  window._setLogs = logs;
+  window._exerciseGifs = gifs;
+  invalidatePool();
+  persistWorkoutState();
+
+  const list = document.getElementById('wkList');
+  if (list) {
+    list.innerHTML = workout.map(function(ex, i){ return renderExerciseCard(ex, i); }).join('');
+    workout.forEach(function(ex, i){ loadExerciseGif(ex, i); });
+  }
+  updateDoneChips();
 }
 
 
@@ -6474,14 +7034,15 @@ async function searchMixTracks(count) {
   <div class="swap-sheet">
     <div class="plate-grab"></div>
     <div class="swap-head">
-      <span class="swap-title">SWAP · <em id="swapMuscle">CHEST</em></span>
+      <span class="swap-title"><span id="swapVerb">SWAP</span> · <em id="swapMuscle">CHEST</em></span>
       <span class="swap-count" id="swapCount"></span>
     </div>
+    <div class="swap-vol" id="swapVol" style="display:none"></div>
     <input class="swap-search" id="swapSearch" type="text" placeholder="Filter exercises…"
       oninput="renderSwapList()" autocomplete="off" autocorrect="off" autocapitalize="off">
     <div class="swap-chips" id="swapChips"></div>
     <div class="swap-list" id="swapList"></div>
-    <button class="swap-random" onclick="swapRandom()">🔀 Surprise me (random)</button>
+    <button class="swap-random" id="swapRandomBtn" onclick="swapRandom()">🔀 Surprise me (random)</button>
   </div>
 </div>
 
