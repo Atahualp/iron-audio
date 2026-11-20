@@ -1,8 +1,8 @@
-// Iron Audio service worker — V20.0.0 (Gridiron)
+// Iron Audio service worker — V20.1.0 (Gridiron)
 // Network-first so a fresh deploy is picked up immediately (version hygiene);
 // cache fallback keeps the app openable offline. Also required so
 // showNotification() works for rest-complete alerts.
-const CACHE     = 'iron-audio-v20-0';
+const CACHE     = 'iron-audio-v20-1';
 const GIF_CACHE = 'iron-audio-gifs'; // version-independent: ~20MB, never re-fetch on a deploy
 
 self.addEventListener('install', (e) => {

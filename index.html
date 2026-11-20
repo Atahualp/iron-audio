@@ -723,6 +723,15 @@ html,body{background:var(--bg);font-family:'Inter',sans-serif}
 .timer-label{color:var(--muted);font-weight:700}
 .timer-btn.stop{background:var(--team);color:#fff}
 
+/* V20.1: 5 Basics */
+.b5-btn{display:block;width:100%;min-height:60px;margin-bottom:10px;padding:10px 14px;background:transparent;border:2px solid var(--gold);border-radius:14px;color:#fff;font-family:'Saira Condensed',sans-serif;font-size:19px;font-weight:800;letter-spacing:3px;cursor:pointer;transition:transform .15s}
+.b5-btn:active{transform:scale(.98)}
+.b5-sub{display:block;margin-top:3px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.3px;color:var(--muted)}
+.b5-badge{background:var(--gold);color:var(--navy);font-weight:800}
+/* Longer football labels: let the card footer wrap instead of clipping Remove */
+.wk-foot{flex-wrap:wrap;row-gap:8px}
+.wk-foot .rest-trigger,.wk-foot .swap-btn,.wk-foot .rm-btn{min-height:40px}
+
 /* Final + Season */
 .ew-confirm{background:var(--team);color:#fff}
 .ew-ex-pr{color:var(--team-text)}
@@ -917,6 +926,7 @@ html,body{background:var(--bg);font-family:'Inter',sans-serif}
     </div>
 
     <div class="gen-wrap">
+      <button class="b5-btn" type="button" onclick="generateFiveBasics()">🏈 RUN THE 5 BASICS<span class="b5-sub">Squat · Push · Pull · Hinge · Carry — full body, one tap</span></button>
       <button class="gen-btn" onclick="generate()">🏈 KICKOFF</button>
     </div>
   </div>
@@ -993,7 +1003,7 @@ html,body{background:var(--bg);font-family:'Inter',sans-serif}
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v20.0.0 · GRIDIRON EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v20.1.0 · GRIDIRON EDITION · ANDROID</div>
 
 </div>
 
@@ -1855,6 +1865,7 @@ const DB = {
     {name:'Rack Pull',sets:'4',reps:'5–6',rest:'120s',desc:'Partial deadlift · heavy trap overload',muscle:'Traps',howto:['Set safety pins in a rack at just below knee height.','Load the bar heavier than your full deadlift.','Grip the bar and brace your entire back.','Pull to full lockout, squeezing traps and glutes hard.','The shortened range allows heavier loading for trap development.']},
     {name:'Face Pull',sets:'3',reps:'15–20',rest:'60s',desc:'Cable rear delt and trap pull',muscle:'Traps',howto:['Set a rope attachment at upper chest or face height.','Pull the rope toward your face, spreading ends apart.','Externally rotate your shoulders at the peak.','Squeeze the rear delts and mid-traps hard at contraction.','Return slowly with full control.']},
     {name:'Upright Row',sets:'3',reps:'10–12',rest:'75s',desc:'Barbell trap and delt pull',muscle:'Traps',howto:['Hold a barbell with an overhand grip, hands shoulder-width.','Pull the bar straight up, leading with your elbows.','Raise until the bar is just below your chin.','Keep the bar close to your body throughout.','Lower with control, avoiding any jerking.']},
+    {name:'Suitcase Carry',sets:'3',reps:'30m',rest:'90s',desc:'One-hand carry · obliques and anti-lean core strength',muscle:'Traps',howto:['Pick up one heavy dumbbell or kettlebell at your side.','Stand tall with shoulders level — do not lean toward or away from the weight.','Walk the distance with slow, even steps and a braced core.','Switch hands and walk back.','Log the weight in one hand; the meters you covered go in the reps box.']},
     {name:'Farmer Carry',sets:'3',reps:'30m walk',rest:'75s',desc:'Heavy loaded carry · traps under sustained tension',muscle:'Traps',howto:['Pick up two heavy dumbbells or kettlebells.','Stand tall — chest up, shoulders back, core tight.','Walk at a steady pace for the prescribed distance.','Let the weight pull your shoulders slightly down to create trap tension.','Keep your neck neutral throughout the carry.']},
     {name:'Cable Shrug',sets:'3',reps:'15–20',rest:'60s',desc:'Constant tension cable shrug',muscle:'Traps',howto:['Stand between two low cable pulleys holding a handle in each hand.','Shrug both shoulders straight up against the cable resistance.','Cables provide constant tension throughout the full range.','Hold the top contraction for 1–2 seconds.','Lower slowly to maximize time under tension.']},
     {name:'Hex Bar Shrug',sets:'4',reps:'15–20',rest:'60s',desc:'Trap bar shrug · neutral grip',muscle:'Traps',howto:['Stand inside a hex bar with handles at your sides.','The neutral grip reduces wrist strain versus a barbell.','Shrug straight up to full contraction.','Pause at the top, then lower to a full stretch.','Load heavier than a barbell shrug for greater overload.']},
@@ -3779,7 +3790,7 @@ function backToCfg() {
   stopTimer();
   showCfg();
 }
-function showCfg(){stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
+function showCfg(){if(window._cfgMusclesBackup){muscles=window._cfgMusclesBackup;window._cfgMusclesBackup=null;}stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
 
 // ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
 function renderExerciseCard(ex, index) {
@@ -3805,7 +3816,8 @@ function renderExerciseCard(ex, index) {
           '<div class="wk-desc">' + escHtml(ex.desc) + '</div>' +
           '<span class="wk-muscle-badge" style="background:' + mc.bg + ';color:' + mc.color + '">' + escHtml(ex.muscle) + '</span>' +
           (ex.userAdded ? '<span class="wk-added-badge">+ ADDED</span>' : '') +
-          (ex.pat && PAT_LABELS[ex.pat] ? '<span class="wk-pat-badge">' + escHtml(PAT_LABELS[ex.pat]) + '</span>' : '') +
+          (ex.b5 ? '<span class="wk-pat-badge b5-badge">' + escHtml((B5_LABEL[ex.b5] || ex.b5).toUpperCase()) + ' \u00b7 BASIC</span>'
+                 : (ex.pat && PAT_LABELS[ex.pat] ? '<span class="wk-pat-badge">' + escHtml(PAT_LABELS[ex.pat]) + '</span>' : '')) +
           '<span class="wk-done-chip" id="doneChip-' + index + '"></span>' +
         '</div>' +
         '<div class="wk-sets-box">' +
@@ -4022,13 +4034,23 @@ async function generate() {
     }
   }
 
-  document.getElementById('timeBadge').textContent = perMuscleCount + 'ex/muscle';
-  document.getElementById('muscleBadge').textContent = muscles.map(m=>m.toUpperCase()).join(' · ');
+  renderWorkout(exercises, {
+    badge: perMuscleCount + 'ex/muscle',
+    label: muscles.map(m => m.toUpperCase()).join(' \u00b7 ')
+  });
+}
+
+// V20.1: everything after exercise selection — shared by KICKOFF and 5 Basics
+// so session persistence, history, GIFs, timers and music can't drift apart.
+function renderWorkout(exercises, meta) {
+  document.getElementById('timeBadge').textContent = meta.badge;
+  document.getElementById('muscleBadge').textContent = meta.label;
 
   // Store workout globally so modal can access exercise data
   window._currentWorkout = exercises;
   // Save to history
   saveWorkoutToHistory(exercises);
+  if (meta.program) tagActiveHistory({ program: meta.program, b5Day: meta.b5Day || null });
   window._exerciseGifs = {};
 
   // Render all cards with skeletons
@@ -4036,7 +4058,7 @@ async function generate() {
   list.innerHTML = exercises.map((ex, i) => renderExerciseCard(ex, i)).join('');
 
   // Show results
-  ov.classList.remove('vis');
+  document.getElementById('ov').classList.remove('vis');
   document.getElementById('cfgView').style.display = 'none';
   document.getElementById('results').classList.add('vis');
   startElapsedOnGenerate();
@@ -4058,6 +4080,9 @@ async function generate() {
       equipment: equipmentMode,
       arnold: { ...arnold },
       histId: window._activeHistId || null,
+      program: meta.program || null,
+      title: meta.title || null,
+      cfgMuscles: window._cfgMusclesBackup || null,
       ts: Date.now()
     }));
   } catch(e) {}
@@ -4080,6 +4105,165 @@ async function generate() {
   } else {
     if (plDisabled) plDisabled.style.display = playlistEnabled ? 'none' : 'block';
     if (plCreate) plCreate.style.display = 'inline-block';
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ── V20.1: RUN THE 5 BASICS ────────────────────────────────────────────
+// Arnold (Pump Club): every session = squat, push, pull, hinge, carry;
+// 2-3 sets of 10-12, ~2 min rest. Sets are raised only as far as needed to
+// reach weekly MEV and never past MAV (DrMike.json via RP_WEEKLY). Push and
+// pull run as an antagonist superset (Arnold.txt §1). Day A / Day B
+// alternate so horizontal and vertical work both get trained.
+// ═══════════════════════════════════════════════════════════════════════
+const B5_PLAN = [
+  { key:'squat', group:'legs', rp:'legs', pats:['knee'],
+    A:{ gym:['Squat','Front Squat','Hack Squat'], bw:['Squat'] },
+    B:{ gym:['Goblet Squat','Front Squat','KB Front-Rack Squat','Bulgarian Split Squat'], bw:['Bulgarian Split Squat','Walking Lunge'] } },
+  { key:'push', A:{ group:'chest', rp:'chest', pats:['hpress'], gym:['Bench Press','DB Bench Press','Floor Press'], bw:['Push-Up','Wide Push-Up'] },
+                B:{ group:'shoulders', rp:'shoulders', pats:['press'], gym:['Overhead Press','DB Shoulder Press','Arnold Press'], bw:['Pike Push-Up','Decline Push-Up'] } },
+  { key:'pull', group:'back', rp:'back',
+    A:{ pats:['hrow'], gym:['Barbell Row','Chest-Supported Row','Single-Arm DB Row','Seated Cable Row'], bw:['Inverted Row'] },
+    B:{ pats:['vpull'], gym:['Pull-Up','Lat Pulldown','Chin-Up'], bw:['Pull-Up','Chin-Up'] } },
+  { key:'hinge', rp:'legs',
+    A:{ group:'legs', pats:['hip'], gym:['Romanian Deadlift','Sumo Deadlift'], bw:['Hip Thrust','Glute Bridge'] },
+    B:{ group:'back', pats:['hinge'], gym:['Stiff-Leg Deadlift','Deadlift'], bw:['Superman'], fallbackGroup:'legs', fallbackPats:['hip'] } },
+  { key:'carry', rp:null,
+    A:{ gym:['Farmer Carry'], bw:['Farmer Carry'] },
+    B:{ gym:['Overhead Carry','Suitcase Carry','Farmer Carry'], bw:['Farmer Carry'] } }
+];
+const B5_LABEL = { squat:'Squat', push:'Push', pull:'Pull', hinge:'Hinge', carry:'Carry' };
+
+function isCarryEx(exOrName) {
+  var n = typeof exOrName === 'string' ? exOrName : (exOrName && exOrName.name);
+  return /\bcarry\b/i.test(String(n || ''));
+}
+
+function b5NextDay() {
+  try {
+    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    for (var i = 0; i < hist.length; i++) {
+      var h = hist[i];
+      if (h && h.program === 'basics5' && !h.provisional && h.b5Day) return h.b5Day === 'A' ? 'B' : 'A';
+    }
+  } catch(e) {}
+  return 'A';
+}
+
+function tagActiveHistory(fields) {
+  try {
+    var hist = JSON.parse(localStorage.getItem('iron_history') || '[]');
+    var i = histIndexById(hist, window._activeHistId);
+    if (i < 0) return;
+    Object.assign(hist[i], fields);
+    localStorage.setItem('iron_history', JSON.stringify(hist));
+  } catch(e) {}
+}
+
+// Find one exercise for a slot: preferred names first (random among those
+// available), then any exercise in the slot's pattern, equipment-filtered.
+function b5Pick(slot, day) {
+  var spec = Object.assign({}, slot, slot[day]);
+  var bw = equipmentMode === 'bodyweight';
+  var prefs = spec[bw ? 'bw' : 'gym'] || [];
+  var all = [];
+  Object.keys(DB).forEach(function(g) {
+    (DB[g] || []).forEach(function(e) { all.push({ e: e, g: g }); });
+  });
+  var okEquip = function(x) { return !bw || x.e.bw || isCarryEx(x.e); };
+  var byName = function(n) {
+    var hits = all.filter(function(x) { return x.e.name === n && okEquip(x); });
+    if (!hits.length) return null;
+    // prefer the copy that lives in the slot's own group (right RP bucket + swap pool)
+    return hits.filter(function(x) { return x.g === spec.group; })[0] || hits[0];
+  };
+  var avail = shuffle(prefs.slice()).map(byName).filter(Boolean);
+  if (avail.length) return avail[0];
+  var pool = function(group, pats) {
+    return (DB[group] || []).filter(function(e) {
+      return (pats || []).indexOf((EX_PATTERNS[group] || {})[e.name]) !== -1 && (!bw || e.bw);
+    }).map(function(e) { return { e: e, g: group }; });
+  };
+  var p = pool(spec.group, spec.pats);
+  if (!p.length && spec.fallbackGroup) p = pool(spec.fallbackGroup, spec.fallbackPats);
+  if (!p.length && slot.key === 'carry') p = all.filter(function(x) { return isCarryEx(x.e) && okEquip(x); });
+  return p.length ? shuffle(p)[0] : null;
+}
+
+// Arnold base (3 sets; 2 at 4x/week), nudged by difficulty, then raised to hit
+// weekly MEV and capped at weekly MAV for the muscle (shared across the
+// patterns that load it). Range 2-5 ("add a set or two as you get stronger").
+function b5Sets(rpKey, nSharing) {
+  var f = Math.max(1, weeklyFreq);
+  var base = f >= 4 ? 2 : 3;
+  if (difficulty === 'beginner') base = Math.max(2, base - 1);
+  if (difficulty === 'advanced') base = Math.min(5, base + 1);
+  var lm = rpKey && RP_WEEKLY[rpKey];
+  if (!lm) return base;
+  var n = Math.max(1, nSharing || 1);
+  var floorSets = Math.ceil(lm.MEV / f / n);
+  var capSets   = Math.max(2, Math.floor(lm.MAV / f / n));
+  return Math.max(2, Math.min(5, capSets, Math.max(base, floorSets)));
+}
+
+function b5Coverage(exercises) {
+  // Weekly working sets per RP muscle this plan produces at the current frequency.
+  var f = Math.max(1, weeklyFreq), out = {};
+  exercises.forEach(function(ex) { if (ex.b5rp) out[ex.b5rp] = (out[ex.b5rp] || 0) + (parseInt(ex.sets, 10) || 0) * f; });
+  return out;
+}
+
+async function generateFiveBasics() {
+  if (playlistEnabled && !genre) { alert('Select a playlist genre!'); return; }
+  document.getElementById('ov').classList.add('vis');
+  document.getElementById('ovTxt').textContent = 'CALLING THE 5 BASICS';
+
+  var day = b5NextDay();
+  var rpShare = { legs: 2 };                       // squat + hinge both load legs
+  var exercises = [];
+  for (var i = 0; i < B5_PLAN.length; i++) {
+    var slot = B5_PLAN[i];
+    var hit = b5Pick(slot, day);
+    if (!hit) continue;
+    var spec = Object.assign({}, slot, slot[day]);
+    var isCarry = slot.key === 'carry';
+    var sets = isCarry ? b5Sets(null) : b5Sets(spec.rp, rpShare[spec.rp]);
+    exercises.push(Object.assign({}, hit.e, {
+      muscleGroup: hit.g,
+      pat: (EX_PATTERNS[hit.g] || {})[hit.e.name] || (isCarry ? 'carry' : 'other'),
+      b5: slot.key, b5rp: spec.rp || null,
+      sets: String(sets),
+      reps: isCarry ? '30 m' : '10–12',
+      rest: '120s'
+    }));
+  }
+  if (exercises.length < 5) {
+    document.getElementById('ov').classList.remove('vis');
+    alert('Could not find an exercise for every pattern with the current equipment setting.');
+    return;
+  }
+  // Arnold.txt §1: push and pull are opposing groups, so they run back-to-back.
+  var push = exercises[1], pull = exercises[2];
+  exercises[1] = Object.assign({}, push, { ssGroup: 0, ssSlot: 'A', ssConnector: true, rest: '15s' });
+  exercises[2] = Object.assign({}, pull, { ssGroup: 0, ssSlot: 'B', ssConnector: false });
+
+  // The session trains these groups; the user's own picks come back on Back/End.
+  if (!window._cfgMusclesBackup) window._cfgMusclesBackup = muscles.slice();
+  muscles = day === 'A' ? ['legs', 'chest', 'back'] : ['legs', 'shoulders', 'back'];
+
+  window._b5Coverage = b5Coverage(exercises);
+  renderWorkout(exercises, {
+    badge: '5 PATTERNS',
+    label: '5 BASICS \u00b7 DAY ' + day,
+    title: '5 BASICS \u00b7 DAY ' + day,
+    program: 'basics5',
+    b5Day: day
+  });
+  var t = document.querySelector('#results .res-title');
+  if (t) t.textContent = '5 BASICS \u00b7 DAY ' + day;
+  if (Math.max(1, weeklyFreq) < 2) {
+    setTimeout(function(){ alert('Heads up: at 1 session per muscle per week, 5 Basics can\'t reach MEV for chest/back. Set Schedule to 2+ for full effect.'); }, 400);
   }
 }
 
@@ -4478,6 +4662,7 @@ function releaseWakeLock() {
     if (session.arnold) { arnold = Object.assign({ on:false, pyramid:false, superset:false, shock:false }, session.arnold); }
     if (session.mode)   workoutMode = session.mode;
     window._activeHistId = session.histId || null;
+    if (session.cfgMuscles) window._cfgMusclesBackup = session.cfgMuscles;
 
     // Rebuild the workout view from saved exercises
     window.addEventListener('DOMContentLoaded', function() {
@@ -4494,7 +4679,7 @@ function releaseWakeLock() {
         // Restore results header (M1: query by class — there are no resTitle/resMeta IDs)
         var resTitle = document.querySelector('#results .res-title');
         if (resTitle) {
-          resTitle.textContent = muscles.map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(' + ');
+          resTitle.textContent = session.title || muscles.map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(' + ');
         }
         var resMeta = document.querySelector('#results .res-meta');
         if (resMeta) {
@@ -4686,7 +4871,7 @@ function endWorkout() {
     validSets.forEach(function(r) {
       var w = parseFloat(r.weight) || 0;
       var rp = parseFloat(r.reps) || 0;
-      totalVolume += w * rp * volMult(ex.name); // V19.7: paired DB / per-side work counts both
+      if (!isCarryEx(ex)) totalVolume += w * rp * volMult(ex.name); // V20.1: carries log meters, not reps
       if (w > exTopWeight || (w === exTopWeight && rp > exTopReps)) {
         exTopWeight = w; exTopReps = rp;
       }
@@ -6945,7 +7130,7 @@ function renderSetRow(exIndex, setIndex, log) {
         ' onclick="openPlateCalc(+this.dataset.ex,+this.dataset.s)" aria-label="Plate calculator">🏋</button>' : '') +
       '</div>' +
       '<div class="set-log-label">×</div>' +
-      '<input class="set-log-input" type="number" placeholder="reps" value="' + (log.reps || '') + '"' +
+      '<input class="set-log-input" type="number" placeholder="' + (ex && isCarryEx(ex) ? 'm' : 'reps') + '" value="' + (log.reps || '') + '"' +
         ' inputmode="numeric" min="0" data-ex="' + exIndex + '" data-s="' + setIndex + '" data-field="reps"' +
         ' oninput="logSet(+this.dataset.ex,+this.dataset.s,this.dataset.field,this.value)">' +
       (isPR ? '<span class="set-log-pr">🏈 TD</span>' : (isRep ? '<span class="set-log-reppr">🔁 REP</span>' : '')) +
@@ -7154,6 +7339,7 @@ function toggleVolMult(exIndex) {
 function sessionVolume(logsByName) {
   var v = 0;
   Object.keys(logsByName || {}).forEach(function(name) {
+    if (isCarryEx(name)) return; // meters, not reps
     var m = volMult(name);
     (logsByName[name] || []).forEach(function(s) {
       v += (parseFloat(s && s.weight) || 0) * (parseFloat(s && s.reps) || 0) * m;
@@ -7199,6 +7385,7 @@ function e1rmHistory(name) {
   return out;
 }
 function e1rmLineHTML(ex, index) {
+  if (isCarryEx(ex)) return '';
   var logs = (window._setLogs && window._setLogs[index]) || [];
   var now = 0;
   logs.forEach(function(s) { if (s) now = Math.max(now, e1rm(s.weight, s.reps)); });
