@@ -1,8 +1,8 @@
-// Iron Audio service worker — V19.5.0
+// Iron Audio service worker — V20.0.0 (Gridiron)
 // Network-first so a fresh deploy is picked up immediately (version hygiene);
 // cache fallback keeps the app openable offline. Also required so
 // showNotification() works for rest-complete alerts.
-const CACHE     = 'iron-audio-v19-5';
+const CACHE     = 'iron-audio-v20-0';
 const GIF_CACHE = 'iron-audio-gifs'; // version-independent: ~20MB, never re-fetch on a deploy
 
 self.addEventListener('install', (e) => {
@@ -61,7 +61,53 @@ self.addEventListener('message', (e) => {
   if (d.type === 'PRECACHE_GIFS' && Array.isArray(d.urls)) {
     e.waitUntil(warmGifCache(d.urls));
   }
+
+  // V19.6: end-of-rest alarm lives here. Chrome freezes a hidden PWA page, so its
+  // timers never fire; an extended message event keeps this worker alive (~5 min cap).
+  if (d.type === 'REST_ARM' && typeof d.endTime === 'number') {
+    const p = armRest(d.endTime, d.name);
+    if (p) e.waitUntil(p);
+  }
+  if (d.type === 'REST_CANCEL') cancelRest();
 });
+
+const REST_MAX_MS = 290000; // stay under Chrome's 5-min extendable-event limit
+let restAlarm = null;       // { timer, resolve, name }
+let lastRestName = 'Next set';
+
+function cancelRest() {
+  if (!restAlarm) return;
+  clearTimeout(restAlarm.timer);
+  restAlarm.resolve();
+  restAlarm = null;
+}
+
+function armRest(endTime, name) {
+  cancelRest();
+  lastRestName = String(name || lastRestName).slice(0, 80);
+  const ms = endTime - Date.now();
+  if (ms <= 0 || ms > REST_MAX_MS) return null;
+  return new Promise((resolve) => {
+    const alarm = { resolve, timer: 0 };
+    alarm.timer = setTimeout(async () => {
+      try {
+        const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        // Foreground page already beeped/vibrated — don't double-alert.
+        if (!cs.some((c) => c.visibilityState === 'visible')) {
+          await self.registration.showNotification('\uD83C\uDFC8 Play clock \u2014 0:00', {
+            body: lastRestName + ' \u2014 snap it',
+            tag: 'ia-rest', renotify: true, vibrate: [100, 50, 100, 50, 300],
+            icon: 'icon-192.png', badge: 'icon-192.png',
+            actions: [{ action: 'add30', title: '+30s' }, { action: 'done', title: 'Done' }]
+          });
+        }
+      } catch (err) { /* notification permission revoked */ }
+      if (restAlarm === alarm) restAlarm = null;
+      resolve();
+    }, ms);
+    restAlarm = alarm;
+  });
+}
 
 // Warm the offline GIF cache in small batches so a few hundred cross-origin
 // requests don't stall the worker or trip rate limits. Progress is reported
@@ -100,7 +146,15 @@ self.addEventListener('notificationclick', (e) => {
 
   // V18.3: +30s / Done are actionable from the lock screen. Relay to the page
   // and stay put — focusing the app on an action tap defeats the purpose.
-  if (action === 'add30' || action === 'done') {
+  if (action === 'add30') {
+    // Re-arm here — the page may still be frozen and can't schedule anything.
+    const endTime = Date.now() + 30000;
+    const p = armRest(endTime, lastRestName);
+    e.waitUntil(Promise.all([post({ type: 'REST_ACTION', action, endTime }), p || Promise.resolve()]));
+    return;
+  }
+  if (action === 'done') {
+    cancelRest();
     e.waitUntil(post({ type: 'REST_ACTION', action }));
     return;
   }
