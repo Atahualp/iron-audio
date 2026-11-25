@@ -1,8 +1,8 @@
-// Iron Audio service worker — V20.1.0 (Gridiron)
+// Iron Audio service worker — V20.1.1 (Gridiron)
 // Network-first so a fresh deploy is picked up immediately (version hygiene);
 // cache fallback keeps the app openable offline. Also required so
 // showNotification() works for rest-complete alerts.
-const CACHE     = 'iron-audio-v20-1';
+const CACHE     = 'iron-audio-v20-1-1';
 const GIF_CACHE = 'iron-audio-gifs'; // version-independent: ~20MB, never re-fetch on a deploy
 
 self.addEventListener('install', (e) => {
@@ -94,8 +94,8 @@ function armRest(endTime, name) {
         const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
         // Foreground page already beeped/vibrated — don't double-alert.
         if (!cs.some((c) => c.visibilityState === 'visible')) {
-          await self.registration.showNotification('\uD83C\uDFC8 Play clock \u2014 0:00', {
-            body: lastRestName + ' \u2014 snap it',
+          await self.registration.showNotification('🏈 Play clock — 0:00', {
+            body: lastRestName + ' — snap it',
             tag: 'ia-rest', renotify: true, vibrate: [100, 50, 100, 50, 300],
             icon: 'icon-192.png', badge: 'icon-192.png',
             actions: [{ action: 'add30', title: '+30s' }, { action: 'done', title: 'Done' }]

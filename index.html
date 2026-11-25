@@ -1003,7 +1003,7 @@ html,body{background:var(--bg);font-family:'Inter',sans-serif}
     </div>
   </div>
 
-  <div class="version-footer">IRON AUDIO v20.1.0 · GRIDIRON EDITION · ANDROID</div>
+  <div class="version-footer">IRON AUDIO v20.1.1 · GRIDIRON EDITION · ANDROID</div>
 
 </div>
 
@@ -3790,7 +3790,15 @@ function backToCfg() {
   stopTimer();
   showCfg();
 }
-function showCfg(){if(window._cfgMusclesBackup){muscles=window._cfgMusclesBackup;window._cfgMusclesBackup=null;}stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
+// V20.1.1: after a restore the chips were blank while `muscles` still held the
+// old selection, so taps toggled the wrong way and hidden groups leaked into KICKOFF.
+function paintMuscleChips() {
+  document.querySelectorAll('.mg-chip').forEach(function(c) {
+    var m = (c.getAttribute('onclick') || '').match(/'([^']+)'/);
+    if (m) c.classList.toggle('on', muscles.indexOf(m[1]) !== -1);
+  });
+}
+function showCfg(){if(window._cfgMusclesBackup){muscles=window._cfgMusclesBackup;window._cfgMusclesBackup=null;}try{paintMuscleChips();renderArnold();renderFreqRead();}catch(e){}stopSpeech();stopMiniPlayer();document.getElementById('cfgView').style.display='block';document.getElementById('results').classList.remove('vis');try{localStorage.removeItem('ia_session');}catch(e){}}
 
 // ─── EXERCISE CARD WITH SKELETON ──────────────────────────────────────
 function renderExerciseCard(ex, index) {
@@ -4001,7 +4009,7 @@ async function generate() {
   // Apply superset pairing — V17: Arnold agonist/antagonist rules. Pair
   // opposing muscle groups back-to-back (chest↔back, biceps↔triceps); within
   // a single group, pair opposing movement patterns (knee↔hip, press↔rear).
-  if (workoutMode === 'superset' && arnold.on && arnold.superset) {
+  if (workoutMode === 'superset' && arnold.on && arnold.superset && hasAntagonistPair()) {
     const PAT_ANT = { knee: ['hip','curl'], hip: ['knee'], curl: ['knee'],
                       press: ['rear','lateral'], rear: ['press'], lateral: ['press'],
                       vpull: ['hrow'], hrow: ['vpull'], hpress: ['fly'], fly: ['hpress'] };
@@ -4042,9 +4050,24 @@ async function generate() {
 
 // V20.1: everything after exercise selection — shared by KICKOFF and 5 Basics
 // so session persistence, history, GIFs, timers and music can't drift apart.
+// V20.1.1: one writer for the results header. Restore and history-load used to
+// replace .res-meta innerHTML, deleting #timeBadge/#muscleBadge, so the next
+// KICKOFF threw on line 1 of renderWorkout and the overlay never cleared.
+function setResultsHeader(title, badge, label) {
+  var t = document.querySelector('#results .res-title');
+  var b = document.getElementById('timeBadge');
+  var m = document.getElementById('muscleBadge');
+  if (t) t.textContent = title;
+  if (b) b.textContent = badge;
+  if (m) m.textContent = label;
+}
+function musclesLabel(list) {
+  return (list || []).map(function(m){ return String(m).toUpperCase(); }).join(' \u00b7 ');
+}
+
 function renderWorkout(exercises, meta) {
-  document.getElementById('timeBadge').textContent = meta.badge;
-  document.getElementById('muscleBadge').textContent = meta.label;
+  // V20.1.1: always write the title — a 5 Basics title used to stick to the next KICKOFF.
+  setResultsHeader(meta.title || 'YOUR WORKOUT', meta.badge, meta.label);
 
   // Store workout globally so modal can access exercise data
   window._currentWorkout = exercises;
@@ -4260,8 +4283,6 @@ async function generateFiveBasics() {
     program: 'basics5',
     b5Day: day
   });
-  var t = document.querySelector('#results .res-title');
-  if (t) t.textContent = '5 BASICS \u00b7 DAY ' + day;
   if (Math.max(1, weeklyFreq) < 2) {
     setTimeout(function(){ alert('Heads up: at 1 session per muscle per week, 5 Basics can\'t reach MEV for chest/back. Set Schedule to 2+ for full effect.'); }, 400);
   }
@@ -4514,6 +4535,7 @@ function loadArnold() {
     var raw = localStorage.getItem(ARN_KEY);
     if (raw) arnold = Object.assign({ on:false, pyramid:false, superset:false, shock:false }, JSON.parse(raw));
   } catch(e) {}
+  setMode(arnold.superset ? 'superset' : 'standard'); // V20.1.1: the switch is the only mode control
   renderArnold();
 }
 function toggleArnold() { arnold.on = !arnold.on; saveArnold(); renderArnold(); }
@@ -4549,8 +4571,10 @@ function renderArnold() {
   var ss = document.getElementById('arnSwSuperset'), w = document.getElementById('arnSsWarn');
   var ok = hasAntagonistPair();
   if (ss) ss.classList.toggle('dis', !ok);
-  if (!ok && arnold.superset) { arnold.superset = false; setMode('standard'); saveArnold();
-    if (ss) ss.classList.remove('on'); }
+  // V20.1.1: display-only. This used to set superset=false and SAVE it whenever
+  // `muscles` was empty — i.e. on every app open — so the setting never stuck.
+  // The pairing engine already emits straight sets when no antagonist exists.
+  if (ss && !ok) ss.classList.remove('on');
   if (w) {
     if (ok) { w.style.display = 'none'; w.textContent = ''; }
     else {
@@ -4676,16 +4700,11 @@ function releaseWakeLock() {
         var list = document.getElementById('wkList');
         list.innerHTML = exercises.map(function(ex, i) { return renderExerciseCard(ex, i); }).join('');
 
-        // Restore results header (M1: query by class — there are no resTitle/resMeta IDs)
-        var resTitle = document.querySelector('#results .res-title');
-        if (resTitle) {
-          resTitle.textContent = session.title || muscles.map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(' + ');
-        }
-        var resMeta = document.querySelector('#results .res-meta');
-        if (resMeta) {
-          resMeta.innerHTML =
-            '<span class="badge badge-t">' + (session.perMuscleCount||2) + 'ex/muscle</span>' +
-            '<span class="badge badge-m">' + muscles.length + ' MUSCLE' + (muscles.length > 1 ? 'S' : '') + '</span>';
+        // V20.1.1: same header as at generation; never rebuild .res-meta.
+        if (session.program === 'basics5') {
+          setResultsHeader(session.title || '5 BASICS', '5 PATTERNS', session.title || '5 BASICS');
+        } else {
+          setResultsHeader(session.title || 'YOUR WORKOUT', (session.perMuscleCount || 2) + 'ex/muscle', musclesLabel(muscles));
         }
 
         // Show results, hide config
@@ -5999,7 +6018,13 @@ function loadHistoryEntry(index) {
 
   // Restore settings (so a later regenerate/share uses the same config)
   if (entry.duration)   { dur = entry.duration; document.querySelectorAll('.dur-card').forEach(c => c.classList.toggle('on', parseInt(c.querySelector('.dur-num').textContent) === dur)); }
-  if (entry.muscles)    { muscles = [...entry.muscles]; document.querySelectorAll('.mg-chip').forEach(c => { const m = c.getAttribute('onclick')?.match(/'([^']+)'/)?.[1]; if(m) c.classList.toggle('on', muscles.includes(m)); }); }
+  if (entry.muscles) {
+    // V20.1.1: a 5 Basics entry's legs/chest/back are session-only — park the
+    // user's own picks so Back restores them instead of leaving 5 Basics muscles selected.
+    if (entry.program === 'basics5' && !window._cfgMusclesBackup) window._cfgMusclesBackup = muscles.slice();
+    muscles = [...entry.muscles];
+    paintMuscleChips();
+  }
   if (entry.difficulty) setDifficulty(entry.difficulty);
   if (entry.weeklyFreq) setWeeklyFreq(entry.weeklyFreq);
   if (entry.mode)       setMode(entry.mode);
@@ -6026,11 +6051,12 @@ function loadHistoryEntry(index) {
   var list = document.getElementById('wkList');
   list.innerHTML = exercises.map(function(ex, i){ return renderExerciseCard(ex, i); }).join('');
 
-  var resTitle = document.querySelector('#results .res-title');
-  if (resTitle) resTitle.textContent = (entry.muscles || []).map(function(m){ return m.charAt(0).toUpperCase()+m.slice(1); }).join(' + ') || 'Workout';
-  var resMeta = document.querySelector('#results .res-meta');
-  if (resMeta) resMeta.innerHTML =
-    '<span class="badge badge-m">' + (entry.muscles ? entry.muscles.length : 0) + ' MUSCLE' + ((entry.muscles && entry.muscles.length > 1) ? 'S' : '') + '</span>';
+  if (entry.program === 'basics5') {
+    var b5t = '5 BASICS' + (entry.b5Day ? ' \u00b7 DAY ' + entry.b5Day : '');
+    setResultsHeader(b5t, '5 PATTERNS', entry.date || b5t);
+  } else {
+    setResultsHeader(musclesLabel(entry.muscles) || 'WORKOUT', entry.date || '', (entry.muscles || []).length + ' MUSCLE' + ((entry.muscles || []).length === 1 ? '' : 'S'));
+  }
 
   document.getElementById('cfgView').style.display = 'none';
   document.getElementById('results').classList.add('vis');
@@ -6432,6 +6458,17 @@ function swapCandidates() {
   let pool = (DB[group] || []).filter(function(e){
     return e.name !== ex.name && !currentNames.has(e.name);
   });
+  if (!isAdd && ex.b5 === 'carry') {
+    // V20.1.1: the carry slot stays a carry — pull from every group, one row per name.
+    var seen = new Set();
+    pool = [];
+    Object.keys(DB).forEach(function(g){ (DB[g] || []).forEach(function(e){
+      if (isCarryEx(e) && e.name !== ex.name && !currentNames.has(e.name) && !seen.has(e.name)) { seen.add(e.name); pool.push(e); }
+    }); });
+    if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw || isCarryEx(e); });
+    _poolCache = pool; _poolKey = key;
+    return pool;
+  }
   if (equipmentMode === 'bodyweight') pool = pool.filter(function(e){ return e.bw; });
 
   if (!isAdd) {
@@ -6517,8 +6554,13 @@ function applyDiffToPick(picked, ex, muscleGroup) {
   const restSecs = parseRestSecs(picked.rest);
   const newRest = Math.round(restSecs * dm.restM);
   const restStr = newRest >= 60 ? Math.round(newRest/10)*10+'s' : newRest+'s';
-  const swapRest = (workoutMode === 'superset' && ex.ssConnector) ? '15s' : restStr;
-  return { ...picked, sets: String(s), rest: swapRest, muscleGroup, pat: _pat, ssGroup: ex.ssGroup, ssConnector: ex.ssConnector };
+  // V20.1.1: the connector rest follows the slot, not the global mode — 5 Basics
+  // pairs push/pull without switching workoutMode to 'superset'.
+  const swapRest = ex.ssConnector ? '15s' : (ex.b5 ? ex.rest : restStr);
+  const out = { ...picked, sets: String(s), rest: swapRest, muscleGroup, pat: _pat,
+                ssGroup: ex.ssGroup, ssSlot: ex.ssSlot, ssConnector: ex.ssConnector };
+  if (ex.b5) Object.assign(out, { b5: ex.b5, b5rp: ex.b5rp, reps: isCarryEx(picked) ? '30 m' : '10\u201312' });
+  return out;
 }
 
 // Added exercises are sized by remaining RP headroom, not by the raw DB value.
@@ -6882,7 +6924,7 @@ function isIsolation(ex) {
   return !!ex && ARN_COMPOUND_PATS.indexOf(ex.pat) === -1;
 }
 function shockBanner(ex) {
-  if (!arnold.on || !arnold.shock || !isIsolation(ex)) return '';
+  if (!arnold.on || !arnold.shock || !isIsolation(ex) || isCarryEx(ex)) return ''; // V20.1.1: no drop sets on a carry
   var t = shockFor(ex.name);
   return '<div class="shock-banner">' +
            '<span class="sb-tag">⚡ ' + t.label + '</span>' +
